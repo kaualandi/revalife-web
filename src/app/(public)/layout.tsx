@@ -3,5 +3,5 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <main className="mx-auto max-w-lg">{children}</main>;
+  return <div className="mx-auto max-w-lg px-8">{children}</div>;
 }

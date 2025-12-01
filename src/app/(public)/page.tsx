@@ -1,65 +1,99 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { useFormSession } from '@/hooks/use-form-session';
+import { useTreatmentFormStore } from '@/stores/treatment-form-store';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import Image from 'next/image';
 
 export default function Home() {
+  const router = useRouter();
+  const { hasExistingSession, isLoading, loadSession, createSession } =
+    useFormSession();
+  const { currentStepIndex, sessionId } = useTreatmentFormStore();
+
+  // Ao clicar em continuar
+  const handleContinue = async () => {
+    if (!sessionId) {
+      // Cria nova sessão
+      await createSession();
+    }
+    // Redireciona para o formulário
+    router.push('/treatment-approach');
+  };
+
+  // Carrega sessão existente automaticamente
+  useEffect(() => {
+    const loadExistingSession = async () => {
+      if (hasExistingSession && sessionId) {
+        await loadSession(sessionId);
+
+        // Se já tem progresso, redireciona automaticamente
+        if (currentStepIndex > 0) {
+          router.push('/treatment-approach');
+        }
+      }
+    };
+
+    loadExistingSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Executa apenas uma vez ao montar
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
+    <div className="flex min-h-screen flex-col px-4 py-8">
+      <header className="mb-20">
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+          src="/images/logo.svg"
+          alt="Revolife Plus"
+          width={200}
+          height={50}
+          className="mx-auto"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{' '}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{' '}
-            or the{' '}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{' '}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        <h1 className="text-primary mt-20 text-6xl">
+          Bem vindo <br />
+          Revalife+
+        </h1>
+      </header>
+
+      <main className="mb-8">
+        <p className="text-2xl leading-none font-thin">
+          Agora, você informará ao médico seus dados de saúde, histórico clínico
+          e hábitos.
+        </p>
+        <p className="mt-3 text-2xl leading-none font-thin">
+          Essas informações serão analisadas com atenção para entender seus
+          sintomas e, se for apropriado, indicar o melhor tratamento.
+        </p>
+
+        <p className="border-foreground text-muted-foreground mt-16 border-l pl-3 text-base leading-none font-thin">
+          *Em alguns casos, o médico pode identificar riscos ou interações
+          medicamentosas que exigem avaliação presencial. Nosso compromisso é
+          com sua segurança e cuidado responsável.
+        </p>
       </main>
+
+      <footer className="mt-auto text-center">
+        <Button
+          size="lg"
+          className="w-full"
+          onClick={handleContinue}
+          disabled={isLoading}
+        >
+          {isLoading
+            ? hasExistingSession
+              ? 'Recuperando preenchimento...'
+              : 'Carregando...'
+            : 'Continuar'}
+        </Button>
+
+        <p className="text-muted-foreground text-xxs mt-2 leading-none font-thin">
+          Ao clicar em “Continuar”, você declara estar de acordo com os Termos
+          de uso, aceita o Consentimento para Telessaúde e confirma que leu e
+          compreendeu a Política de Privacidade.
+        </p>
+      </footer>
     </div>
   );
 }
