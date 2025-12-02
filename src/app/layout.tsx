@@ -4,7 +4,6 @@ import { QueryProvider } from '@/providers/query-provider';
 import { Archivo } from 'next/font/google';
 import type { Metadata } from 'next';
 
-
 const archivo = Archivo({
   variable: '--font-archivo',
   subsets: ['latin'],
