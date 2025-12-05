@@ -37,7 +37,7 @@ export function RadioQuestion({ question, form }: RadioQuestionProps) {
                 <label
                   key={option.value}
                   className={cn(
-                    'border-input hover:border-primary flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors',
+                    'border-input hover:border-primary relative flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
                     field.value === option.value &&
                       'border-primary bg-primary/5'
                   )}
@@ -48,8 +48,22 @@ export function RadioQuestion({ question, form }: RadioQuestionProps) {
                     value={option.value}
                     checked={field.value === option.value}
                     onChange={e => field.onChange(e.target.value)}
-                    className="text-primary focus:ring-primary mt-1"
+                    className="sr-only"
                   />
+
+                  <div
+                    className={cn(
+                      'border-primary flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 bg-white',
+                      field.value === option.value
+                        ? 'bg-primary border-primary'
+                        : 'bg-white'
+                    )}
+                  >
+                    {field.value === option.value && (
+                      <div className="h-2 w-2 rounded-full bg-white" />
+                    )}
+                  </div>
+
                   <div className="flex-1">
                     <div className="font-medium">{option.label}</div>
                     {option.description && (
