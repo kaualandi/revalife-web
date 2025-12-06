@@ -2,12 +2,13 @@
 
 import { FormStepComponent } from '@/components/form/form-step';
 import { FormNavigation } from '@/components/form/form-navigation';
+import { FormFinalLoading } from '@/components/form/form-final-loading';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
 import { useFormAutoSave } from '@/hooks/use-form-autosave';
 import { useFormSession } from '@/hooks/use-form-session';
 import { treatmentFormConfig } from '@/config/treatment-form.config';
+import { getProductRedirectUrl } from '@/lib/get-product-redirect-url';
 import type { FormAnswers } from '@/types/form.types';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,6 @@ import { ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function TreatmentApproachPage() {
-  const router = useRouter();
   const {
     currentStepIndex,
     answers,
@@ -26,6 +26,7 @@ export default function TreatmentApproachPage() {
   } = useTreatmentFormStore();
   const { initializeSession, isLoading: isLoadingSession } = useFormSession();
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
+  const [showFinalLoading, setShowFinalLoading] = useState(false);
 
   const currentStep = treatmentFormConfig.steps[currentStepIndex];
   const isLastStep = currentStepIndex === treatmentFormConfig.steps.length - 1;
@@ -36,7 +37,7 @@ export default function TreatmentApproachPage() {
     const init = async () => {
       // Se não tem sessionId, redireciona para home
       if (!sessionId) {
-        router.push('/');
+        window.location.href = '/';
         return;
       }
 
@@ -84,9 +85,11 @@ export default function TreatmentApproachPage() {
     saveNow();
 
     if (isLastStep) {
-      // Submete o formulário final
+      // Mostra loading final
       setIsSubmitting(true);
+      setShowFinalLoading(true);
 
+      // Salva dados finais no backend
       // TODO: Implementar submit final
       console.log('Submitting final form:', { sessionId, answers });
 
@@ -96,13 +99,20 @@ export default function TreatmentApproachPage() {
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify({ answers }),
       // })
-      //   .then(() => router.push('/next-page'))
-      //   .finally(() => setIsSubmitting(false));
     } else {
       // Avança para próximo step
       setDirection('forward');
       nextStep();
     }
+  };
+
+  // Função chamada quando o loading final termina
+  const handleFinalLoadingComplete = () => {
+    // Gera URL do produto baseada nas respostas
+    const redirectUrl = getProductRedirectUrl(answers);
+    
+    // Redireciona para a URL do produto
+    window.location.href = redirectUrl;
   };
 
   // Função para auto-advance ao selecionar radio
@@ -136,27 +146,31 @@ export default function TreatmentApproachPage() {
     );
   }
 
+  // Mostra tela de loading final após submeter
+  if (showFinalLoading) {
+    return <FormFinalLoading onComplete={handleFinalLoadingComplete} />;
+  }
+
   return (
     <div className="flex min-h-screen flex-col px-4 pt-16 pb-8">
-      <header className="mb-12 flex items-center justify-between">
+      <header className="mb-12 flex items-center gap-4">
+        {!isFirstStep && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handlePreviousStep}
+            size="icon"
+            className="shrink-0"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+        )}
         <Image
           src="/images/logo.svg"
           alt="Revolife Plus"
           width={150}
           height={30}
         />
-        {!isFirstStep && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handlePreviousStep}
-            className="gap-2"
-            size="sm"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Voltar
-          </Button>
-        )}
       </header>
 
       <main className="mb-8 flex-1">

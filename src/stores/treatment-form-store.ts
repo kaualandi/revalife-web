@@ -29,6 +29,7 @@ interface TreatmentFormState {
   // Helpers
   getVisibleQuestions: (stepIndex: number) => Question[];
   isQuestionVisible: (question: Question) => boolean;
+  isStepVisible: (stepIndex: number) => boolean;
   canProceedToNextStep: () => boolean;
   getCurrentProgress: () => number;
 }
@@ -108,20 +109,64 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             },
           })),
 
-        // Avançar para próximo step
+        // Avançar para próximo step (pula steps invisíveis)
         nextStep: () =>
           set(state => {
             const maxStep = treatmentFormConfig.steps.length - 1;
+            let nextIndex = state.currentStepIndex + 1;
+
+            // Pula steps invisíveis
+            while (nextIndex <= maxStep) {
+              const step = treatmentFormConfig.steps[nextIndex];
+              if (!step.showWhen) break; // Sem condição = sempre visível
+
+              const { answers } = get();
+              // Verifica se é QuestionConditionGroup ou QuestionCondition
+              const isVisible =
+                'all' in step.showWhen || 'any' in step.showWhen
+                  ? checkConditionGroup(
+                      step.showWhen as QuestionConditionGroup,
+                      answers
+                    )
+                  : checkCondition(step.showWhen as QuestionCondition, answers);
+
+              if (isVisible) break;
+              nextIndex++;
+            }
+
             return {
-              currentStepIndex: Math.min(state.currentStepIndex + 1, maxStep),
+              currentStepIndex: Math.min(nextIndex, maxStep),
             };
           }),
 
-        // Voltar para step anterior
+        // Voltar para step anterior (pula steps invisíveis)
         previousStep: () =>
-          set(state => ({
-            currentStepIndex: Math.max(state.currentStepIndex - 1, 0),
-          })),
+          set(state => {
+            let prevIndex = state.currentStepIndex - 1;
+
+            // Pula steps invisíveis
+            while (prevIndex >= 0) {
+              const step = treatmentFormConfig.steps[prevIndex];
+              if (!step.showWhen) break; // Sem condição = sempre visível
+
+              const { answers } = get();
+              // Verifica se é QuestionConditionGroup ou QuestionCondition
+              const isVisible =
+                'all' in step.showWhen || 'any' in step.showWhen
+                  ? checkConditionGroup(
+                      step.showWhen as QuestionConditionGroup,
+                      answers
+                    )
+                  : checkCondition(step.showWhen as QuestionCondition, answers);
+
+              if (isVisible) break;
+              prevIndex--;
+            }
+
+            return {
+              currentStepIndex: Math.max(prevIndex, 0),
+            };
+          }),
 
         // Ir para step específico
         goToStep: stepIndex =>
@@ -167,6 +212,27 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             question.showWhen as QuestionCondition,
             answers
           );
+        },
+
+        // Verifica se um step deve ser exibido
+        isStepVisible: stepIndex => {
+          const step = treatmentFormConfig.steps[stepIndex];
+          if (!step || !step.showWhen) {
+            return true; // Sem condições = sempre visível
+          }
+
+          const { answers } = get();
+
+          // Se for QuestionConditionGroup (tem 'all' ou 'any')
+          if ('all' in step.showWhen || 'any' in step.showWhen) {
+            return checkConditionGroup(
+              step.showWhen as QuestionConditionGroup,
+              answers
+            );
+          }
+
+          // Se for QuestionCondition simples
+          return checkCondition(step.showWhen as QuestionCondition, answers);
         },
 
         // Retorna perguntas visíveis de um step

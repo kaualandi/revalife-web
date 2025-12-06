@@ -9,11 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from '@/components/ui/input-group';
+import { InputGroup, InputGroupAddon } from '@/components/ui/input-group';
 import {
   Popover,
   PopoverContent,
@@ -32,6 +28,7 @@ import { format, parse } from 'date-fns';
 import { Calendar as CalendarIcon, ChevronLeft } from 'lucide-react';
 import { useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
+import { IMaskInput } from 'react-imask';
 
 interface DateQuestionProps {
   question: Question;
@@ -44,10 +41,6 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
       control={form.control}
       name={question.id}
       render={({ field }) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [inputValue, setInputValue] = useState(
-          (field.value as string) || ''
-        );
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const [isOpen, setIsOpen] = useState(false);
         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -80,44 +73,40 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
           'Dezembro',
         ];
 
-        // Converte string ISO para Date
-        const dateValue = field.value
-          ? parse(field.value as string, 'yyyy-MM-dd', new Date())
-          : undefined;
+        // Converte valor do campo para formato display
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [localValue, setLocalValue] = useState(() => {
+          if (!field.value || typeof field.value !== 'string') return '';
 
-        // Handler para input manual com máscara
-        const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          let value = e.target.value.replace(/\D/g, ''); // Remove não-dígitos
-
-          // Aplica máscara DD/MM/YYYY
-          if (value.length >= 2) {
-            value = value.slice(0, 2) + '/' + value.slice(2);
-          }
-          if (value.length >= 5) {
-            value = value.slice(0, 5) + '/' + value.slice(5, 9);
+          // Se já está no formato DD/MM/YYYY, retorna direto
+          if (/^\d{2}\/\d{2}\/\d{4}$/.test(field.value)) {
+            return field.value;
           }
 
-          setInputValue(value);
-
-          // Valida e converte formato DD/MM/YYYY para ISO quando completo
-          if (value.length === 10) {
+          // Se está no formato yyyy-MM-dd, converte
+          if (/^\d{4}-\d{2}-\d{2}$/.test(field.value)) {
             try {
-              const parsed = parse(value, 'dd/MM/yyyy', new Date());
+              const parsed = parse(field.value, 'yyyy-MM-dd', new Date());
               if (!isNaN(parsed.getTime())) {
-                field.onChange(format(parsed, 'yyyy-MM-dd'));
+                return format(parsed, 'dd/MM/yyyy');
               }
             } catch {
-              // Ignora erro de parsing
+              return '';
             }
           }
-        };
+
+          return '';
+        });
 
         // Handler para seleção no calendário
         const handleDateSelect = (day: number) => {
           if (selectedYear !== null && selectedMonth !== null) {
             const date = new Date(selectedYear, selectedMonth, day);
-            field.onChange(format(date, 'yyyy-MM-dd'));
-            setInputValue(format(date, 'dd/MM/yyyy'));
+            const isoDate = format(date, 'yyyy-MM-dd');
+            const displayDate = format(date, 'dd/MM/yyyy');
+
+            field.onChange(isoDate);
+            setLocalValue(displayDate);
             setIsOpen(false);
             setTimeout(() => {
               setStep('year');
@@ -235,11 +224,14 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
                 {days.map(day => {
                   const date = new Date(selectedYear, selectedMonth, day);
                   const isDisabled = maxDate && date > maxDate;
+                  const currentDate = field.value
+                    ? parse(field.value as string, 'yyyy-MM-dd', new Date())
+                    : null;
                   const isSelected =
-                    dateValue &&
-                    dateValue.getDate() === day &&
-                    dateValue.getMonth() === selectedMonth &&
-                    dateValue.getFullYear() === selectedYear;
+                    currentDate &&
+                    currentDate.getDate() === day &&
+                    currentDate.getMonth() === selectedMonth &&
+                    currentDate.getFullYear() === selectedYear;
 
                   return (
                     <Button
@@ -258,10 +250,6 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
           );
         };
 
-        // Formata valor para exibição
-        const displayValue =
-          inputValue || (dateValue ? format(dateValue, 'dd/MM/yyyy') : '');
-
         return (
           <FormItem>
             <FormLabel className="text-base font-medium">
@@ -272,12 +260,30 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
             )}
             <FormControl>
               <InputGroup>
-                <InputGroupInput
-                  type="text"
-                  value={displayValue}
-                  onChange={handleInputChange}
+                <IMaskInput
+                  mask="00/00/0000"
+                  unmask={false}
+                  value={localValue}
+                  onAccept={(value: string) => {
+                    setLocalValue(value);
+
+                    // Valida e converte formato DD/MM/YYYY para ISO quando completo
+                    if (value.length === 10) {
+                      try {
+                        const parsed = parse(value, 'dd/MM/yyyy', new Date());
+                        if (!isNaN(parsed.getTime())) {
+                          field.onChange(format(parsed, 'yyyy-MM-dd'));
+                          return;
+                        }
+                      } catch {
+                        // Ignora erro de parsing
+                      }
+                    }
+                  }}
+                  inputRef={field.ref}
                   placeholder="DD/MM/AAAA"
-                  maxLength={10}
+                  className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-12 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  style={{ borderRadius: '0.375rem 0 0 0.375rem' }}
                 />
                 <InputGroupAddon align="inline-end">
                   <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -288,7 +294,7 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
                         type="button"
                         className={cn(
                           'rounded-full',
-                          !dateValue && 'text-muted-foreground'
+                          !field.value && 'text-muted-foreground'
                         )}
                       >
                         <CalendarIcon className="h-4 w-4" />

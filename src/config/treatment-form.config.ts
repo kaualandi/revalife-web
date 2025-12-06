@@ -121,34 +121,76 @@ export const treatmentFormConfig: FormConfig = {
       title: 'Seu tipo corporal',
       questions: [
         {
-          id: 'body-type',
+          id: 'body-type-male',
           type: 'radio-image',
           label: 'Qual imagem representa melhor seu corpo atual?',
           required: true,
+          showWhen: {
+            questionId: 'biological-sex',
+            operator: 'equals',
+            value: 'male',
+          },
           grid: {
             cols: 2,
             imageSize: 'lg',
           },
           options: [
             {
-              value: 'ectomorph',
-              label: 'Ectomorfo',
-              image: '/images/body-types/ectomorph.svg',
+              value: 'thin',
+              label: 'Magro',
+              image: '/images/body-types/male/thin.png',
             },
             {
-              value: 'mesomorph',
-              label: 'Mesomorfo',
-              image: '/images/body-types/mesomorph.svg',
+              value: 'medium',
+              label: 'Corpo médio',
+              image: '/images/body-types/male/medium.png',
             },
             {
-              value: 'endomorph',
-              label: 'Endomorfo',
-              image: '/images/body-types/endomorph.svg',
+              value: 'large',
+              label: 'Corpo grande',
+              image: '/images/body-types/male/large.png',
             },
             {
-              value: 'combined',
-              label: 'Combinado',
-              image: '/images/body-types/combined.svg',
+              value: 'overweight',
+              label: 'Com sobrepeso',
+              image: '/images/body-types/male/overweight.png',
+            },
+          ],
+        },
+        {
+          id: 'body-type-female',
+          type: 'radio-image',
+          label: 'Qual imagem representa melhor seu corpo atual?',
+          required: true,
+          showWhen: {
+            questionId: 'biological-sex',
+            operator: 'equals',
+            value: 'female',
+          },
+          grid: {
+            cols: 2,
+            imageSize: 'lg',
+          },
+          options: [
+            {
+              value: 'thin',
+              label: 'Magra',
+              image: '/images/body-types/female/thin.png',
+            },
+            {
+              value: 'medium',
+              label: 'Corpo médio',
+              image: '/images/body-types/female/medium.png',
+            },
+            {
+              value: 'large',
+              label: 'Corpo grande',
+              image: '/images/body-types/female/large.png',
+            },
+            {
+              value: 'overweight',
+              label: 'Com sobrepeso',
+              image: '/images/body-types/female/overweight.png',
             },
           ],
         },
@@ -521,10 +563,10 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 15: Estilo de vida - Atividade física
+    // STEP 15: Frequência de exercícios
     {
-      id: 'physical-activity',
-      title: 'Estilo de vida',
+      id: 'exercise-frequency',
+      title: 'Atividade física',
       questions: [
         {
           id: 'exercise-frequency',
@@ -539,16 +581,24 @@ export const treatmentFormConfig: FormConfig = {
             { value: 'daily', label: 'Diariamente' },
           ],
         },
+      ],
+    },
+
+    // STEP 16: Tipos de exercício
+    {
+      id: 'exercise-types',
+      title: 'Tipos de exercício',
+      showWhen: {
+        questionId: 'exercise-frequency',
+        operator: 'notEquals',
+        value: 'sedentary',
+      },
+      questions: [
         {
           id: 'exercise-types',
           type: 'checkbox',
           label: 'Que tipos de exercício você pratica?',
           required: false,
-          showWhen: {
-            questionId: 'exercise-frequency',
-            operator: 'notEquals',
-            value: 'sedentary',
-          },
           options: [
             { value: 'walking', label: 'Caminhada' },
             { value: 'running', label: 'Corrida' },
@@ -563,10 +613,10 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 16: Hábitos alimentares
+    // STEP 17: Refeições diárias
     {
-      id: 'eating-habits',
-      title: 'Hábitos alimentares',
+      id: 'meals-frequency',
+      title: 'Refeições diárias',
       questions: [
         {
           id: 'meals-per-day',
@@ -580,6 +630,14 @@ export const treatmentFormConfig: FormConfig = {
             { value: '6-plus', label: '6 ou mais refeições' },
           ],
         },
+      ],
+    },
+
+    // STEP 18: Restrições alimentares
+    {
+      id: 'diet-restrictions',
+      title: 'Restrições alimentares',
+      questions: [
         {
           id: 'diet-restrictions',
           type: 'checkbox',
@@ -599,10 +657,10 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 17: Sono e estresse
+    // STEP 19: Sono
     {
-      id: 'sleep-stress',
-      title: 'Sono e bem-estar',
+      id: 'sleep',
+      title: 'Sono',
       questions: [
         {
           id: 'sleep-hours',
@@ -616,6 +674,14 @@ export const treatmentFormConfig: FormConfig = {
             { value: '8-plus', label: 'Mais de 8 horas' },
           ],
         },
+      ],
+    },
+
+    // STEP 20: Estresse
+    {
+      id: 'stress',
+      title: 'Nível de estresse',
+      questions: [
         {
           id: 'stress-level',
           type: 'radio',
@@ -631,7 +697,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 18: Gravidez (apenas para mulheres)
+    // STEP 21: Gravidez (apenas para mulheres)
     {
       id: 'pregnancy',
       title: 'Gravidez e amamentação',
@@ -695,7 +761,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 19: Observações finais
+    // STEP 22: Observações finais
     {
       id: 'final-observations',
       title: 'Quase lá!',

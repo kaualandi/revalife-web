@@ -47,7 +47,7 @@ export function CheckboxQuestion({ question, form }: CheckboxQuestionProps) {
                   <label
                     key={option.value}
                     className={cn(
-                      'border-input hover:border-primary flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors',
+                      'border-input hover:border-primary relative flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
                       value.includes(option.value) &&
                         'border-primary bg-primary/5'
                     )}
@@ -57,8 +57,34 @@ export function CheckboxQuestion({ question, form }: CheckboxQuestionProps) {
                       value={option.value}
                       checked={value.includes(option.value)}
                       onChange={() => handleToggle(option.value)}
-                      className="text-primary focus:ring-primary mt-1"
+                      className="sr-only"
                     />
+
+                    <div
+                      className={cn(
+                        'border-primary flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 bg-white transition-colors',
+                        value.includes(option.value)
+                          ? 'bg-primary border-primary'
+                          : 'bg-white'
+                      )}
+                    >
+                      {value.includes(option.value) && (
+                        <svg
+                          className="h-3 w-3 text-white"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                        >
+                          <path
+                            d="M10 3L4.5 8.5L2 6"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </div>
+
                     <div className="flex-1">
                       <div className="font-medium">{option.label}</div>
                       {option.description && (

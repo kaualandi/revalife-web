@@ -8,10 +8,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import type { Question } from '@/types/form.types';
-import { useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
+import { IMaskInput } from 'react-imask';
 
 interface TelQuestionProps {
   question: Question;
@@ -23,50 +22,30 @@ export function TelQuestion({ question, form }: TelQuestionProps) {
     <FormField
       control={form.control}
       name={question.id}
-      render={({ field }) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [displayValue, setDisplayValue] = useState(
-          (field.value as string) || ''
-        );
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="text-base font-medium">
+            {question.label}
+          </FormLabel>
+          {question.description && (
+            <FormDescription>{question.description}</FormDescription>
+          )}
 
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          let value = e.target.value.replace(/\D/g, ''); // Remove não-dígitos
+          <FormControl>
+            <IMaskInput
+              mask="(00) 00000-0000"
+              unmask={false}
+              value={(field.value as string) || ''}
+              onAccept={(value: string) => field.onChange(value)}
+              inputRef={field.ref}
+              placeholder={question.placeholder}
+              className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-12 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            />
+          </FormControl>
 
-          // Aplica máscara (00) 00000-0000
-          if (value.length >= 2) {
-            value = '(' + value.slice(0, 2) + ') ' + value.slice(2);
-          }
-          if (value.length >= 10) {
-            value = value.slice(0, 10) + '-' + value.slice(10, 14);
-          }
-
-          setDisplayValue(value);
-          field.onChange(value);
-        };
-
-        return (
-          <FormItem>
-            <FormLabel className="text-base font-medium">
-              {question.label}
-            </FormLabel>
-            {question.description && (
-              <FormDescription>{question.description}</FormDescription>
-            )}
-
-            <FormControl>
-              <Input
-                value={displayValue}
-                onChange={handleChange}
-                type="tel"
-                placeholder={question.placeholder}
-                maxLength={15}
-              />
-            </FormControl>
-
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

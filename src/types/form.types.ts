@@ -65,6 +65,7 @@ export interface FormStep {
   title?: string;
   description?: string;
   questions: Question[];
+  showWhen?: QuestionCondition | QuestionConditionGroup; // Condições para exibir o step inteiro
 }
 
 // Configuração completa do formulário

@@ -18,9 +18,16 @@ export function FormStepComponent({
   step,
   onAutoAdvance,
 }: FormStepComponentProps) {
-  const { answers, setAnswer, getVisibleQuestions, currentStepIndex } =
-    useTreatmentFormStore();
-  const visibleQuestions = getVisibleQuestions(currentStepIndex);
+  const { answers, setAnswer, currentStepIndex } = useTreatmentFormStore();
+
+  // Filtra perguntas visíveis baseado nas condições
+  const visibleQuestions = step.questions.filter(q => {
+    if (!q.showWhen) return true;
+
+    // Verifica condições usando o store
+    const store = useTreatmentFormStore.getState();
+    return store.isQuestionVisible(q);
+  });
 
   // Gera schema dinamicamente baseado nas perguntas visíveis
   const schema = generateFormSchema(visibleQuestions);
@@ -48,7 +55,7 @@ export function FormStepComponent({
     return () => subscription.unsubscribe();
   }, [form.watch, setAnswer]);
 
-  // Reseta form quando muda de step
+  // Reseta form quando muda de step (usando step.id para evitar flicker)
   useEffect(() => {
     const newDefaults = visibleQuestions.reduce(
       (acc, q) => {
@@ -58,7 +65,7 @@ export function FormStepComponent({
       {} as Record<string, string | string[]>
     );
     form.reset(newDefaults);
-  }, [currentStepIndex]);
+  }, [step.id]); // Usa step.id ao invés de currentStepIndex
 
   // Verifica se todas as perguntas visíveis estão respondidas
   const handleRadioSelect = () => {
@@ -66,7 +73,13 @@ export function FormStepComponent({
 
     // Aguarda um delay para o estado ser atualizado e perguntas condicionais aparecerem
     setTimeout(() => {
-      const updatedVisibleQuestions = getVisibleQuestions(currentStepIndex);
+      // Recalcula as perguntas visíveis após a mudança
+      const updatedVisibleQuestions = step.questions.filter(q => {
+        if (!q.showWhen) return true;
+        const store = useTreatmentFormStore.getState();
+        return store.isQuestionVisible(q);
+      });
+
       const formValues = form.getValues();
 
       const allAnswered = updatedVisibleQuestions.every(q => {
