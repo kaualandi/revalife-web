@@ -68,7 +68,7 @@ export function FormStepComponent({
     setTimeout(() => {
       const updatedVisibleQuestions = getVisibleQuestions(currentStepIndex);
       const formValues = form.getValues();
-      
+
       const allAnswered = updatedVisibleQuestions.every(q => {
         const answer = formValues[q.id];
         if (!q.required) return true;

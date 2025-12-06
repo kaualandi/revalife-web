@@ -1,5 +1,6 @@
 import type { FormConfig } from '@/types/form.types';
 
+
 // Configuração completa do formulário de tratamento médico
 export const treatmentFormConfig: FormConfig = {
   steps: [
