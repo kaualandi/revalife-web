@@ -1,5 +1,6 @@
 import type { FormAnswers } from '@/types/form.types';
 
+
 // Mapeamento de dosagem de Tirzepatida para o produto
 const tirzepatidaDosageMap: Record<string, string> = {
   '2.5mg': '2.5mg',
@@ -30,15 +31,16 @@ const semaglutidaDosageMap: Record<string, string> = {
  * 3. Caso contrário → 30mg (dose padrão)
  */
 export function getProductRedirectUrl(answers: FormAnswers): string {
-  const baseUrl = 'https://revalifemed.com/products/protocolo-de-emagrecimento-revalife-tirzepatida';
-  
+  const baseUrl =
+    'https://revalifemed.com/products/protocolo-de-emagrecimento-revalife-tirzepatida';
+
   // Pega email e telefone das respostas
   const email = (answers.email as string) || '';
   const phone = (answers.phone as string) || '';
-  
+
   // Determina a dosagem baseada nas respostas
   let dosage = '30mg'; // Dose padrão
-  
+
   // Verifica se usou Semaglutida
   if (answers['used-semaglutide'] === 'yes') {
     const semaglutideDosage = answers['semaglutide-dosage'] as string;
@@ -49,9 +51,9 @@ export function getProductRedirectUrl(answers: FormAnswers): string {
     const tirzepatideDosage = answers['tirzepatide-dosage'] as string;
     dosage = tirzepatidaDosageMap[tirzepatideDosage] || '30mg';
   }
-  
+
   // Monta a URL final
   const url = `${baseUrl}-${dosage}-1/?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
-  
+
   return url;
 }

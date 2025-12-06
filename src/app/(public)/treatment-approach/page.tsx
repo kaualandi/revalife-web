@@ -110,7 +110,7 @@ export default function TreatmentApproachPage() {
   const handleFinalLoadingComplete = () => {
     // Gera URL do produto baseada nas respostas
     const redirectUrl = getProductRedirectUrl(answers);
-    
+
     // Redireciona para a URL do produto
     window.location.href = redirectUrl;
   };

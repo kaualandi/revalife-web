@@ -57,11 +57,11 @@ export function FormFinalLoading({ onComplete }: FormFinalLoadingProps) {
           transition={{ delay: 0.2 }}
           className="space-y-4"
         >
-          <p className="text-xl font-semibold text-muted-foreground">
+          <p className="text-muted-foreground text-xl font-semibold">
             Estamos prontos para encontrar o plano mais adequado para você.
           </p>
 
-          <p className="text-lg text-muted-foreground">
+          <p className="text-muted-foreground text-lg">
             Com suas respostas, o médico já consegue direcionar o caminho mais
             seguro, inteligente e realista para seu tratamento.
           </p>
@@ -74,15 +74,15 @@ export function FormFinalLoading({ onComplete }: FormFinalLoadingProps) {
           transition={{ delay: 0.3 }}
           className="mx-auto w-full max-w-md space-y-2"
         >
-          <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+          <div className="bg-secondary h-2 w-full overflow-hidden rounded-full">
             <motion.div
-              className="h-full bg-primary"
+              className="bg-primary h-full"
               initial={{ width: '0%' }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.1, ease: 'linear' }}
             />
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {Math.round(progress)}%
           </p>
         </motion.div>
