@@ -7,13 +7,22 @@ export type QuestionType =
   | 'select'
   | 'checkbox'
   | 'text'
+  | 'email'
+  | 'tel'
+  | 'number'
   | 'textarea';
 
 // Condição para exibir uma pergunta baseada em respostas anteriores
 export interface QuestionCondition {
   questionId: string; // ID da pergunta que será verificada
   operator: 'equals' | 'notEquals' | 'contains' | 'notContains';
-  value: string | string[]; // Valor(es) esperado(s)
+  value: string; // Valor esperado
+}
+
+// Grupo de condições com lógica AND/OR
+export interface QuestionConditionGroup {
+  all?: QuestionCondition[]; // AND logic - todas devem ser verdadeiras
+  any?: QuestionCondition[]; // OR logic - pelo menos uma deve ser verdadeira
 }
 
 // Opção para perguntas de múltipla escolha
@@ -36,12 +45,14 @@ export interface Question {
   validation?: {
     min?: number;
     max?: number;
+    minLength?: number;
+    maxLength?: number;
     minDate?: Date;
     maxDate?: Date;
     pattern?: string;
     message?: string;
   };
-  showWhen?: QuestionCondition[]; // Condições para exibir a pergunta (AND logic)
+  showWhen?: QuestionCondition | QuestionConditionGroup; // Condições para exibir a pergunta
   grid?: {
     cols?: number; // Para layout de opções em grid
     imageSize?: 'sm' | 'md' | 'lg'; // Para radio-image

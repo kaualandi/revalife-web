@@ -15,9 +15,14 @@ import type { UseFormReturn } from 'react-hook-form';
 interface RadioQuestionProps {
   question: Question;
   form: UseFormReturn<Record<string, unknown>>;
+  onValueChange?: (value: string) => void;
 }
 
-export function RadioQuestion({ question, form }: RadioQuestionProps) {
+export function RadioQuestion({
+  question,
+  form,
+  onValueChange,
+}: RadioQuestionProps) {
   return (
     <FormField
       control={form.control}
@@ -47,7 +52,10 @@ export function RadioQuestion({ question, form }: RadioQuestionProps) {
                     name={question.id}
                     value={option.value}
                     checked={field.value === option.value}
-                    onChange={e => field.onChange(e.target.value)}
+                    onChange={e => {
+                      field.onChange(e.target.value);
+                      onValueChange?.(e.target.value);
+                    }}
                     className="sr-only"
                   />
 

@@ -8,17 +8,28 @@ import { useFormSession } from '@/hooks/use-form-session';
 import { treatmentFormConfig } from '@/config/treatment-form.config';
 import type { FormAnswers } from '@/types/form.types';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function TreatmentApproachPage() {
   const router = useRouter();
-  const { currentStepIndex, answers, nextStep, setIsSubmitting, sessionId } =
-    useTreatmentFormStore();
+  const {
+    currentStepIndex,
+    answers,
+    nextStep,
+    previousStep,
+    setIsSubmitting,
+    sessionId,
+  } = useTreatmentFormStore();
   const { initializeSession, isLoading: isLoadingSession } = useFormSession();
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
 
   const currentStep = treatmentFormConfig.steps[currentStepIndex];
   const isLastStep = currentStepIndex === treatmentFormConfig.steps.length - 1;
+  const isFirstStep = currentStepIndex === 0;
 
   // Inicializa/carrega sessão ao montar componente
   useEffect(() => {
@@ -68,36 +79,50 @@ export default function TreatmentApproachPage() {
   });
 
   // Função ao clicar em Continuar
-  const handleContinue = async () => {
-    // Salva imediatamente antes de continuar
-    await saveNow();
+  const handleContinue = () => {
+    // Trigger save em background (não await)
+    saveNow();
 
     if (isLastStep) {
       // Submete o formulário final
       setIsSubmitting(true);
 
-      try {
-        // TODO: Implementar submit final
-        console.log('Submitting final form:', { sessionId, answers });
+      // TODO: Implementar submit final
+      console.log('Submitting final form:', { sessionId, answers });
 
-        // Exemplo:
-        // await fetch(`/api/treatment-form/session/${sessionId}/submit`, {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ answers }),
-        // });
-
-        // Redirecionar para próxima página
-        // router.push('/next-page');
-      } catch (error) {
-        console.error('Erro ao submeter:', error);
-      } finally {
-        setIsSubmitting(false);
-      }
+      // Exemplo:
+      // fetch(`/api/treatment-form/session/${sessionId}/submit`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ answers }),
+      // })
+      //   .then(() => router.push('/next-page'))
+      //   .finally(() => setIsSubmitting(false));
     } else {
       // Avança para próximo step
+      setDirection('forward');
       nextStep();
     }
+  };
+
+  // Função para auto-advance ao selecionar radio
+  const handleAutoAdvance = () => {
+    // Salva em background
+    saveNow();
+
+    // Delay visual antes de avançar
+    setTimeout(() => {
+      if (!isLastStep) {
+        setDirection('forward');
+        nextStep();
+      }
+    }, 300);
+  };
+
+  // Função para voltar step
+  const handlePreviousStep = () => {
+    setDirection('backward');
+    previousStep();
   };
 
   // Mostra loading enquanto carrega sessão
@@ -113,17 +138,56 @@ export default function TreatmentApproachPage() {
 
   return (
     <div className="flex min-h-screen flex-col px-4 pt-16 pb-8">
-      <header className="mb-12">
+      <header className="mb-12 flex items-center justify-between">
         <Image
           src="/images/logo.svg"
           alt="Revolife Plus"
           width={150}
           height={30}
         />
+        {!isFirstStep && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handlePreviousStep}
+            className="gap-2"
+            size="sm"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+        )}
       </header>
 
       <main className="mb-8 flex-1">
-        {currentStep && <FormStepComponent step={currentStep} />}
+        <AnimatePresence mode="wait" initial={false}>
+          {currentStep && (
+            <motion.div
+              key={currentStepIndex}
+              initial={{
+                opacity: 0,
+                x: direction === 'forward' ? 50 : -50,
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+              }}
+              exit={{
+                opacity: 0,
+                x: direction === 'forward' ? -50 : 50,
+              }}
+              transition={{
+                duration: 0.3,
+                ease: 'easeInOut',
+              }}
+            >
+              <FormStepComponent
+                step={currentStep}
+                onAutoAdvance={handleAutoAdvance}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       <footer className="mt-auto">

@@ -1,4 +1,4 @@
-import type { FormAnswers, Question, QuestionCondition, } from '@/types/form.types';
+import type { FormAnswers, Question, QuestionCondition, QuestionConditionGroup, } from '@/types/form.types';
 import { treatmentFormConfig } from '@/config/treatment-form.config';
 import { devtools, persist } from 'zustand/middleware';
 import { create } from 'zustand';
@@ -50,24 +50,32 @@ const checkCondition = (
       return answer !== condition.value;
 
     case 'contains':
-      if (Array.isArray(answer)) {
-        return Array.isArray(condition.value)
-          ? condition.value.some(v => answer.includes(v))
-          : answer.includes(condition.value as string);
-      }
-      return false;
+      return Array.isArray(answer) && answer.includes(condition.value);
 
     case 'notContains':
-      if (Array.isArray(answer)) {
-        return Array.isArray(condition.value)
-          ? !condition.value.some(v => answer.includes(v))
-          : !answer.includes(condition.value as string);
-      }
-      return true;
+      return Array.isArray(answer) && !answer.includes(condition.value);
 
     default:
       return false;
   }
+};
+
+// Verifica grupo de condições (AND/OR logic)
+const checkConditionGroup = (
+  group: QuestionConditionGroup,
+  answers: FormAnswers
+): boolean => {
+  // Se tem 'all', todas as condições devem ser verdadeiras (AND)
+  if (group.all) {
+    return group.all.every(cond => checkCondition(cond, answers));
+  }
+
+  // Se tem 'any', pelo menos uma condição deve ser verdadeira (OR)
+  if (group.any) {
+    return group.any.some(cond => checkCondition(cond, answers));
+  }
+
+  return false;
 };
 
 export const useTreatmentFormStore = create<TreatmentFormState>()(
@@ -140,15 +148,24 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
 
         // Verifica se uma pergunta deve ser exibida
         isQuestionVisible: question => {
-          if (!question.showWhen || question.showWhen.length === 0) {
+          if (!question.showWhen) {
             return true; // Sem condições = sempre visível
           }
 
           const { answers } = get();
 
-          // Todas as condições devem ser atendidas (AND logic)
-          return question.showWhen.every(condition =>
-            checkCondition(condition, answers)
+          // Se for QuestionConditionGroup (tem 'all' ou 'any')
+          if ('all' in question.showWhen || 'any' in question.showWhen) {
+            return checkConditionGroup(
+              question.showWhen as QuestionConditionGroup,
+              answers
+            );
+          }
+
+          // Se for QuestionCondition simples
+          return checkCondition(
+            question.showWhen as QuestionCondition,
+            answers
           );
         },
 

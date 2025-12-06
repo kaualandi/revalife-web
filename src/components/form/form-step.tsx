@@ -11,9 +11,13 @@ import { useEffect } from 'react';
 
 interface FormStepComponentProps {
   step: FormStep;
+  onAutoAdvance?: () => void;
 }
 
-export function FormStepComponent({ step }: FormStepComponentProps) {
+export function FormStepComponent({
+  step,
+  onAutoAdvance,
+}: FormStepComponentProps) {
   const { answers, setAnswer, getVisibleQuestions, currentStepIndex } =
     useTreatmentFormStore();
   const visibleQuestions = getVisibleQuestions(currentStepIndex);
@@ -56,6 +60,31 @@ export function FormStepComponent({ step }: FormStepComponentProps) {
     form.reset(newDefaults);
   }, [currentStepIndex]);
 
+  // Verifica se todas as perguntas visíveis estão respondidas
+  const handleRadioSelect = () => {
+    if (!onAutoAdvance) return;
+
+    // Aguarda um delay para o estado ser atualizado e perguntas condicionais aparecerem
+    setTimeout(() => {
+      const updatedVisibleQuestions = getVisibleQuestions(currentStepIndex);
+      const formValues = form.getValues();
+      
+      const allAnswered = updatedVisibleQuestions.every(q => {
+        const answer = formValues[q.id];
+        if (!q.required) return true;
+        if (q.type === 'checkbox') {
+          return Array.isArray(answer) && answer.length > 0;
+        }
+        return answer !== undefined && answer !== '';
+      });
+
+      // Só chama onAutoAdvance se todas estiverem respondidas
+      if (allAnswered) {
+        onAutoAdvance();
+      }
+    }, 200);
+  };
+
   return (
     <Form {...form}>
       <form className="space-y-8">
@@ -76,6 +105,11 @@ export function FormStepComponent({ step }: FormStepComponentProps) {
               key={question.id}
               question={question}
               form={form}
+              onRadioSelect={
+                question.type === 'radio' || question.type === 'radio-image'
+                  ? handleRadioSelect
+                  : undefined
+              }
             />
           ))}
         </div>
