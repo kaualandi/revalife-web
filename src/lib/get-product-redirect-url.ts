@@ -26,8 +26,8 @@ const semaglutidaDosageMap: Record<string, string> = {
  * Gera a URL do produto com base nas respostas do formulário
  *
  * Regras:
- * 1. Se usou Semaglutida (used-semaglutide = yes) → 20mg
- * 2. Se usou Tirzepatida (used-tirzepatide = yes) → dosagem baseada em tirzepatide-dosage
+ * 1. Se usou Semaglutida (glp1-medication = semaglutide) → 20mg
+ * 2. Se usou Tirzepatida (glp1-medication = tirzepatide) → dosagem baseada em tirzepatide-dosage
  * 3. Caso contrário → 30mg (dose padrão)
  */
 export function getProductRedirectUrl(answers: FormAnswers): string {
@@ -41,13 +41,13 @@ export function getProductRedirectUrl(answers: FormAnswers): string {
   // Determina a dosagem baseada nas respostas
   let dosage = '30mg'; // Dose padrão
 
-  // Verifica se usou Semaglutida
-  if (answers['used-semaglutide'] === 'yes') {
+  const glp1Medication = answers['glp1-medication'] as string;
+
+  // Verifica qual medicação foi usada
+  if (glp1Medication === 'semaglutide') {
     const semaglutideDosage = answers['semaglutide-dosage'] as string;
     dosage = semaglutidaDosageMap[semaglutideDosage] || '20mg';
-  }
-  // Se não usou Semaglutida, verifica se usou Tirzepatida
-  else if (answers['used-tirzepatide'] === 'yes') {
+  } else if (glp1Medication === 'tirzepatide') {
     const tirzepatideDosage = answers['tirzepatide-dosage'] as string;
     dosage = tirzepatidaDosageMap[tirzepatideDosage] || '30mg';
   }

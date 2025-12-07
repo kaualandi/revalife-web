@@ -250,7 +250,7 @@ export const treatmentFormConfig: FormConfig = {
         },
         {
           id: 'height',
-          type: 'number',
+          type: 'integer',
           label: 'Altura (cm)',
           placeholder: '170',
           required: true,
@@ -444,32 +444,43 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 13: Histórico com GLP-1 - Tirzepatida
+    // STEP 13: Histórico com medicações GLP-1
     {
-      id: 'tirzepatide-history',
+      id: 'glp1-history',
       title: 'Medicamentos GLP-1',
-      description: 'Tirzepatida (Mounjaro)',
+      description:
+        'Você já fez uso de alguma dessas medicações em outro momento?\n\nSaber disso ajuda nos a entender como seu corpo pode responder ao tratamento:',
       questions: [
         {
-          id: 'used-tirzepatide',
+          id: 'glp1-medication',
           type: 'radio',
-          label: 'Você já usou Tirzepatida (Mounjaro)?',
+          label: 'Selecione a medicação que você já usou',
           required: true,
           options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
+            { value: 'tirzepatide', label: 'Tirzepatida (Mounjaro)' },
+            { value: 'semaglutide', label: 'Semaglutida (Wegovy ou Ozempic)' },
+            { value: 'none', label: 'Não, nunca usei' },
           ],
         },
+      ],
+    },
+
+    // STEP 14: Tirzepatida - Dosagem
+    {
+      id: 'tirzepatide-dosage-step',
+      title: 'Medicamentos GLP-1',
+      description: 'Tirzepatida (Mounjaro)',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'tirzepatide',
+      },
+      questions: [
         {
           id: 'tirzepatide-dosage',
           type: 'radio',
           label: 'Qual foi a dose máxima que você usou?',
           required: true,
-          showWhen: {
-            questionId: 'used-tirzepatide',
-            operator: 'equals',
-            value: 'yes',
-          },
           options: [
             { value: '2.5mg', label: '2,5 mg' },
             { value: '5mg', label: '5 mg' },
@@ -480,16 +491,25 @@ export const treatmentFormConfig: FormConfig = {
             { value: 'not-sure', label: 'Não tenho certeza' },
           ],
         },
+      ],
+    },
+
+    // STEP 15: Tirzepatida - Efeitos colaterais
+    {
+      id: 'tirzepatide-side-effects-step',
+      title: 'Medicamentos GLP-1',
+      description: 'Tirzepatida (Mounjaro)',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'tirzepatide',
+      },
+      questions: [
         {
           id: 'tirzepatide-side-effects',
           type: 'checkbox',
           label: 'Você teve algum efeito colateral?',
           required: false,
-          showWhen: {
-            questionId: 'used-tirzepatide',
-            operator: 'equals',
-            value: 'yes',
-          },
           options: [
             { value: 'nausea', label: 'Náusea' },
             { value: 'vomiting', label: 'Vômito' },
@@ -504,32 +524,22 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 14: Histórico com GLP-1 - Semaglutida
+    // STEP 16: Semaglutida - Dosagem
     {
-      id: 'semaglutide-history',
+      id: 'semaglutide-dosage-step',
       title: 'Medicamentos GLP-1',
       description: 'Semaglutida (Ozempic/Wegovy)',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'semaglutide',
+      },
       questions: [
-        {
-          id: 'used-semaglutide',
-          type: 'radio',
-          label: 'Você já usou Semaglutida (Ozempic/Wegovy)?',
-          required: true,
-          options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
-          ],
-        },
         {
           id: 'semaglutide-dosage',
           type: 'radio',
           label: 'Qual foi a dose máxima que você usou?',
           required: true,
-          showWhen: {
-            questionId: 'used-semaglutide',
-            operator: 'equals',
-            value: 'yes',
-          },
           options: [
             { value: '0.25mg', label: '0,25 mg' },
             { value: '0.5mg', label: '0,5 mg' },
@@ -539,16 +549,25 @@ export const treatmentFormConfig: FormConfig = {
             { value: 'not-sure', label: 'Não tenho certeza' },
           ],
         },
+      ],
+    },
+
+    // STEP 17: Semaglutida - Efeitos colaterais
+    {
+      id: 'semaglutide-side-effects-step',
+      title: 'Medicamentos GLP-1',
+      description: 'Semaglutida (Ozempic/Wegovy)',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'semaglutide',
+      },
+      questions: [
         {
           id: 'semaglutide-side-effects',
           type: 'checkbox',
           label: 'Você teve algum efeito colateral?',
           required: false,
-          showWhen: {
-            questionId: 'used-semaglutide',
-            operator: 'equals',
-            value: 'yes',
-          },
           options: [
             { value: 'nausea', label: 'Náusea' },
             { value: 'vomiting', label: 'Vômito' },
@@ -563,7 +582,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 15: Frequência de exercícios
+    // STEP 18: Frequência de exercícios
     {
       id: 'exercise-frequency',
       title: 'Atividade física',
@@ -584,7 +603,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 16: Tipos de exercício
+    // STEP 19: Tipos de exercício
     {
       id: 'exercise-types',
       title: 'Tipos de exercício',
@@ -613,7 +632,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 17: Refeições diárias
+    // STEP 20: Refeições diárias
     {
       id: 'meals-frequency',
       title: 'Refeições diárias',
@@ -633,7 +652,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 18: Restrições alimentares
+    // STEP 21: Restrições alimentares
     {
       id: 'diet-restrictions',
       title: 'Restrições alimentares',
@@ -657,7 +676,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 19: Sono
+    // STEP 22: Sono
     {
       id: 'sleep',
       title: 'Sono',
@@ -677,7 +696,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 20: Estresse
+    // STEP 23: Estresse
     {
       id: 'stress',
       title: 'Nível de estresse',
@@ -697,21 +716,21 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 21: Gravidez (apenas para mulheres)
+    // STEP 24: Gravidez (apenas para mulheres)
     {
       id: 'pregnancy',
       title: 'Gravidez e amamentação',
+      showWhen: {
+        questionId: 'biological-sex',
+        operator: 'equals',
+        value: 'female',
+      },
       questions: [
         {
           id: 'is-pregnant',
           type: 'radio',
           label: 'Você está grávida?',
           required: true,
-          showWhen: {
-            questionId: 'biological-sex',
-            operator: 'equals',
-            value: 'female',
-          },
           options: [
             { value: 'yes', label: 'Sim' },
             { value: 'no', label: 'Não' },
@@ -723,11 +742,6 @@ export const treatmentFormConfig: FormConfig = {
           type: 'radio',
           label: 'Você está amamentando?',
           required: true,
-          showWhen: {
-            questionId: 'biological-sex',
-            operator: 'equals',
-            value: 'female',
-          },
           options: [
             { value: 'yes', label: 'Sim' },
             { value: 'no', label: 'Não' },
@@ -739,18 +753,9 @@ export const treatmentFormConfig: FormConfig = {
           label: 'Você planeja engravidar nos próximos 12 meses?',
           required: true,
           showWhen: {
-            all: [
-              {
-                questionId: 'biological-sex',
-                operator: 'equals',
-                value: 'female',
-              },
-              {
-                questionId: 'is-pregnant',
-                operator: 'equals',
-                value: 'no',
-              },
-            ],
+            questionId: 'is-pregnant',
+            operator: 'equals',
+            value: 'no',
           },
           options: [
             { value: 'yes', label: 'Sim' },
@@ -761,7 +766,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 22: Observações finais
+    // STEP 25: Observações finais
     {
       id: 'final-observations',
       title: 'Quase lá!',

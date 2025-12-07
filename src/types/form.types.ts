@@ -10,6 +10,7 @@ export type QuestionType =
   | 'email'
   | 'tel'
   | 'number'
+  | 'integer'
   | 'textarea';
 
 // Condição para exibir uma pergunta baseada em respostas anteriores

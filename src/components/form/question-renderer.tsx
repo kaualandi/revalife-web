@@ -11,6 +11,7 @@ import { TextQuestion } from './questions/text-question';
 import { EmailQuestion } from './questions/email-question';
 import { TelQuestion } from './questions/tel-question';
 import { NumberQuestion } from './questions/number-question';
+import { IntegerQuestion } from './questions/integer-question';
 
 interface QuestionRendererProps {
   question: Question;
@@ -59,6 +60,9 @@ export function QuestionRenderer({
 
     case 'number':
       return <NumberQuestion question={question} form={form} />;
+
+    case 'integer':
+      return <IntegerQuestion question={question} form={form} />;
 
     case 'textarea':
       return <TextareaQuestion question={question} form={form} />;

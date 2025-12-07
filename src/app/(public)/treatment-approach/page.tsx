@@ -27,6 +27,7 @@ export default function TreatmentApproachPage() {
   const { initializeSession, isLoading: isLoadingSession } = useFormSession();
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [showFinalLoading, setShowFinalLoading] = useState(false);
+  const [isAdvancing, setIsAdvancing] = useState(false);
 
   const currentStep = treatmentFormConfig.steps[currentStepIndex];
   const isLastStep = currentStepIndex === treatmentFormConfig.steps.length - 1;
@@ -54,7 +55,6 @@ export default function TreatmentApproachPage() {
     if (!sessionId) return;
 
     // TODO: Implementar chamada real para o backend
-    // eslint-disable-next-line no-console
     console.log('Auto-saving:', { sessionId, answers: formAnswers });
 
     // Simulando chamada API
@@ -117,6 +117,11 @@ export default function TreatmentApproachPage() {
 
   // Função para auto-advance ao selecionar radio
   const handleAutoAdvance = () => {
+    // Previne múltiplos avanços simultâneos
+    if (isAdvancing) return;
+
+    setIsAdvancing(true);
+
     // Salva em background
     saveNow();
 
@@ -126,6 +131,8 @@ export default function TreatmentApproachPage() {
         setDirection('forward');
         nextStep();
       }
+      // Libera o lock após o avanço
+      setTimeout(() => setIsAdvancing(false), 100);
     }, 300);
   };
 
