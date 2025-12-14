@@ -19,6 +19,7 @@ export function FormStepComponent({
   onAutoAdvance,
 }: FormStepComponentProps) {
   const { answers, setAnswer, currentStepIndex } = useTreatmentFormStore();
+  console.log(currentStepIndex);
 
   // Filtra perguntas visíveis baseado nas condições
   const visibleQuestions = step.questions.filter(q => {
@@ -100,11 +101,13 @@ export function FormStepComponent({
 
   return (
     <Form {...form}>
-      <form className="space-y-8">
+      <form className="space-y-3">
         {/* Header do Step (se houver) */}
         {(step.title || step.description) && (
           <div className="space-y-2">
-            {step.title && <h2 className="text-2xl font-bold">{step.title}</h2>}
+            {step.title && (
+              <h2 className="text-2xl leading-none">{step.title}</h2>
+            )}
             {step.description && (
               <p className="text-muted-foreground">{step.description}</p>
             )}
@@ -126,6 +129,11 @@ export function FormStepComponent({
             />
           ))}
         </div>
+
+        <p className="text-muted-foreground text-xxs leading-none">
+          Lembre-se: precisamos das informações corretas para indicar o melhor
+          tratamento pra você
+        </p>
       </form>
     </Form>
   );

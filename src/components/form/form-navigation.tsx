@@ -2,8 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
-import { ChevronLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface FormNavigationProps {
   onContinue: () => void;
@@ -26,12 +24,6 @@ export function FormNavigation({ onContinue, isSaving }: FormNavigationProps) {
       >
         Continuar
       </Button>
-
-      {/* Mensagem de aviso */}
-      <p className="text-muted-foreground text-center text-xs leading-none">
-        Lembre-se: precisamos das informações corretas para indicar o melhor
-        tratamento pra você
-      </p>
     </div>
   );
 }

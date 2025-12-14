@@ -47,9 +47,9 @@ export function CheckboxQuestion({ question, form }: CheckboxQuestionProps) {
                   <label
                     key={option.value}
                     className={cn(
-                      'border-input hover:border-primary relative flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
+                      'border-input hover:border-primary relative flex min-h-16 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
                       value.includes(option.value) &&
-                        'border-primary bg-primary/5'
+                        'border-primary bg-primary'
                     )}
                   >
                     <input
@@ -62,10 +62,7 @@ export function CheckboxQuestion({ question, form }: CheckboxQuestionProps) {
 
                     <div
                       className={cn(
-                        'border-primary flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 bg-white transition-colors',
-                        value.includes(option.value)
-                          ? 'bg-primary border-primary'
-                          : 'bg-white'
+                        'bg-primary/5 flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors'
                       )}
                     >
                       {value.includes(option.value) && (
@@ -85,10 +82,15 @@ export function CheckboxQuestion({ question, form }: CheckboxQuestionProps) {
                       )}
                     </div>
 
-                    <div className="flex-1">
-                      <div className="font-medium">{option.label}</div>
+                    <div
+                      className={cn(
+                        'flex-1 text-sm',
+                        value.includes(option.value) && 'text-white'
+                      )}
+                    >
+                      <div>{option.label}</div>
                       {option.description && (
-                        <p className="text-muted-foreground mt-1 text-sm">
+                        <p className="text-muted-foreground mt-1">
                           {option.description}
                         </p>
                       )}
@@ -97,6 +99,12 @@ export function CheckboxQuestion({ question, form }: CheckboxQuestionProps) {
                 ))}
               </div>
             </FormControl>
+
+            {question.observation && (
+              <div className="content rounded bg-zinc-100 p-4 text-sm text-zinc-700 italic">
+                <p>{question.observation}</p>
+              </div>
+            )}
 
             <FormMessage />
           </FormItem>

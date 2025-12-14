@@ -7,19 +7,18 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 1: Meta de peso
     {
       id: 'weight-goal',
-      title: 'Vamos começar!',
-      description: 'Qual é seu objetivo de peso?',
+      title: 'Quantos quilos você gostaria de perder?',
       questions: [
         {
           id: 'weight-goal',
           type: 'radio',
-          label: 'Quanto você gostaria de perder?',
           required: true,
           options: [
-            { value: '5-10kg', label: '5 a 10 kg' },
-            { value: '10-20kg', label: '10 a 20 kg' },
-            { value: '20-30kg', label: '20 a 30 kg' },
-            { value: 'more-30kg', label: 'Mais de 30 kg' },
+            { value: '<5kg', label: 'Menos de 5 kg' },
+            { value: '5-10kg', label: 'Entre 5 e 10 kg' },
+            { value: '10-20kg', label: 'Entre 10 e 20 kg' },
+            { value: '>20kg', label: 'Mais de 20 kg' },
+            { value: 'not-sure', label: 'Ainda não tenho um número definido' },
           ],
         },
       ],
@@ -28,20 +27,21 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 2: Motivação
     {
       id: 'motivation',
-      title: 'Sua motivação',
-      description: 'O que te motiva a começar essa jornada?',
+      title: 'O que está te motivando a começar essa jornada de emagrecimento?',
       questions: [
         {
           id: 'motivation',
-          type: 'radio',
-          label: 'Qual é sua principal motivação?',
+          type: 'checkbox',
           required: true,
           options: [
-            { value: 'health', label: 'Melhorar minha saúde' },
-            { value: 'self-esteem', label: 'Aumentar minha autoestima' },
-            { value: 'clothes', label: 'Vestir roupas que eu gosto' },
-            { value: 'medical', label: 'Recomendação médica' },
-            { value: 'quality-life', label: 'Qualidade de vida' },
+            { value: 'health', label: 'Melhorar minha saúde e bem-estar' },
+            {
+              value: 'self-esteem',
+              label: 'Sentir mais confiança e autoestima',
+            },
+            { value: 'energy', label: 'Ter mais energia e disposição' },
+            { value: 'event', label: 'Me preparar para um evento específico' },
+            { value: 'discomfort', label: 'Reduzir desconfortos físicos' },
             { value: 'other', label: 'Outro motivo' },
           ],
         },
@@ -51,65 +51,79 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 3: Tentativas anteriores
     {
       id: 'previous-treatments',
-      title: 'Histórico de tratamentos',
+      title: 'Você já tentou outros tratamentos pra emagrecer antes?',
       questions: [
-        {
-          id: 'has-tried-before',
-          type: 'radio',
-          label: 'Você já tentou emagrecer antes?',
-          required: true,
-          options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
-          ],
-        },
         {
           id: 'previous-methods',
           type: 'checkbox',
-          label: 'Quais métodos você já tentou?',
           required: true,
-          showWhen: {
-            questionId: 'has-tried-before',
-            operator: 'equals',
-            value: 'yes',
-          },
           options: [
-            { value: 'diet', label: 'Dieta restritiva' },
-            { value: 'gym', label: 'Academia/Exercícios' },
-            { value: 'supplements', label: 'Suplementos' },
-            { value: 'medication', label: 'Medicação para emagrecimento' },
-            { value: 'surgery', label: 'Cirurgia bariátrica' },
-            { value: 'nutritionist', label: 'Acompanhamento nutricional' },
+            {
+              value: 'restrictive-diet',
+              label:
+                'Dietas restritivas (low carb, cetogênica, jejum intermitente)',
+            },
+            {
+              value: 'prescribed-medication',
+              label: 'Medicamentos prescritos por médico',
+            },
+            { value: 'supplements-teas', label: 'Fórmulas manipuladas e chás' },
+            {
+              value: 'nutritional-program',
+              label: 'Programas de acompanhamento nutricional',
+            },
+            {
+              value: 'bariatric-surgery',
+              label: 'Cirurgia bariátrica ou procedimentos estéticos invasivos',
+            },
+            { value: 'none', label: 'Nunca fiz tratamento específico' },
           ],
         },
       ],
     },
 
     // STEP 4: Informações biológicas
+    // {
+    //   id: 'biological-info',
+    //   title: 'Qual é seu sexo biológico?',
+    //   description: 'Precisamos conhecer você melhor',
+    //   questions: [
+    //     {
+    //       id: 'birthdate',
+    //       type: 'date',
+    //       label: 'Data de nascimento',
+    //       placeholder: 'DD/MM/AAAA',
+    //       required: true,
+    //       validation: {
+    //         maxDate: new Date(),
+    //         message: 'Data inválida',
+    //       },
+    //     },
+    //     {
+    //       id: 'biological-sex',
+    //       type: 'radio',
+    //       label: 'Sexo biológico',
+    //       required: true,
+    //       options: [
+    //         { value: 'male', label: 'Masculino' },
+    //         { value: 'female', label: 'Feminino' },
+    //       ],
+    //     },
+    //   ],
+    // },
+
+    // STEP 4: Sexo biológico
     {
       id: 'biological-info',
-      title: 'Informações pessoais',
-      description: 'Precisamos conhecer você melhor',
+      title: 'Qual é seu sexo biológico?',
       questions: [
-        {
-          id: 'birthdate',
-          type: 'date',
-          label: 'Data de nascimento',
-          placeholder: 'DD/MM/AAAA',
-          required: true,
-          validation: {
-            maxDate: new Date(),
-            message: 'Data inválida',
-          },
-        },
         {
           id: 'biological-sex',
           type: 'radio',
-          label: 'Sexo biológico',
           required: true,
           options: [
-            { value: 'male', label: 'Masculino' },
             { value: 'female', label: 'Feminino' },
+            { value: 'male', label: 'Masculino' },
           ],
         },
       ],
@@ -123,7 +137,8 @@ export const treatmentFormConfig: FormConfig = {
         {
           id: 'body-type-male',
           type: 'radio-image',
-          label: 'Qual imagem representa melhor seu corpo atual?',
+          label:
+            'Qual dessas imagens representa melhor o seu corpo atualmente?',
           required: true,
           showWhen: {
             questionId: 'biological-sex',
@@ -200,13 +215,12 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 6: Informações de contato
     {
       id: 'contact-info',
-      title: 'Dados de contato',
-      description: 'Para entrarmos em contato com você',
+      title: 'Como posso te chamar e qual o melhor jeito de falarmos com você?',
       questions: [
         {
           id: 'full-name',
           type: 'text',
-          label: 'Nome completo',
+          label: 'Nome',
           placeholder: 'Digite seu nome completo',
           required: true,
           validation: {
@@ -224,8 +238,14 @@ export const treatmentFormConfig: FormConfig = {
         {
           id: 'phone',
           type: 'tel',
-          label: 'Telefone/WhatsApp',
+          label: 'Celular',
           placeholder: '(00) 00000-0000',
+          required: true,
+        },
+        {
+          id: 'consent',
+          type: 'consent',
+          label: 'Termos e consentimento',
           required: true,
         },
       ],
@@ -234,8 +254,20 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 7: Métricas corporais
     {
       id: 'body-metrics',
-      title: 'Suas medidas',
+      title:
+        'Pra começar da forma certa, precisamos entender como está o seu corpo hoje, vamos lá?',
       questions: [
+        {
+          id: 'birthdate',
+          type: 'date',
+          label: 'Data de nascimento',
+          placeholder: 'DD/MM/AAAA',
+          required: true,
+          validation: {
+            maxDate: new Date(),
+            message: 'Data inválida',
+          },
+        },
         {
           id: 'current-weight',
           type: 'number',
@@ -266,62 +298,24 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 8: Condições de saúde
     {
       id: 'health-conditions',
-      title: 'Condições de saúde',
-      description: 'Informações importantes sobre sua saúde',
+      title: 'Você já foi diagnosticado(a) com alguma dessas condições?',
       questions: [
-        {
-          id: 'has-health-conditions',
-          type: 'radio',
-          label: 'Você tem alguma condição de saúde diagnosticada?',
-          required: true,
-          options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
-          ],
-        },
         {
           id: 'health-conditions',
           type: 'checkbox',
-          label: 'Quais condições de saúde você possui?',
           required: true,
-          showWhen: {
-            questionId: 'has-health-conditions',
-            operator: 'equals',
-            value: 'yes',
-          },
           options: [
-            { value: 'diabetes-type1', label: 'Diabetes Tipo 1' },
-            { value: 'diabetes-type2', label: 'Diabetes Tipo 2' },
+            { value: 'diabetes', label: 'Diabetes' },
+            { value: 'hypothyroidism', label: 'Hipotireoidismo' },
             { value: 'hypertension', label: 'Hipertensão' },
-            { value: 'thyroid', label: 'Problemas de tireoide' },
             { value: 'heart-disease', label: 'Doença cardíaca' },
-            { value: 'cholesterol', label: 'Colesterol alto' },
-            { value: 'pcos', label: 'Síndrome dos ovários policísticos (SOP)' },
-            { value: 'depression', label: 'Depressão' },
-            { value: 'anxiety', label: 'Ansiedade' },
-            { value: 'other', label: 'Outra condição' },
+            { value: 'pancreatitis', label: 'Pancreatite' },
+            { value: 'cancer', label: 'Câncer ativo ou recente' },
+            { value: 'gastrointestinal', label: 'Doenças gastrointestinais' },
+            { value: 'none', label: 'Nenhuma das anteriores' },
           ],
-        },
-        {
-          id: 'health-conditions-other',
-          type: 'textarea',
-          label: 'Descreva sua(s) outra(s) condição(ões)',
-          placeholder: 'Digite aqui...',
-          required: true,
-          showWhen: {
-            all: [
-              {
-                questionId: 'has-health-conditions',
-                operator: 'equals',
-                value: 'yes',
-              },
-              {
-                questionId: 'health-conditions',
-                operator: 'contains',
-                value: 'other',
-              },
-            ],
-          },
+          observation:
+            'Isso nos ajuda a identificar cuidado extra onde for necessário.',
         },
       ],
     },
@@ -329,29 +323,81 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 9: Uso de medicamentos
     {
       id: 'medications',
-      title: 'Medicamentos',
+      title: 'Você utiliza algum medicamento de uso regular atualmente?',
       questions: [
         {
           id: 'uses-medication',
           type: 'radio',
-          label: 'Você usa algum medicamento regularmente?',
           required: true,
           options: [
             { value: 'yes', label: 'Sim' },
             { value: 'no', label: 'Não' },
           ],
         },
+      ],
+    },
+
+    // STEP 10: Tipos de medicamentos
+    {
+      id: 'medication-types',
+      title: 'Quais desses tipos de medicamentos você usa com mais frequência?',
+      showWhen: {
+        questionId: 'uses-medication',
+        operator: 'equals',
+        value: 'yes',
+      },
+      questions: [
         {
-          id: 'medication-list',
-          type: 'textarea',
-          label: 'Liste os medicamentos que você usa',
-          placeholder: 'Ex: Losartana 50mg - 1x ao dia',
+          id: 'medication-types',
+          type: 'checkbox',
           required: true,
-          showWhen: {
+          options: [
+            {
+              value: 'antidepressants',
+              label: 'Antidepressivos (remédios para depressão/ansiedade)',
+            },
+            {
+              value: 'antidiabetics',
+              label: 'Antidiabéticos (metformina/insulina/ou similares)',
+            },
+            { value: 'contraceptives', label: 'Anticoncepcionais' },
+            {
+              value: 'antihypertensives',
+              label: 'Anti-hipertensivos (pressão)',
+            },
+            { value: 'thyroid-hormone', label: 'Hormônio da tireoide' },
+            { value: 'corticosteroids', label: 'Corticoides' },
+            { value: 'none', label: 'Nenhum destes' },
+          ],
+        },
+      ],
+    },
+
+    // STEP 11: Lista de medicamentos
+    {
+      id: 'medication-list-step',
+      title: 'Me conte, quais medicamentos fazem parte da sua rotina.',
+      showWhen: {
+        all: [
+          {
             questionId: 'uses-medication',
             operator: 'equals',
             value: 'yes',
           },
+          {
+            questionId: 'medication-types',
+            operator: 'contains',
+            value: 'none',
+          },
+        ],
+      },
+      questions: [
+        {
+          id: 'medication-list',
+          type: 'textarea',
+          label: 'Nome, dose e motivo do uso.',
+          placeholder: 'Ex: Losartana 50mg - 1x ao dia',
+          required: true,
           validation: {
             minLength: 5,
             message: 'Por favor, descreva os medicamentos',
@@ -360,7 +406,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 10: Alergias
+    // STEP 12: Alergias
     {
       id: 'allergies',
       title: 'Alergias',
@@ -391,7 +437,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 11: Histórico familiar
+    // STEP 13: Histórico familiar
     {
       id: 'family-history',
       title: 'Histórico familiar',
@@ -414,7 +460,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 12: Cirurgias e procedimentos
+    // STEP 14: Cirurgias e procedimentos
     {
       id: 'procedures',
       title: 'Cirurgias e procedimentos',
@@ -444,7 +490,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 13: Histórico com medicações GLP-1
+    // STEP 15: Histórico com medicações GLP-1
     {
       id: 'glp1-history',
       title: 'Medicamentos GLP-1',
@@ -465,7 +511,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 14: Tirzepatida - Dosagem
+    // STEP 16: Tirzepatida - Dosagem
     {
       id: 'tirzepatide-dosage-step',
       title: 'Medicamentos GLP-1',
@@ -494,7 +540,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 15: Tirzepatida - Efeitos colaterais
+    // STEP 17: Tirzepatida - Efeitos colaterais
     {
       id: 'tirzepatide-side-effects-step',
       title: 'Medicamentos GLP-1',
@@ -524,7 +570,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 16: Semaglutida - Dosagem
+    // STEP 18: Semaglutida - Dosagem
     {
       id: 'semaglutide-dosage-step',
       title: 'Medicamentos GLP-1',
@@ -552,7 +598,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 17: Semaglutida - Efeitos colaterais
+    // STEP 19: Semaglutida - Efeitos colaterais
     {
       id: 'semaglutide-side-effects-step',
       title: 'Medicamentos GLP-1',
@@ -582,7 +628,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 18: Frequência de exercícios
+    // STEP 20: Frequência de exercícios
     {
       id: 'exercise-frequency',
       title: 'Atividade física',
@@ -603,7 +649,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 19: Tipos de exercício
+    // STEP 21: Tipos de exercício
     {
       id: 'exercise-types',
       title: 'Tipos de exercício',
@@ -632,7 +678,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 20: Refeições diárias
+    // STEP 22: Refeições diárias
     {
       id: 'meals-frequency',
       title: 'Refeições diárias',
@@ -652,7 +698,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 21: Restrições alimentares
+    // STEP 23: Restrições alimentares
     {
       id: 'diet-restrictions',
       title: 'Restrições alimentares',
@@ -676,7 +722,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 22: Sono
+    // STEP 24: Sono
     {
       id: 'sleep',
       title: 'Sono',
@@ -696,7 +742,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 23: Estresse
+    // STEP 25: Estresse
     {
       id: 'stress',
       title: 'Nível de estresse',
@@ -716,7 +762,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 24: Gravidez (apenas para mulheres)
+    // STEP 26: Gravidez (apenas para mulheres)
     {
       id: 'pregnancy',
       title: 'Gravidez e amamentação',
@@ -766,7 +812,7 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 25: Observações finais
+    // STEP 27: Observações finais
     {
       id: 'final-observations',
       title: 'Quase lá!',
@@ -778,27 +824,6 @@ export const treatmentFormConfig: FormConfig = {
             'Há algo mais que você gostaria que soubéssemos sobre sua saúde ou objetivos?',
           placeholder: 'Escreva aqui qualquer informação adicional...',
           required: false,
-        },
-        {
-          id: 'consent',
-          type: 'checkbox',
-          label: 'Termos e consentimento',
-          required: true,
-          options: [
-            {
-              value: 'privacy',
-              label:
-                'Li e concordo com a Política de Privacidade e Termos de Uso',
-            },
-            {
-              value: 'telehealth',
-              label: 'Concordo em receber atendimento via telemedicina',
-            },
-            {
-              value: 'contact',
-              label: 'Autorizo contato via WhatsApp, e-mail e telefone',
-            },
-          ],
         },
       ],
     },

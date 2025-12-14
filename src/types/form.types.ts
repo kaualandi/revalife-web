@@ -4,8 +4,8 @@ export type QuestionType =
   | 'date'
   | 'radio'
   | 'radio-image'
-  | 'select'
   | 'checkbox'
+  | 'consent'
   | 'text'
   | 'email'
   | 'tel'
@@ -38,10 +38,11 @@ export interface QuestionOption {
 export interface Question {
   id: string;
   type: QuestionType;
-  label: string;
+  label?: string;
   description?: string;
   placeholder?: string;
   required?: boolean;
+  observation?: string; // Texto de observação adicional
   options?: QuestionOption[]; // Para radio, select, checkbox
   validation?: {
     min?: number;

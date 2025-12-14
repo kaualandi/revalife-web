@@ -23,10 +23,8 @@ export function TextareaQuestion({ question, form }: TextareaQuestionProps) {
       control={form.control}
       name={question.id}
       render={({ field }) => (
-        <FormItem>
-          <FormLabel className="text-base font-medium">
-            {question.label}
-          </FormLabel>
+        <FormItem className="gap-1">
+          <FormLabel className="text-sm">{question.label}</FormLabel>
           {question.description && (
             <FormDescription>{question.description}</FormDescription>
           )}
@@ -36,7 +34,7 @@ export function TextareaQuestion({ question, form }: TextareaQuestionProps) {
               {...field}
               value={(field.value as string) || ''}
               placeholder={question.placeholder}
-              rows={4}
+              rows={6}
             />
           </FormControl>
 

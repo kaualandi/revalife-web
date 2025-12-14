@@ -159,15 +159,15 @@ export default function TreatmentApproachPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col px-4 pt-16 pb-8">
-      <header className="mb-12 flex items-center gap-4">
+    <div className="flex min-h-screen flex-col px-3 pt-3 pb-3">
+      <header className="relative mb-14 flex items-center justify-center gap-4">
         {!isFirstStep && (
           <Button
             type="button"
             variant="ghost"
             onClick={handlePreviousStep}
             size="icon"
-            className="shrink-0"
+            className="absolute left-0 shrink-0"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -175,8 +175,9 @@ export default function TreatmentApproachPage() {
         <Image
           src="/images/logo.svg"
           alt="Revolife Plus"
+          className="w-24"
           width={150}
-          height={30}
+          height={15}
         />
       </header>
 

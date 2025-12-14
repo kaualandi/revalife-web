@@ -12,6 +12,7 @@ import type { Question } from '@/types/form.types';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import type { UseFormReturn } from 'react-hook-form';
+import { ChevronRight } from 'lucide-react';
 
 interface RadioImageQuestionProps {
   question: Question;
@@ -59,9 +60,8 @@ export function RadioImageQuestion({
                 <label
                   key={option.value}
                   className={cn(
-                    'border-input hover:border-primary group relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border p-4 transition-colors',
-                    field.value === option.value &&
-                      'border-primary bg-primary/5'
+                    'border-input hover:border-primary group relative flex cursor-pointer flex-col gap-3 rounded-md border p-2 transition-colors',
+                    field.value === option.value && 'border-primary bg-primary'
                   )}
                 >
                   <input
@@ -79,7 +79,7 @@ export function RadioImageQuestion({
                   {option.image && (
                     <div
                       className={cn(
-                        'relative w-full overflow-hidden rounded-md',
+                        'relative w-full overflow-hidden rounded',
                         imageSizeClasses[imageSize]
                       )}
                     >
@@ -92,25 +92,27 @@ export function RadioImageQuestion({
                     </div>
                   )}
 
-                  <div className="text-center">
-                    <div className="font-medium">{option.label}</div>
-                    {option.description && (
-                      <p className="text-muted-foreground mt-1 text-sm">
-                        {option.description}
-                      </p>
-                    )}
-                  </div>
-
                   <div
                     className={cn(
-                      'border-primary absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full border-2 bg-white',
-                      field.value === option.value
-                        ? 'bg-primary border-primary'
-                        : 'bg-white'
+                      'flex items-center gap-2 text-sm',
+                      field.value === option.value && 'text-white'
                     )}
                   >
-                    {field.value === option.value && (
-                      <div className="h-2 w-2 rounded-full bg-white" />
+                    <div
+                      className={cn(
+                        'flex size-6 shrink-0 items-center justify-center rounded-full',
+                        field.value === option.value
+                          ? 'bg-primary text-white'
+                          : 'bg-primary/5'
+                      )}
+                    >
+                      <ChevronRight className="size-4" />
+                    </div>
+                    <div className="">{option.label}</div>
+                    {option.description && (
+                      <p className="text-muted-foreground mt-1">
+                        {option.description}
+                      </p>
                     )}
                   </div>
                 </label>

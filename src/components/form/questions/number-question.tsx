@@ -36,6 +36,7 @@ export function NumberQuestion({ question, form }: NumberQuestionProps) {
               {...field}
               value={(field.value as string) || ''}
               type="number"
+              inputMode="numeric"
               placeholder={question.placeholder}
               min={question.validation?.min}
               max={question.validation?.max}

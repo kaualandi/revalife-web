@@ -23,10 +23,8 @@ export function EmailQuestion({ question, form }: EmailQuestionProps) {
       control={form.control}
       name={question.id}
       render={({ field }) => (
-        <FormItem>
-          <FormLabel className="text-base font-medium">
-            {question.label}
-          </FormLabel>
+        <FormItem className="gap-1">
+          <FormLabel className="text-sm">{question.label}</FormLabel>
           {question.description && (
             <FormDescription>{question.description}</FormDescription>
           )}

@@ -12,6 +12,7 @@ import { EmailQuestion } from './questions/email-question';
 import { TelQuestion } from './questions/tel-question';
 import { NumberQuestion } from './questions/number-question';
 import { IntegerQuestion } from './questions/integer-question';
+import { ConsentQuestion } from './questions/consent-question';
 
 interface QuestionRendererProps {
   question: Question;
@@ -48,6 +49,15 @@ export function QuestionRenderer({
 
     case 'checkbox':
       return <CheckboxQuestion question={question} form={form} />;
+
+    case 'consent':
+      return (
+        <ConsentQuestion
+          question={question}
+          form={form}
+          onValueChange={onRadioSelect}
+        />
+      );
 
     case 'text':
       return <TextQuestion question={question} form={form} />;

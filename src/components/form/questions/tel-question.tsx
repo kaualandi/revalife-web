@@ -23,10 +23,8 @@ export function TelQuestion({ question, form }: TelQuestionProps) {
       control={form.control}
       name={question.id}
       render={({ field }) => (
-        <FormItem>
-          <FormLabel className="text-base font-medium">
-            {question.label}
-          </FormLabel>
+        <FormItem className="gap-1">
+          <FormLabel className="text-sm">{question.label}</FormLabel>
           {question.description && (
             <FormDescription>{question.description}</FormDescription>
           )}
@@ -39,7 +37,7 @@ export function TelQuestion({ question, form }: TelQuestionProps) {
               onAccept={(value: string) => field.onChange(value)}
               inputRef={field.ref}
               placeholder={question.placeholder}
-              className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-12 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-16 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
             />
           </FormControl>
 

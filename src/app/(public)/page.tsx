@@ -25,18 +25,19 @@ export default function Home() {
 
   // Carrega sessão existente automaticamente
   useEffect(() => {
-    const loadExistingSession = async () => {
-      if (hasExistingSession && sessionId) {
-        await loadSession(sessionId);
+    // const loadExistingSession = async () => {
+    //   if (hasExistingSession && sessionId) {
+    //     await loadSession(sessionId);
 
-        // Se já tem progresso, redireciona automaticamente
-        if (currentStepIndex > 0) {
-          router.push('/treatment-approach');
-        }
-      }
-    };
+    //     // Se já tem progresso, redireciona automaticamente
+    //     if (currentStepIndex > 0) {
+    //       router.push('/treatment-approach');
+    //     }
+    //   }
+    // };
 
-    loadExistingSession();
+    // loadExistingSession();
+    handleContinue();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Executa apenas uma vez ao montar
 

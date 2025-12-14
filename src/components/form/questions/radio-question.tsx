@@ -11,6 +11,7 @@ import {
 import type { Question } from '@/types/form.types';
 import { cn } from '@/lib/utils';
 import type { UseFormReturn } from 'react-hook-form';
+import { ChevronRight } from 'lucide-react';
 
 interface RadioQuestionProps {
   question: Question;
@@ -42,9 +43,8 @@ export function RadioQuestion({
                 <label
                   key={option.value}
                   className={cn(
-                    'border-input hover:border-primary relative flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
-                    field.value === option.value &&
-                      'border-primary bg-primary/5'
+                    'border-input hover:border-primary relative flex min-h-16 cursor-pointer items-center gap-3 rounded-md border px-4 py-3 transition-colors',
+                    field.value === option.value && 'border-primary bg-primary'
                   )}
                 >
                   <input
@@ -61,21 +61,24 @@ export function RadioQuestion({
 
                   <div
                     className={cn(
-                      'border-primary flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 bg-white',
+                      'flex size-6 shrink-0 items-center justify-center rounded-full',
                       field.value === option.value
-                        ? 'bg-primary border-primary'
-                        : 'bg-white'
+                        ? 'bg-primary text-white'
+                        : 'bg-primary/5'
                     )}
                   >
-                    {field.value === option.value && (
-                      <div className="h-2 w-2 rounded-full bg-white" />
-                    )}
+                    <ChevronRight className="size-4" />
                   </div>
 
-                  <div className="flex-1">
-                    <div className="font-medium">{option.label}</div>
+                  <div
+                    className={cn(
+                      'flex-1 text-sm',
+                      field.value === option.value && 'text-white'
+                    )}
+                  >
+                    <div>{option.label}</div>
                     {option.description && (
-                      <p className="text-muted-foreground mt-1 text-sm">
+                      <p className="text-muted-foreground mt-1">
                         {option.description}
                       </p>
                     )}
