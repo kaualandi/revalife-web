@@ -37,7 +37,6 @@ export const generateQuestionSchema = (question: Question) => {
       break;
 
     case 'radio':
-    case 'select':
     case 'radio-image':
       schema = z.string().min(1, 'Selecione uma opção');
       break;
