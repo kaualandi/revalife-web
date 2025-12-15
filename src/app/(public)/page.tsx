@@ -49,6 +49,14 @@ export default function Home() {
   }, []); // Executa apenas uma vez ao montar
 
   return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <p className="text-muted-foreground">Carregando formulário...</p>
+      </div>
+    </div>
+  );
+
+  return (
     <div className="flex min-h-screen flex-col px-4 py-8">
       <header className="mb-20">
         <Image

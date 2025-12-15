@@ -49,6 +49,8 @@ export function useFormSession() {
       // return response.json();
       return {
         sessionId: '123',
+        answers: {},
+        currentStepIndex: 0,
       } as SessionResponse;
     },
     onSuccess: data => {
