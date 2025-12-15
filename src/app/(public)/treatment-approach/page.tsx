@@ -3,13 +3,13 @@
 import { FormStepComponent } from '@/components/form/form-step';
 import { FormNavigation } from '@/components/form/form-navigation';
 import { FormFinalLoading } from '@/components/form/form-final-loading';
+import { FormFinalMessage } from '@/components/form/form-final-message';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
 import { useFormAutoSave } from '@/hooks/use-form-autosave';
 import { useFormSession } from '@/hooks/use-form-session';
 import { treatmentFormConfig } from '@/config/treatment-form.config';
-import { getProductRedirectUrl } from '@/lib/get-product-redirect-url';
 import type { FormAnswers } from '@/types/form.types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -27,7 +27,13 @@ export default function TreatmentApproachPage() {
   const { initializeSession, isLoading: isLoadingSession } = useFormSession();
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [showFinalLoading, setShowFinalLoading] = useState(false);
+  const [showFinalMessage, setShowFinalMessage] = useState(false);
   const [isAdvancing, setIsAdvancing] = useState(false);
+
+  // Debug dos estados
+  useEffect(() => {
+    console.log('States:', { showFinalLoading, showFinalMessage });
+  }, [showFinalLoading, showFinalMessage]);
 
   const currentStep = treatmentFormConfig.steps[currentStepIndex];
   const isLastStep = currentStepIndex === treatmentFormConfig.steps.length - 1;
@@ -107,13 +113,12 @@ export default function TreatmentApproachPage() {
   };
 
   // Função chamada quando o loading final termina
-  const handleFinalLoadingComplete = () => {
-    // Gera URL do produto baseada nas respostas
-    const redirectUrl = getProductRedirectUrl(answers);
-
-    // Redireciona para a URL do produto
-    window.location.href = redirectUrl;
-  };
+  const handleFinalLoadingComplete = useCallback(() => {
+    console.log('Loading complete, showing final message');
+    // Desativa o loading e mostra a mensagem final
+    setShowFinalLoading(false);
+    setShowFinalMessage(true);
+  }, []);
 
   // Função para auto-advance ao selecionar radio
   const handleAutoAdvance = () => {
@@ -156,6 +161,11 @@ export default function TreatmentApproachPage() {
   // Mostra tela de loading final após submeter
   if (showFinalLoading) {
     return <FormFinalLoading onComplete={handleFinalLoadingComplete} />;
+  }
+
+  // Mostra mensagem final após loading
+  if (showFinalMessage) {
+    return <FormFinalMessage />;
   }
 
   return (
