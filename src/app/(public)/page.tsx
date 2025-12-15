@@ -9,9 +9,16 @@ import Image from 'next/image';
 
 export default function Home() {
   const router = useRouter();
-  const { hasExistingSession, isLoading, loadSession, createSession } =
-    useFormSession();
-  const { currentStepIndex, sessionId } = useTreatmentFormStore();
+  const {
+    hasExistingSession,
+    isLoading,
+    // loadSession,
+    createSession,
+  } = useFormSession();
+  const {
+    // currentStepIndex,
+    sessionId,
+  } = useTreatmentFormStore();
 
   // Ao clicar em continuar
   const handleContinue = async () => {
