@@ -406,55 +406,23 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
-    // STEP 12: Alergias
-    {
-      id: 'allergies',
-      title: 'Alergias',
-      questions: [
-        {
-          id: 'has-allergies',
-          type: 'radio',
-          label: 'Você tem alguma alergia a medicamentos?',
-          required: true,
-          options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
-            { value: 'not-sure', label: 'Não tenho certeza' },
-          ],
-        },
-        {
-          id: 'allergy-list',
-          type: 'textarea',
-          label: 'Liste suas alergias',
-          placeholder: 'Ex: Penicilina, dipirona...',
-          required: true,
-          showWhen: {
-            questionId: 'has-allergies',
-            operator: 'equals',
-            value: 'yes',
-          },
-        },
-      ],
-    },
-
     // STEP 13: Histórico familiar
     {
       id: 'family-history',
-      title: 'Histórico familiar',
+      title: 'Histórico familiar é um passo importante no cuidado preventivo.',
       questions: [
         {
           id: 'family-health-conditions',
           type: 'checkbox',
-          label: 'Alguém na sua família tem ou teve alguma dessas condições?',
+          label: 'Escolha o que se aplica a familiares de primeiro grau.',
           required: false,
           options: [
-            { value: 'diabetes', label: 'Diabetes' },
-            { value: 'obesity', label: 'Obesidade' },
-            { value: 'heart-disease', label: 'Doença cardíaca' },
-            { value: 'hypertension', label: 'Hipertensão' },
-            { value: 'cancer', label: 'Câncer' },
-            { value: 'thyroid', label: 'Problemas de tireoide' },
-            { value: 'none', label: 'Nenhuma das opções' },
+            { value: 'thyroid-cancer', label: 'Câncer de tireoide' },
+            { value: 'pancreatitis', label: 'Pancreatite' },
+            { value: 'men2', label: 'Múltiplos tumores endócrinos (MEN2)' },
+            { value: 'diabetes-type1', label: 'Diabetes tipo 1' },
+            { value: 'diabetes-type2', label: 'Diabetes tipo 2' },
+            { value: 'none', label: 'Nenhuma dessas' },
           ],
         },
       ],
@@ -463,29 +431,18 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 14: Cirurgias e procedimentos
     {
       id: 'procedures',
-      title: 'Cirurgias e procedimentos',
+      title:
+        'Você já passou por algum procedimento como cirurgia bariátrica ou estética invasiva?',
       questions: [
         {
           id: 'had-surgeries',
           type: 'radio',
-          label: 'Você já fez alguma cirurgia?',
           required: true,
           options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
+            { value: 'yes-less-12', label: 'Sim, menos de 12 meses' },
+            { value: 'yes-more-12', label: 'Sim, mais de 12 meses' },
+            { value: 'no', label: 'Não, nunca fiz' },
           ],
-        },
-        {
-          id: 'surgery-list',
-          type: 'textarea',
-          label: 'Descreva as cirurgias realizadas e quando',
-          placeholder: 'Ex: Apendicite em 2015',
-          required: true,
-          showWhen: {
-            questionId: 'had-surgeries',
-            operator: 'equals',
-            value: 'yes',
-          },
         },
       ],
     },
@@ -493,14 +450,13 @@ export const treatmentFormConfig: FormConfig = {
     // STEP 15: Histórico com medicações GLP-1
     {
       id: 'glp1-history',
-      title: 'Medicamentos GLP-1',
+      title: 'Você já fez uso de alguma dessas medicações em outro momento?',
       description:
-        'Você já fez uso de alguma dessas medicações em outro momento?\n\nSaber disso ajuda nos a entender como seu corpo pode responder ao tratamento:',
+        'Saber disso ajuda nos a entender como seu corpo pode responder ao tratamento:',
       questions: [
         {
           id: 'glp1-medication',
           type: 'radio',
-          label: 'Selecione a medicação que você já usou',
           required: true,
           options: [
             { value: 'tirzepatide', label: 'Tirzepatida (Mounjaro)' },
@@ -511,11 +467,139 @@ export const treatmentFormConfig: FormConfig = {
       ],
     },
 
+    // STEP 17: Tirzepatida - Efeitos colaterais
+    {
+      id: 'tirzepatide-side-effects-step',
+      title:
+        'Quando você usou, teve algum efeito ou reação que chamou sua atenção?',
+      description:
+        'Pode ser físico, emocional, desconforto leve ou algo que você considerou fora do normal.',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'tirzepatide',
+      },
+      questions: [
+        {
+          id: 'tirzepatide-side-effects',
+          type: 'radio',
+          required: true,
+          options: [
+            { value: 'strong', label: 'Sim, fortes' },
+            { value: 'mild', label: 'Sim, leves' },
+            { value: 'none', label: 'Não' },
+          ],
+        },
+      ],
+    },
+
+    // STEP 17: Tirzepatida - Uso atual
+    {
+      id: 'tirzepatide-current-use-step',
+      title: 'Você está utilizando Tirzepatida neste momento?',
+      description: 'Marque o que mais se encaixa com o seu caso atual:',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'tirzepatide',
+      },
+      questions: [
+        {
+          id: 'tirzepatide-current-use',
+          type: 'radio',
+          required: true,
+          options: [
+            { value: 'yes', label: 'Sim' },
+            { value: 'no', label: 'Não' },
+          ],
+        },
+      ],
+    },
+
+    // STEP: Tirzepatida - Método de aplicação
+    {
+      id: 'tirzepatide-application-method-step',
+      title: 'Como você aplicava?',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'tirzepatide',
+      },
+      questions: [
+        {
+          id: 'tirzepatide-application-method',
+          type: 'radio',
+          required: true,
+          options: [
+            {
+              value: 'self-application',
+              label: 'Aplicação em casa sozinho(a)',
+            },
+            {
+              value: 'professional',
+              label: 'Aplicação feita por um profissional',
+            },
+            { value: 'other-person', label: 'Outra pessoa' },
+          ],
+        },
+      ],
+    },
+
+    // STEP: Tirzepatida - Última utilização
+    {
+      id: 'tirzepatide-last-use-step',
+      title: 'Quando foi a última vez que você utilizou Tirzepatida?',
+      description:
+        'Essa informação ajuda o médico a entender o intervalo atual entre doses.',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'tirzepatide',
+      },
+      questions: [
+        {
+          id: 'tirzepatide-last-use',
+          type: 'radio',
+          required: true,
+          options: [
+            { value: 'today', label: 'Hoje' },
+            { value: 'last-7-days', label: 'Nos últimos 7 dias' },
+            { value: '7-14-days', label: 'Entre 7 e 14 dias' },
+            { value: 'more-14-days', label: 'Mais de 14 dias' },
+          ],
+        },
+      ],
+    },
+
+    // STEP: Tirzepatida - Acompanhamento médico
+    {
+      id: 'tirzepatide-medical-supervision-step',
+      title: 'Você realizou esse processo com acompanhamento médico?',
+      showWhen: {
+        questionId: 'glp1-medication',
+        operator: 'equals',
+        value: 'tirzepatide',
+      },
+      questions: [
+        {
+          id: 'tirzepatide-medical-supervision',
+          type: 'radio',
+          required: true,
+          options: [
+            { value: 'continuous', label: 'Sim, acompanhamento contínuo' },
+            { value: 'partial', label: 'Sim, mas acompanhamento parcial' },
+            { value: 'none', label: 'Não tive acompanhamento' },
+          ],
+        },
+      ],
+    },
+
     // STEP 16: Tirzepatida - Dosagem
     {
       id: 'tirzepatide-dosage-step',
-      title: 'Medicamentos GLP-1',
-      description: 'Tirzepatida (Mounjaro)',
+      title: 'Qual foi a dose semanal que você utilizou?',
+      description:
+        'Se não lembrar com precisão, escolha a opção mais próxima do que você recorda.',
       showWhen: {
         questionId: 'glp1-medication',
         operator: 'equals',
@@ -528,305 +612,300 @@ export const treatmentFormConfig: FormConfig = {
           label: 'Qual foi a dose máxima que você usou?',
           required: true,
           options: [
-            { value: '2.5mg', label: '2,5 mg' },
-            { value: '5mg', label: '5 mg' },
-            { value: '7.5mg', label: '7,5 mg' },
-            { value: '10mg', label: '10 mg' },
-            { value: '12.5mg', label: '12,5 mg' },
-            { value: '15mg', label: '15 mg' },
-            { value: 'not-sure', label: 'Não tenho certeza' },
+            { value: '2.5mg', label: '2,5 mg p/ semana' },
+            { value: '5mg', label: '5 mg p/ semana' },
+            { value: '7.5mg', label: '7,5 mg p/ semana' },
+            { value: '10mg', label: '10 mg p/ semana' },
+            { value: '12.5mg', label: '12,5 mg p/ semana' },
+            { value: '15mg', label: '15 mg p/ semana' },
+            { value: 'not-sure', label: 'Não lembro' },
           ],
         },
       ],
     },
 
-    // STEP 17: Tirzepatida - Efeitos colaterais
+    // Step 18 Semaglutida - experiencia
     {
-      id: 'tirzepatide-side-effects-step',
-      title: 'Medicamentos GLP-1',
-      description: 'Tirzepatida (Mounjaro)',
+      id: 'semaglutide-experience-step',
+      title: 'Como foi a sua experiência com a Semaglutida?',
+      description:
+        'Descreva brevemente sua experiência com: tempo de uso, resultados e última dosagem administrada.',
       showWhen: {
         questionId: 'glp1-medication',
         operator: 'equals',
-        value: 'tirzepatide',
+        value: 'semaglutide',
       },
       questions: [
         {
-          id: 'tirzepatide-side-effects',
-          type: 'checkbox',
-          label: 'Você teve algum efeito colateral?',
-          required: false,
-          options: [
-            { value: 'nausea', label: 'Náusea' },
-            { value: 'vomiting', label: 'Vômito' },
-            { value: 'diarrhea', label: 'Diarreia' },
-            { value: 'constipation', label: 'Constipação' },
-            { value: 'fatigue', label: 'Fadiga' },
-            { value: 'headache', label: 'Dor de cabeça' },
-            { value: 'none', label: 'Nenhum efeito colateral' },
-            { value: 'other', label: 'Outro' },
-          ],
+          id: 'semaglutide-experience',
+          type: 'textarea',
+          placeholder: 'Digite sua mensagem...',
+          required: true,
+          validation: {
+            minLength: 10,
+            message: 'Por favor, descreva sua experiência',
+          },
         },
       ],
     },
 
     // STEP 18: Semaglutida - Dosagem
-    {
-      id: 'semaglutide-dosage-step',
-      title: 'Medicamentos GLP-1',
-      description: 'Semaglutida (Ozempic/Wegovy)',
-      showWhen: {
-        questionId: 'glp1-medication',
-        operator: 'equals',
-        value: 'semaglutide',
-      },
-      questions: [
-        {
-          id: 'semaglutide-dosage',
-          type: 'radio',
-          label: 'Qual foi a dose máxima que você usou?',
-          required: true,
-          options: [
-            { value: '0.25mg', label: '0,25 mg' },
-            { value: '0.5mg', label: '0,5 mg' },
-            { value: '1mg', label: '1 mg' },
-            { value: '1.7mg', label: '1,7 mg' },
-            { value: '2.4mg', label: '2,4 mg' },
-            { value: 'not-sure', label: 'Não tenho certeza' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'semaglutide-dosage-step',
+    //   title: 'Medicamentos GLP-1',
+    //   description: 'Semaglutida (Ozempic/Wegovy)',
+    //   showWhen: {
+    //     questionId: 'glp1-medication',
+    //     operator: 'equals',
+    //     value: 'semaglutide',
+    //   },
+    //   questions: [
+    //     {
+    //       id: 'semaglutide-dosage',
+    //       type: 'radio',
+    //       label: 'Qual foi a dose máxima que você usou?',
+    //       required: true,
+    //       options: [
+    //         { value: '0.25mg', label: '0,25 mg' },
+    //         { value: '0.5mg', label: '0,5 mg' },
+    //         { value: '1mg', label: '1 mg' },
+    //         { value: '1.7mg', label: '1,7 mg' },
+    //         { value: '2.4mg', label: '2,4 mg' },
+    //         { value: 'not-sure', label: 'Não tenho certeza' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 19: Semaglutida - Efeitos colaterais
-    {
-      id: 'semaglutide-side-effects-step',
-      title: 'Medicamentos GLP-1',
-      description: 'Semaglutida (Ozempic/Wegovy)',
-      showWhen: {
-        questionId: 'glp1-medication',
-        operator: 'equals',
-        value: 'semaglutide',
-      },
-      questions: [
-        {
-          id: 'semaglutide-side-effects',
-          type: 'checkbox',
-          label: 'Você teve algum efeito colateral?',
-          required: false,
-          options: [
-            { value: 'nausea', label: 'Náusea' },
-            { value: 'vomiting', label: 'Vômito' },
-            { value: 'diarrhea', label: 'Diarreia' },
-            { value: 'constipation', label: 'Constipação' },
-            { value: 'fatigue', label: 'Fadiga' },
-            { value: 'headache', label: 'Dor de cabeça' },
-            { value: 'none', label: 'Nenhum efeito colateral' },
-            { value: 'other', label: 'Outro' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'semaglutide-side-effects-step',
+    //   title: 'Medicamentos GLP-1',
+    //   description: 'Semaglutida (Ozempic/Wegovy)',
+    //   showWhen: {
+    //     questionId: 'glp1-medication',
+    //     operator: 'equals',
+    //     value: 'semaglutide',
+    //   },
+    //   questions: [
+    //     {
+    //       id: 'semaglutide-side-effects',
+    //       type: 'checkbox',
+    //       label: 'Você teve algum efeito colateral?',
+    //       required: false,
+    //       options: [
+    //         { value: 'nausea', label: 'Náusea' },
+    //         { value: 'vomiting', label: 'Vômito' },
+    //         { value: 'diarrhea', label: 'Diarreia' },
+    //         { value: 'constipation', label: 'Constipação' },
+    //         { value: 'fatigue', label: 'Fadiga' },
+    //         { value: 'headache', label: 'Dor de cabeça' },
+    //         { value: 'none', label: 'Nenhum efeito colateral' },
+    //         { value: 'other', label: 'Outro' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 20: Frequência de exercícios
-    {
-      id: 'exercise-frequency',
-      title: 'Atividade física',
-      questions: [
-        {
-          id: 'exercise-frequency',
-          type: 'radio',
-          label: 'Com que frequência você pratica exercícios físicos?',
-          required: true,
-          options: [
-            { value: 'sedentary', label: 'Sedentário (não pratico)' },
-            { value: '1-2-week', label: '1-2 vezes por semana' },
-            { value: '3-4-week', label: '3-4 vezes por semana' },
-            { value: '5-plus-week', label: '5 ou mais vezes por semana' },
-            { value: 'daily', label: 'Diariamente' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'exercise-frequency',
+    //   title: 'Atividade física',
+    //   questions: [
+    //     {
+    //       id: 'exercise-frequency',
+    //       type: 'radio',
+    //       label: 'Com que frequência você pratica exercícios físicos?',
+    //       required: true,
+    //       options: [
+    //         { value: 'sedentary', label: 'Sedentário (não pratico)' },
+    //         { value: '1-2-week', label: '1-2 vezes por semana' },
+    //         { value: '3-4-week', label: '3-4 vezes por semana' },
+    //         { value: '5-plus-week', label: '5 ou mais vezes por semana' },
+    //         { value: 'daily', label: 'Diariamente' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 21: Tipos de exercício
-    {
-      id: 'exercise-types',
-      title: 'Tipos de exercício',
-      showWhen: {
-        questionId: 'exercise-frequency',
-        operator: 'notEquals',
-        value: 'sedentary',
-      },
-      questions: [
-        {
-          id: 'exercise-types',
-          type: 'checkbox',
-          label: 'Que tipos de exercício você pratica?',
-          required: false,
-          options: [
-            { value: 'walking', label: 'Caminhada' },
-            { value: 'running', label: 'Corrida' },
-            { value: 'gym', label: 'Musculação' },
-            { value: 'cycling', label: 'Ciclismo' },
-            { value: 'swimming', label: 'Natação' },
-            { value: 'sports', label: 'Esportes' },
-            { value: 'yoga', label: 'Yoga/Pilates' },
-            { value: 'other', label: 'Outro' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'exercise-types',
+    //   title: 'Tipos de exercício',
+    //   showWhen: {
+    //     questionId: 'exercise-frequency',
+    //     operator: 'notEquals',
+    //     value: 'sedentary',
+    //   },
+    //   questions: [
+    //     {
+    //       id: 'exercise-types',
+    //       type: 'checkbox',
+    //       label: 'Que tipos de exercício você pratica?',
+    //       required: false,
+    //       options: [
+    //         { value: 'walking', label: 'Caminhada' },
+    //         { value: 'running', label: 'Corrida' },
+    //         { value: 'gym', label: 'Musculação' },
+    //         { value: 'cycling', label: 'Ciclismo' },
+    //         { value: 'swimming', label: 'Natação' },
+    //         { value: 'sports', label: 'Esportes' },
+    //         { value: 'yoga', label: 'Yoga/Pilates' },
+    //         { value: 'other', label: 'Outro' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 22: Refeições diárias
-    {
-      id: 'meals-frequency',
-      title: 'Refeições diárias',
-      questions: [
-        {
-          id: 'meals-per-day',
-          type: 'radio',
-          label: 'Quantas refeições você faz por dia?',
-          required: true,
-          options: [
-            { value: '1-2', label: '1 a 2 refeições' },
-            { value: '3', label: '3 refeições' },
-            { value: '4-5', label: '4 a 5 refeições' },
-            { value: '6-plus', label: '6 ou mais refeições' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'meals-frequency',
+    //   title: 'Refeições diárias',
+    //   questions: [
+    //     {
+    //       id: 'meals-per-day',
+    //       type: 'radio',
+    //       label: 'Quantas refeições você faz por dia?',
+    //       required: true,
+    //       options: [
+    //         { value: '1-2', label: '1 a 2 refeições' },
+    //         { value: '3', label: '3 refeições' },
+    //         { value: '4-5', label: '4 a 5 refeições' },
+    //         { value: '6-plus', label: '6 ou mais refeições' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 23: Restrições alimentares
-    {
-      id: 'diet-restrictions',
-      title: 'Restrições alimentares',
-      questions: [
-        {
-          id: 'diet-restrictions',
-          type: 'checkbox',
-          label: 'Você segue alguma restrição alimentar?',
-          required: false,
-          options: [
-            { value: 'vegetarian', label: 'Vegetariano' },
-            { value: 'vegan', label: 'Vegano' },
-            { value: 'gluten-free', label: 'Sem glúten' },
-            { value: 'lactose-free', label: 'Sem lactose' },
-            { value: 'low-carb', label: 'Low carb' },
-            { value: 'keto', label: 'Cetogênica' },
-            { value: 'none', label: 'Nenhuma restrição' },
-            { value: 'other', label: 'Outra' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'diet-restrictions',
+    //   title: 'Restrições alimentares',
+    //   questions: [
+    //     {
+    //       id: 'diet-restrictions',
+    //       type: 'checkbox',
+    //       label: 'Você segue alguma restrição alimentar?',
+    //       required: false,
+    //       options: [
+    //         { value: 'vegetarian', label: 'Vegetariano' },
+    //         { value: 'vegan', label: 'Vegano' },
+    //         { value: 'gluten-free', label: 'Sem glúten' },
+    //         { value: 'lactose-free', label: 'Sem lactose' },
+    //         { value: 'low-carb', label: 'Low carb' },
+    //         { value: 'keto', label: 'Cetogênica' },
+    //         { value: 'none', label: 'Nenhuma restrição' },
+    //         { value: 'other', label: 'Outra' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 24: Sono
-    {
-      id: 'sleep',
-      title: 'Sono',
-      questions: [
-        {
-          id: 'sleep-hours',
-          type: 'radio',
-          label: 'Quantas horas você dorme por noite em média?',
-          required: true,
-          options: [
-            { value: 'less-4', label: 'Menos de 4 horas' },
-            { value: '4-6', label: '4 a 6 horas' },
-            { value: '6-8', label: '6 a 8 horas' },
-            { value: '8-plus', label: 'Mais de 8 horas' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'sleep',
+    //   title: 'Sono',
+    //   questions: [
+    //     {
+    //       id: 'sleep-hours',
+    //       type: 'radio',
+    //       label: 'Quantas horas você dorme por noite em média?',
+    //       required: true,
+    //       options: [
+    //         { value: 'less-4', label: 'Menos de 4 horas' },
+    //         { value: '4-6', label: '4 a 6 horas' },
+    //         { value: '6-8', label: '6 a 8 horas' },
+    //         { value: '8-plus', label: 'Mais de 8 horas' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 25: Estresse
-    {
-      id: 'stress',
-      title: 'Nível de estresse',
-      questions: [
-        {
-          id: 'stress-level',
-          type: 'radio',
-          label: 'Como você avalia seu nível de estresse?',
-          required: true,
-          options: [
-            { value: 'low', label: 'Baixo' },
-            { value: 'moderate', label: 'Moderado' },
-            { value: 'high', label: 'Alto' },
-            { value: 'very-high', label: 'Muito alto' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'stress',
+    //   title: 'Nível de estresse',
+    //   questions: [
+    //     {
+    //       id: 'stress-level',
+    //       type: 'radio',
+    //       label: 'Como você avalia seu nível de estresse?',
+    //       required: true,
+    //       options: [
+    //         { value: 'low', label: 'Baixo' },
+    //         { value: 'moderate', label: 'Moderado' },
+    //         { value: 'high', label: 'Alto' },
+    //         { value: 'very-high', label: 'Muito alto' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 26: Gravidez (apenas para mulheres)
-    {
-      id: 'pregnancy',
-      title: 'Gravidez e amamentação',
-      showWhen: {
-        questionId: 'biological-sex',
-        operator: 'equals',
-        value: 'female',
-      },
-      questions: [
-        {
-          id: 'is-pregnant',
-          type: 'radio',
-          label: 'Você está grávida?',
-          required: true,
-          options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
-            { value: 'not-sure', label: 'Não tenho certeza' },
-          ],
-        },
-        {
-          id: 'is-breastfeeding',
-          type: 'radio',
-          label: 'Você está amamentando?',
-          required: true,
-          options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
-          ],
-        },
-        {
-          id: 'plans-pregnancy',
-          type: 'radio',
-          label: 'Você planeja engravidar nos próximos 12 meses?',
-          required: true,
-          showWhen: {
-            questionId: 'is-pregnant',
-            operator: 'equals',
-            value: 'no',
-          },
-          options: [
-            { value: 'yes', label: 'Sim' },
-            { value: 'no', label: 'Não' },
-            { value: 'maybe', label: 'Talvez' },
-          ],
-        },
-      ],
-    },
+    // {
+    //   id: 'pregnancy',
+    //   title: 'Gravidez e amamentação',
+    //   showWhen: {
+    //     questionId: 'biological-sex',
+    //     operator: 'equals',
+    //     value: 'female',
+    //   },
+    //   questions: [
+    //     {
+    //       id: 'is-pregnant',
+    //       type: 'radio',
+    //       label: 'Você está grávida?',
+    //       required: true,
+    //       options: [
+    //         { value: 'yes', label: 'Sim' },
+    //         { value: 'no', label: 'Não' },
+    //         { value: 'not-sure', label: 'Não tenho certeza' },
+    //       ],
+    //     },
+    //     {
+    //       id: 'is-breastfeeding',
+    //       type: 'radio',
+    //       label: 'Você está amamentando?',
+    //       required: true,
+    //       options: [
+    //         { value: 'yes', label: 'Sim' },
+    //         { value: 'no', label: 'Não' },
+    //       ],
+    //     },
+    //     {
+    //       id: 'plans-pregnancy',
+    //       type: 'radio',
+    //       label: 'Você planeja engravidar nos próximos 12 meses?',
+    //       required: true,
+    //       showWhen: {
+    //         questionId: 'is-pregnant',
+    //         operator: 'equals',
+    //         value: 'no',
+    //       },
+    //       options: [
+    //         { value: 'yes', label: 'Sim' },
+    //         { value: 'no', label: 'Não' },
+    //         { value: 'maybe', label: 'Talvez' },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // STEP 27: Observações finais
-    {
-      id: 'final-observations',
-      title: 'Quase lá!',
-      questions: [
-        {
-          id: 'additional-info',
-          type: 'textarea',
-          label:
-            'Há algo mais que você gostaria que soubéssemos sobre sua saúde ou objetivos?',
-          placeholder: 'Escreva aqui qualquer informação adicional...',
-          required: false,
-        },
-      ],
-    },
+    // {
+    //   id: 'final-observations',
+    //   title: 'Quase lá!',
+    //   questions: [
+    //     {
+    //       id: 'additional-info',
+    //       type: 'textarea',
+    //       label:
+    //         'Há algo mais que você gostaria que soubéssemos sobre sua saúde ou objetivos?',
+    //       placeholder: 'Escreva aqui qualquer informação adicional...',
+    //       required: false,
+    //     },
+    //   ],
+    // },
   ],
 };
 

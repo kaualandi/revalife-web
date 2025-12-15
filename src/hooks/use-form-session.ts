@@ -49,22 +49,8 @@ export function useFormSession() {
       // return response.json();
       return {
         sessionId: '123',
-        answers: {
-          'weight-goal': '5-10kg',
-          motivation: ['self-esteem', 'event'],
-          'previous-methods': ['prescribed-medication', 'bariatric-surgery'],
-          'biological-sex': 'male',
-          'body-type-male': 'medium',
-          'full-name': 'Kauã Landi Fernando',
-          email: 'kaualandi@hotmail.com',
-          phone: '(21) 99922-2644',
-          consent: 'accepted',
-          height: '184',
-          birthdate: '2005-10-02',
-          'current-weight': '74',
-          'health-conditions': ['hypertension', 'heart-disease'],
-        },
-        currentStepIndex: 8,
+        answers: {},
+        currentStepIndex: 0,
       } as SessionResponse;
     },
     onSuccess: data => {
