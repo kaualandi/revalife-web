@@ -43,7 +43,7 @@ export function useStartSession() {
 
 /**
  * Hook para buscar sessão existente
- * Carrega dados do backend e sincroniza com o Zustand store
+ * Carrega dados do backend e sincroniza com o Zustand store APENAS na primeira vez
  */
 export function useGetSession(sessionId: string | null) {
   const { loadFormData } = useTreatmentFormStore();
@@ -52,20 +52,22 @@ export function useGetSession(sessionId: string | null) {
     queryKey: sessionKeys.detail(sessionId || ''),
     queryFn: () => sessionApi.getSession(sessionId || ''),
     enabled: !!sessionId,
-    staleTime: 30000, // 30 segundos
+    staleTime: Infinity, // Nunca considerar stale - carregar apenas uma vez
+    gcTime: Infinity, // Manter cache para sempre durante a sessão
     retry: 2,
   });
 
   useEffect(() => {
-    if (query.data) {
-      // Sincronizar dados do backend com o store local
+    // Sincronizar APENAS na primeira vez que os dados chegam (isSuccess transição)
+    if (query.data && query.isSuccess && !query.isFetching) {
       loadFormData({
         currentStepIndex: query.data.currentStep,
         answers: query.data.answers,
       });
       console.log('✅ Sessão carregada:', sessionId);
     }
-  }, [query.data, loadFormData, sessionId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.isSuccess]); // Roda apenas quando isSuccess muda (primeira vez)
 
   useEffect(() => {
     if (query.error) {

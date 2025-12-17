@@ -41,20 +41,16 @@ export function useAutoSave(enabled = true, delay = 2000) {
 
     // Criar novo timeout para salvar
     timeoutRef.current = setTimeout(() => {
-      // Salvar sempre o PRÓXIMO step (current + 1)
-      // Indica que o usuário completou o step atual
+      // Auto-save salva o step ATUAL (usuário ainda preenchendo)
       const currentStep = currentStepRef.current;
-      const totalSteps = treatmentFormConfig.steps.length;
-      const stepToSave = Math.min(currentStep + 1, totalSteps - 1);
 
       console.log('💾 Iniciando auto-save...', {
         currentStep,
-        savingAs: stepToSave,
         fields: Object.keys(answers).length,
       });
 
       updateSession.mutate({
-        currentStep: stepToSave,
+        currentStep,
         answers,
       });
 
@@ -71,7 +67,7 @@ export function useAutoSave(enabled = true, delay = 2000) {
 
   /**
    * Força salvamento imediato (sem debounce)
-   * Útil para salvar antes de navegar ou submeter
+   * Salva o PRÓXIMO step, indicando que o usuário completou o atual
    */
   const saveNow = () => {
     if (!sessionId) return;
@@ -80,7 +76,7 @@ export function useAutoSave(enabled = true, delay = 2000) {
       clearTimeout(timeoutRef.current);
     }
 
-    // Salvar sempre o PRÓXIMO step (current + 1)
+    // saveNow() salva o PRÓXIMO step (completou o atual)
     const currentStep = currentStepRef.current;
     const totalSteps = treatmentFormConfig.steps.length;
     const stepToSave = Math.min(currentStep + 1, totalSteps - 1);
