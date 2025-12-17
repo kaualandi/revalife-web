@@ -1,60 +1,68 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { useFormSession } from '@/hooks/use-form-session';
+import { useStartSession } from '@/hooks/use-session-queries';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+
+export default function Home() {
+  const router = useRouter();
+  const startSession = useStartSession();
+  const { sessionId } = useTreatmentFormStore();
+
+  // Criar sessão automaticamente ao montar o componente
+  useEffect(() => {
+    if (!sessionId && !startSession.isPending) {
+      startSession.mutate(undefined, {
+        onSuccess: () => {
+          router.push('/treatment-approach');
+        },
+      });
+    } else if (sessionId) {
+      // Se já tem sessão, redirecionar direto
+      router.push('/treatment-approach');
+    }
+  }, [sessionId, startSession, router]);
+
+  // Mostrar loading enquanto cria sessão
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <p className="text-muted-foreground text-lg">Iniciando formulário...</p>
+      </div>
+    </div>
+  );
+}
+
+/* 
+==============================================
+TELA DE BEM-VINDO (CÓDIGO ORIGINAL SALVO)
+==============================================
+
+Para reativar a tela de boas-vindas, substitua o componente Home acima por este código 
+e adicione os imports necessários (Button e Image):
+
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
 export default function Home() {
   const router = useRouter();
-  const {
-    hasExistingSession,
-    isLoading,
-    // loadSession,
-    createSession,
-  } = useFormSession();
-  const {
-    // currentStepIndex,
-    sessionId,
-  } = useTreatmentFormStore();
+  const startSession = useStartSession();
+  const { sessionId } = useTreatmentFormStore();
 
-  // Ao clicar em continuar
-  const handleContinue = async () => {
-    if (!sessionId) {
-      // Cria nova sessão
-      await createSession();
-    }
-    // Redireciona para o formulário
-    router.push('/treatment-approach');
+  const handleStart = () => {
+    startSession.mutate(undefined, {
+      onSuccess: () => {
+        router.push('/treatment-approach');
+      },
+    });
   };
 
-  // Carrega sessão existente automaticamente
   useEffect(() => {
-    // const loadExistingSession = async () => {
-    //   if (hasExistingSession && sessionId) {
-    //     await loadSession(sessionId);
-
-    //     // Se já tem progresso, redireciona automaticamente
-    //     if (currentStepIndex > 0) {
-    //       router.push('/treatment-approach');
-    //     }
-    //   }
-    // };
-
-    // loadExistingSession();
-    handleContinue();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Executa apenas uma vez ao montar
-
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <p className="text-muted-foreground">Carregando formulário...</p>
-      </div>
-    </div>
-  );
+    if (sessionId) {
+      router.push('/treatment-approach');
+    }
+  }, [sessionId, router]);
 
   return (
     <div className="flex min-h-screen flex-col px-4 py-8">
@@ -94,18 +102,14 @@ export default function Home() {
         <Button
           size="lg"
           className="w-full"
-          onClick={handleContinue}
-          disabled={isLoading}
+          onClick={handleStart}
+          disabled={startSession.isPending}
         >
-          {isLoading
-            ? hasExistingSession
-              ? 'Recuperando preenchimento...'
-              : 'Carregando...'
-            : 'Continuar'}
+          {startSession.isPending ? 'Iniciando...' : 'Continuar'}
         </Button>
 
         <p className="text-muted-foreground text-xxs mt-2 leading-none font-thin">
-          Ao clicar em “Continuar”, você declara estar de acordo com os Termos
+          Ao clicar em "Continuar", você declara estar de acordo com os Termos
           de uso, aceita o Consentimento para Telessaúde e confirma que leu e
           compreendeu a Política de Privacidade.
         </p>
@@ -113,3 +117,4 @@ export default function Home() {
     </div>
   );
 }
+*/

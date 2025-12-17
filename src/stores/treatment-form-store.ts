@@ -1,8 +1,12 @@
-import type { FormAnswers, Question, QuestionCondition, QuestionConditionGroup, } from '@/types/form.types';
+import type {
+  FormAnswers,
+  Question,
+  QuestionCondition,
+  QuestionConditionGroup,
+} from '@/types/form.types';
 import { treatmentFormConfig } from '@/config/treatment-form.config';
 import { devtools, persist } from 'zustand/middleware';
 import { create } from 'zustand';
-
 
 interface TreatmentFormState {
   // Estado
@@ -94,11 +98,13 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         setSessionId: sessionId => set({ sessionId }),
 
         // Carregar dados do formulário do backend
-        loadFormData: data =>
+        loadFormData: data => {
+          console.log('📥 Carregando dados da sessão:', data);
           set({
             currentStepIndex: data.currentStepIndex,
             answers: data.answers,
-          }),
+          });
+        },
 
         // Definir resposta de uma pergunta
         setAnswer: (questionId, value) =>

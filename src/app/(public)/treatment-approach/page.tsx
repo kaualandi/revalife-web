@@ -5,108 +5,70 @@ import { FormNavigation } from '@/components/form/form-navigation';
 import { FormFinalLoading } from '@/components/form/form-final-loading';
 import { FormFinalMessage } from '@/components/form/form-final-message';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
-import { useFormAutoSave } from '@/hooks/use-form-autosave';
-import { useFormSession } from '@/hooks/use-form-session';
+import { useAutoSave } from '@/hooks/use-auto-save';
+import { useGetSession, useSubmitSession } from '@/hooks/use-session-queries';
 import { treatmentFormConfig } from '@/config/treatment-form.config';
-import type { FormAnswers } from '@/types/form.types';
 import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export default function TreatmentApproachPage() {
-  const {
-    currentStepIndex,
-    answers,
-    nextStep,
-    previousStep,
-    setIsSubmitting,
-    sessionId,
-  } = useTreatmentFormStore();
-  const { initializeSession, isLoading: isLoadingSession } = useFormSession();
+  const router = useRouter();
+  const { currentStepIndex, answers, nextStep, previousStep, sessionId } =
+    useTreatmentFormStore();
+
+  // Carregar sessão do backend
+  const { isLoading: isLoadingSession } = useGetSession(sessionId);
+
+  // Auto-save com debounce de 2s
+  const { isSaving, saveNow } = useAutoSave(!!sessionId);
+
+  // Submit do formulário
+  const submitSession = useSubmitSession();
+
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [showFinalLoading, setShowFinalLoading] = useState(false);
   const [showFinalMessage, setShowFinalMessage] = useState(false);
   const [isAdvancing, setIsAdvancing] = useState(false);
 
-  // Debug dos estados
-  useEffect(() => {
-    console.log('States:', { showFinalLoading, showFinalMessage });
-  }, [showFinalLoading, showFinalMessage]);
-
   const currentStep = treatmentFormConfig.steps[currentStepIndex];
   const isLastStep = currentStepIndex === treatmentFormConfig.steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
 
-  // Inicializa/carrega sessão ao montar componente
+  // Redirecionar para home se não tem sessão
   useEffect(() => {
-    const init = async () => {
-      // Se não tem sessionId, redireciona para home
-      if (!sessionId) {
-        window.location.href = '/';
-        return;
-      }
-
-      // Carrega dados da sessão
-      await initializeSession();
-    };
-
-    init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Função de save para o backend
-  const handleSave = async (formAnswers: FormAnswers) => {
-    if (!sessionId) return;
-
-    // TODO: Implementar chamada real para o backend
-    console.log('Auto-saving:', { sessionId, answers: formAnswers });
-
-    // Simulando chamada API
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Exemplo de chamada real:
-    // await fetch(`/api/treatment-form/session/${sessionId}`, {
-    //   method: 'PATCH',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     currentStepIndex,
-    //     answers: formAnswers,
-    //   }),
-    // });
-  };
-
-  // Hook de auto-save com debounce
-  const { isSaving, saveNow } = useFormAutoSave({
-    answers,
-    onSave: handleSave,
-    delay: 2000, // 2 segundos após parar de digitar
-    enabled: !!sessionId, // Só salva se tem sessionId
-  });
+    if (!sessionId && !isLoadingSession) {
+      router.push('/');
+    }
+  }, [sessionId, isLoadingSession, router]);
 
   // Função ao clicar em Continuar
   const handleContinue = () => {
-    // Trigger save em background (não await)
-    saveNow();
-
     if (isLastStep) {
-      // Mostra loading final
-      setIsSubmitting(true);
+      // Salvar antes de submeter
+      saveNow();
+
+      // Mostrar loading final
       setShowFinalLoading(true);
 
-      // Salva dados finais no backend
-      // TODO: Implementar submit final
-      console.log('Submitting final form:', { sessionId, answers });
-
-      // Exemplo:
-      // fetch(`/api/treatment-form/session/${sessionId}/submit`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ answers }),
-      // })
+      // Submeter formulário para o backend
+      submitSession.mutate(
+        { answers },
+        {
+          onSuccess: () => {
+            // Loading já está mostrando, aguardar conclusão
+          },
+          onError: () => {
+            // Em caso de erro, voltar para o formulário
+            setShowFinalLoading(false);
+          },
+        }
+      );
     } else {
-      // Avança para próximo step
+      // Avançar para próximo step (sem salvar - o auto-save vai fazer isso)
       setDirection('forward');
       nextStep();
     }
@@ -114,8 +76,7 @@ export default function TreatmentApproachPage() {
 
   // Função chamada quando o loading final termina
   const handleFinalLoadingComplete = useCallback(() => {
-    console.log('Loading complete, showing final message');
-    // Desativa o loading e mostra a mensagem final
+    // Desativar loading e mostrar mensagem final
     setShowFinalLoading(false);
     setShowFinalMessage(true);
   }, []);
