@@ -12,7 +12,7 @@ export default function Home() {
 
   // Criar sessão automaticamente ao montar o componente
   useEffect(() => {
-    if (!sessionId && !startSession.isPending) {
+    if (!sessionId && !startSession.isPending && !startSession.isError) {
       startSession.mutate(undefined, {
         onSuccess: () => {
           router.push('/treatment-approach');
@@ -24,11 +24,30 @@ export default function Home() {
     }
   }, [sessionId, startSession, router]);
 
-  // Mostrar loading enquanto cria sessão
+  // Mostrar loading ou erro
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <p className="text-muted-foreground text-lg">Iniciando formulário...</p>
+        {startSession.isError ? (
+          <>
+            <p className="text-destructive mb-2 text-lg font-medium">
+              Erro ao iniciar formulário
+            </p>
+            <p className="text-muted-foreground mb-4 text-sm">
+              Não foi possível conectar ao servidor. Tente novamente.
+            </p>
+            <button
+              onClick={() => startSession.reset()}
+              className="text-primary hover:underline"
+            >
+              Tentar novamente
+            </button>
+          </>
+        ) : (
+          <p className="text-muted-foreground text-lg">
+            Iniciando formulário...
+          </p>
+        )}
       </div>
     </div>
   );
