@@ -21,7 +21,8 @@ export default function TreatmentApproachPage() {
     useTreatmentFormStore();
 
   // Carregar sessão do backend
-  const { isLoading: isLoadingSession } = useGetSession(sessionId);
+  const { isLoading: isLoadingSession, isError: isErrorSession } =
+    useGetSession(sessionId);
 
   // Auto-save com debounce de 2s
   const { isSaving, saveNow } = useAutoSave(!!sessionId);
@@ -38,12 +39,12 @@ export default function TreatmentApproachPage() {
   const isLastStep = currentStepIndex === treatmentFormConfig.steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
 
-  // Redirecionar para home se não tem sessão
+  // Redirecionar para home se não tem sessão ou se deu erro
   useEffect(() => {
-    if (!sessionId && !isLoadingSession) {
+    if ((!sessionId && !isLoadingSession) || isErrorSession) {
       router.push('/');
     }
-  }, [sessionId, isLoadingSession, router]);
+  }, [sessionId, isLoadingSession, isErrorSession, router]);
 
   // Função ao clicar em Continuar
   const handleContinue = () => {

@@ -74,10 +74,12 @@ export function useGetSession(sessionId: string | null) {
       const error = query.error as unknown as ApiError;
       console.error('❌ Erro ao carregar sessão:', error);
 
-      // Se a sessão não existe, limpar sessionId
-      if (error.statusCode === 404) {
-        useTreatmentFormStore.getState().setSessionId(null);
-      }
+      // Limpar sessionId para forçar criação de nova sessão
+      useTreatmentFormStore.getState().setSessionId(null);
+
+      toast.error('Sessão inválida', {
+        description: 'Criando nova sessão...',
+      });
     }
   }, [query.error]);
 
