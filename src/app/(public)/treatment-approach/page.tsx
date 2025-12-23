@@ -36,7 +36,25 @@ export default function TreatmentApproachPage() {
   const [isAdvancing, setIsAdvancing] = useState(false);
 
   const currentStep = treatmentFormConfig.steps[currentStepIndex];
-  const isLastStep = currentStepIndex === treatmentFormConfig.steps.length - 1;
+
+  // Verifica se o step atual é o último step visível
+  const isLastVisibleStep = () => {
+    const { isStepVisible } = useTreatmentFormStore.getState();
+
+    // Verifica se há algum step visível após o atual
+    for (
+      let i = currentStepIndex + 1;
+      i < treatmentFormConfig.steps.length;
+      i++
+    ) {
+      if (isStepVisible(i)) {
+        return false; // Existe um próximo step visível
+      }
+    }
+    return true; // Não há próximos steps visíveis
+  };
+
+  const isLastStep = isLastVisibleStep();
   const isFirstStep = currentStepIndex === 0;
 
   // Redirecionar para home se não tem sessão ou se deu erro

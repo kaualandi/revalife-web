@@ -140,8 +140,13 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
               nextIndex++;
             }
 
+            // Se passou do último step, mantém no step atual (não avança)
+            if (nextIndex > maxStep) {
+              return { currentStepIndex: state.currentStepIndex };
+            }
+
             return {
-              currentStepIndex: Math.min(nextIndex, maxStep),
+              currentStepIndex: nextIndex,
             };
           }),
 
