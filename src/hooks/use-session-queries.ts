@@ -60,6 +60,22 @@ export function useGetSession(sessionId: string | null) {
   useEffect(() => {
     // Sincronizar APENAS na primeira vez que os dados chegam (isSuccess transição)
     if (query.data && query.isSuccess && !query.isFetching) {
+      // Verificar se a sessão está com status diferente de IN_PROGRESS
+      if (query.data.status !== 'IN_PROGRESS') {
+        console.log(
+          '⚠️ Sessão não está mais ativa. Limpando e criando nova...'
+        );
+
+        // Limpar sessão do Zustand
+        useTreatmentFormStore.getState().resetForm();
+        useTreatmentFormStore.getState().setSessionId(null);
+
+        toast.error('Sessão expirada', {
+          description: 'Iniciando nova sessão...',
+        });
+        return;
+      }
+
       loadFormData({
         currentStepIndex: query.data.currentStep,
         answers: query.data.answers,
@@ -140,10 +156,6 @@ export function useSubmitSession() {
     mutationFn: (data: SubmitSessionDto) =>
       sessionApi.submitSession(sessionId || '', data),
     onSuccess: () => {
-      toast.success('Formulário enviado!', {
-        description: 'Suas respostas foram salvas com sucesso',
-      });
-
       // Invalidar cache da sessão
       queryClient.invalidateQueries({ queryKey: sessionKeys.all });
 

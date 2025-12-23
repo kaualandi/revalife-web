@@ -46,18 +46,20 @@ export const generateQuestionSchema = (question: Question) => {
 
     case 'text':
       schema = textSchema;
-      if (question.validation?.min) {
+      if (question.validation?.minLength || question.validation?.min) {
+        const minValue =
+          question.validation.minLength || question.validation.min || 0;
         schema = (schema as z.ZodString).min(
-          question.validation.min,
-          question.validation.message ||
-            `Mínimo de ${question.validation.min} caracteres`
+          minValue,
+          question.validation.message || `Mínimo de ${minValue} caracteres`
         );
       }
-      if (question.validation?.max) {
+      if (question.validation?.maxLength || question.validation?.max) {
+        const maxValue =
+          question.validation.maxLength || question.validation.max || 0;
         schema = (schema as z.ZodString).max(
-          question.validation.max,
-          question.validation.message ||
-            `Máximo de ${question.validation.max} caracteres`
+          maxValue,
+          question.validation.message || `Máximo de ${maxValue} caracteres`
         );
       }
       if (question.validation?.pattern) {
@@ -70,11 +72,20 @@ export const generateQuestionSchema = (question: Question) => {
 
     case 'textarea':
       schema = textSchema;
-      if (question.validation?.min) {
+      if (question.validation?.minLength || question.validation?.min) {
+        const minValue =
+          question.validation.minLength || question.validation.min || 0;
         schema = (schema as z.ZodString).min(
-          question.validation.min,
-          question.validation.message ||
-            `Mínimo de ${question.validation.min} caracteres`
+          minValue,
+          question.validation.message || `Mínimo de ${minValue} caracteres`
+        );
+      }
+      if (question.validation?.maxLength || question.validation?.max) {
+        const maxValue =
+          question.validation.maxLength || question.validation.max || 0;
+        schema = (schema as z.ZodString).max(
+          maxValue,
+          question.validation.message || `Máximo de ${maxValue} caracteres`
         );
       }
       break;

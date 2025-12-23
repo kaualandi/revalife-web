@@ -8,7 +8,7 @@ import { useTreatmentFormStore } from '@/stores/treatment-form-store';
 import { useAutoSave } from '@/hooks/use-auto-save';
 import { useGetSession, useSubmitSession } from '@/hooks/use-session-queries';
 import { treatmentFormConfig } from '@/config/treatment-form.config';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -59,8 +59,20 @@ export default function TreatmentApproachPage() {
       submitSession.mutate(
         { answers },
         {
-          onSuccess: () => {
-            // Loading já está mostrando, aguardar conclusão
+          onSuccess: data => {
+            // Limpar sessão do store
+            // useTreatmentFormStore.getState().resetForm();
+            // useTreatmentFormStore.getState().setSessionId(null);
+
+            // Processar resposta baseada no status
+            if (data.status === 'APPROVED' && data.productUrl) {
+              // Redirecionar para URL do produto (mesma aba)
+              window.location.href = data.productUrl;
+            } else if (data.status === 'REJECTED') {
+              // Mostrar mensagem de rejeição
+              setShowFinalLoading(false);
+              setShowFinalMessage(true);
+            }
           },
           onError: () => {
             // Em caso de erro, voltar para o formulário
@@ -74,13 +86,6 @@ export default function TreatmentApproachPage() {
       nextStep();
     }
   };
-
-  // Função chamada quando o loading final termina
-  const handleFinalLoadingComplete = useCallback(() => {
-    // Desativar loading e mostrar mensagem final
-    setShowFinalLoading(false);
-    setShowFinalMessage(true);
-  }, []);
 
   // Função para auto-advance ao selecionar radio
   const handleAutoAdvance = () => {
@@ -122,7 +127,7 @@ export default function TreatmentApproachPage() {
 
   // Mostra tela de loading final após submeter
   if (showFinalLoading) {
-    return <FormFinalLoading onComplete={handleFinalLoadingComplete} />;
+    return <FormFinalLoading />;
   }
 
   // Mostra mensagem final após loading

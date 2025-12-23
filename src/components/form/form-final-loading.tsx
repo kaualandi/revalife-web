@@ -3,15 +3,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-interface FormFinalLoadingProps {
-  onComplete: () => void;
-}
-
-export function FormFinalLoading({ onComplete }: FormFinalLoadingProps) {
+export function FormFinalLoading() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Atualiza o progresso de 0 a 100% em 2 segundos
+    // Atualiza o progresso de 0 a 100% em 2 segundos e continua em loop
     const duration = 2000; // 2 segundos
     const intervalTime = 20; // Atualiza a cada 20ms (50x por segundo)
     const increment = (intervalTime / duration) * 100;
@@ -20,17 +16,14 @@ export function FormFinalLoading({ onComplete }: FormFinalLoadingProps) {
       setProgress(prev => {
         const next = prev + increment;
         if (next >= 100) {
-          clearInterval(interval);
-          // Aguarda um pouco depois de chegar a 100% antes de completar
-          setTimeout(() => onComplete(), 200);
-          return 100;
+          return 0; // Reinicia o loop
         }
         return next;
       });
     }, intervalTime);
 
     return () => clearInterval(interval);
-  }, [onComplete]);
+  }, []);
 
   return (
     <motion.div

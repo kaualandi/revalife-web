@@ -40,12 +40,16 @@ export interface SubmitSessionDto {
   answers: FormAnswers;
 }
 
+// Status de aprovação
+export type ApprovalStatus = 'APPROVED' | 'REJECTED';
+
 // Resposta ao submeter formulário
 export interface SubmitSessionResponse {
   sessionId: string;
-  status: SessionStatus;
+  status: ApprovalStatus;
   submittedAt: string;
   message: string;
+  productUrl?: string; // URL do produto (apenas se APPROVED)
 }
 
 // Erro da API

@@ -1,6 +1,5 @@
 import type { FormConfig } from '@/types/form.types';
 
-
 // Configuração completa do formulário de tratamento médico
 export const treatmentFormConfig: FormConfig = {
   steps: [
@@ -643,7 +642,7 @@ export const treatmentFormConfig: FormConfig = {
           required: true,
           validation: {
             minLength: 10,
-            message: 'Por favor, descreva sua experiência',
+            message: 'Por favor, descreva melhor sua experiência',
           },
         },
       ],
