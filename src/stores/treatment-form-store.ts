@@ -15,9 +15,11 @@ interface TreatmentFormState {
   answers: FormAnswers;
   isSubmitting: boolean;
   isLoading: boolean;
+  hasHydrated: boolean;
 
   // Ações
   setSessionId: (sessionId: string | null) => void;
+  setHasHydrated: (hasHydrated: boolean) => void;
   setAnswer: (questionId: string, value: string | string[]) => void;
   loadFormData: (data: {
     currentStepIndex: number;
@@ -93,9 +95,11 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         answers: {},
         isSubmitting: false,
         isLoading: false,
+        hasHydrated: false,
 
         // Definir session ID
         setSessionId: sessionId => set({ sessionId }),
+        setHasHydrated: hasHydrated => set({ hasHydrated }),
 
         // Carregar dados do formulário do backend
         loadFormData: data => {
@@ -287,6 +291,9 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         partialize: state => ({
           sessionId: state.sessionId,
         }),
+        onRehydrateStorage: () => state => {
+          state?.setHasHydrated(true);
+        },
       }
     )
   )

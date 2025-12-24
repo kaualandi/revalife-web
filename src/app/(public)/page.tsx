@@ -3,31 +3,40 @@
 import { useStartSession } from '@/hooks/use-session-queries';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function Home() {
   const router = useRouter();
   const startSession = useStartSession();
-  const { sessionId } = useTreatmentFormStore();
+  const { sessionId, hasHydrated } = useTreatmentFormStore();
+  const hasAttemptedStart = useRef(false);
 
   // Criar sessão automaticamente ao montar o componente
   useEffect(() => {
+    // Aguardar hidratação do Zustand
+    if (!hasHydrated) return;
+
     // Preservar query params (UTM's) no redirecionamento
     const queryString =
       typeof window !== 'undefined' ? window.location.search : '';
     const targetUrl = `/treatment-approach${queryString}`;
 
-    if (!sessionId && !startSession.isPending && !startSession.isError) {
+    // Se já tem sessão, redirecionar direto
+    if (sessionId) {
+      router.push(targetUrl);
+      return;
+    }
+
+    // Criar nova sessão apenas uma vez
+    if (!hasAttemptedStart.current && !startSession.isPending) {
+      hasAttemptedStart.current = true;
       startSession.mutate(undefined, {
         onSuccess: () => {
           router.push(targetUrl);
         },
       });
-    } else if (sessionId) {
-      // Se já tem sessão, redirecionar direto
-      router.push(targetUrl);
     }
-  }, [sessionId, startSession, router]);
+  }, [sessionId, hasHydrated, startSession, router]);
 
   // Mostrar loading ou erro
   return (
