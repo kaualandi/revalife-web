@@ -5,6 +5,7 @@ import type {
   UpdateSessionResponse,
   SubmitSessionDto,
   SubmitSessionResponse,
+  UtmParameters,
 } from '@/types/api.types';
 import { fetchApi } from '@/lib/api-client';
 
@@ -48,5 +49,17 @@ export const sessionApi = {
     fetchApi<SubmitSessionResponse>(`/sessions/${sessionId}/submit`, {
       method: 'POST',
       body: JSON.stringify(data),
+    }),
+
+  /**
+   * Registra UTM parameters da sessão
+   * @param sessionId - UUID da sessão
+   * @param utms - Parâmetros UTM da URL
+   * @returns Promise com confirmação do registro
+   */
+  registerUtms: (sessionId: string, utms: UtmParameters) =>
+    fetchApi<void>(`/sessions/${sessionId}/utms`, {
+      method: 'POST',
+      body: JSON.stringify(utms),
     }),
 };

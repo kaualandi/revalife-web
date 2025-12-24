@@ -12,15 +12,20 @@ export default function Home() {
 
   // Criar sessão automaticamente ao montar o componente
   useEffect(() => {
+    // Preservar query params (UTM's) no redirecionamento
+    const queryString =
+      typeof window !== 'undefined' ? window.location.search : '';
+    const targetUrl = `/treatment-approach${queryString}`;
+
     if (!sessionId && !startSession.isPending && !startSession.isError) {
       startSession.mutate(undefined, {
         onSuccess: () => {
-          router.push('/treatment-approach');
+          router.push(targetUrl);
         },
       });
     } else if (sessionId) {
       // Se já tem sessão, redirecionar direto
-      router.push('/treatment-approach');
+      router.push(targetUrl);
     }
   }, [sessionId, startSession, router]);
 

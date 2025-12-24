@@ -2,6 +2,7 @@ import type {
   UpdateSessionDto,
   SubmitSessionDto,
   ApiError,
+  UtmParameters,
 } from '@/types/api.types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
@@ -81,6 +82,52 @@ export function useGetSession(sessionId: string | null) {
         answers: query.data.answers,
       });
       console.log('✅ Sessão carregada:', sessionId);
+
+      // Extrair e enviar UTM's da URL
+      const extractUtmsFromUrl = (): UtmParameters | null => {
+        if (typeof window === 'undefined') return null;
+
+        const params = new URLSearchParams(window.location.search);
+        const utms: UtmParameters = {};
+
+        const utmSource = params.get('utm_source');
+        const utmMedium = params.get('utm_medium');
+        const utmCampaign = params.get('utm_campaign');
+        const utmContent = params.get('utm_content');
+        const utmTerm = params.get('utm_term');
+
+        if (utmSource) utms.utm_source = utmSource;
+        if (utmMedium) utms.utm_medium = utmMedium;
+        if (utmCampaign) utms.utm_campaign = utmCampaign;
+        if (utmContent) utms.utm_content = utmContent;
+        if (utmTerm) utms.utm_term = utmTerm;
+
+        return Object.keys(utms).length > 0 ? utms : null;
+      };
+
+      const utms = extractUtmsFromUrl();
+      if (utms && sessionId) {
+        sessionApi
+          .registerUtms(sessionId, utms)
+          .then(() => {
+            console.log("✅ UTM's registradas:", utms);
+            
+            // Remover UTM's da URL após salvar
+            if (typeof window !== 'undefined') {
+              const url = new URL(window.location.href);
+              url.searchParams.delete('utm_source');
+              url.searchParams.delete('utm_medium');
+              url.searchParams.delete('utm_campaign');
+              url.searchParams.delete('utm_content');
+              url.searchParams.delete('utm_term');
+              
+              // Atualizar URL sem reload
+              window.history.replaceState({}, '', url.toString());
+              console.log('✅ UTM\'s removidas da URL');
+            }
+          })
+          .catch(err => console.error("❌ Erro ao registrar UTM's:", err));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query.isSuccess]); // Roda apenas quando isSuccess muda (primeira vez)

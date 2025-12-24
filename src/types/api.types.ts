@@ -43,6 +43,15 @@ export interface SubmitSessionDto {
 // Status de aprovação
 export type ApprovalStatus = 'APPROVED' | 'REJECTED';
 
+// UTM parameters
+export interface UtmParameters {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+  utm_term?: string;
+}
+
 // Resposta ao submeter formulário
 export interface SubmitSessionResponse {
   sessionId: string;
@@ -50,6 +59,8 @@ export interface SubmitSessionResponse {
   submittedAt: string;
   message: string;
   productUrl?: string; // URL do produto (apenas se APPROVED)
+  leadId?: number;
+  latestUtm?: UtmParameters; // UTM's mais recentes (apenas se APPROVED)
 }
 
 // Erro da API

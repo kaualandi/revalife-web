@@ -84,8 +84,30 @@ export default function TreatmentApproachPage() {
 
             // Processar resposta baseada no status
             if (data.status === 'APPROVED' && data.productUrl) {
+              // Concatenar UTM's na productUrl se existirem
+              let finalUrl = data.productUrl;
+
+              if (data.latestUtm) {
+                const url = new URL(data.productUrl);
+                const utms = data.latestUtm;
+
+                if (utms.utm_source)
+                  url.searchParams.set('utm_source', utms.utm_source);
+                if (utms.utm_medium)
+                  url.searchParams.set('utm_medium', utms.utm_medium);
+                if (utms.utm_campaign)
+                  url.searchParams.set('utm_campaign', utms.utm_campaign);
+                if (utms.utm_content)
+                  url.searchParams.set('utm_content', utms.utm_content);
+                if (utms.utm_term)
+                  url.searchParams.set('utm_term', utms.utm_term);
+
+                finalUrl = url.toString();
+                console.log("✅ URL com UTM's:", finalUrl);
+              }
+
               // Redirecionar para URL do produto (mesma aba)
-              window.location.href = data.productUrl;
+              window.location.href = finalUrl;
             } else if (data.status === 'REJECTED') {
               // Mostrar mensagem de rejeição
               setShowFinalLoading(false);
