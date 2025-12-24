@@ -111,7 +111,7 @@ export function useGetSession(sessionId: string | null) {
           .registerUtms(sessionId, utms)
           .then(() => {
             console.log("✅ UTM's registradas:", utms);
-            
+
             // Remover UTM's da URL após salvar
             if (typeof window !== 'undefined') {
               const url = new URL(window.location.href);
@@ -120,10 +120,10 @@ export function useGetSession(sessionId: string | null) {
               url.searchParams.delete('utm_campaign');
               url.searchParams.delete('utm_content');
               url.searchParams.delete('utm_term');
-              
+
               // Atualizar URL sem reload
               window.history.replaceState({}, '', url.toString());
-              console.log('✅ UTM\'s removidas da URL');
+              console.log("✅ UTM's removidas da URL");
             }
           })
           .catch(err => console.error("❌ Erro ao registrar UTM's:", err));
