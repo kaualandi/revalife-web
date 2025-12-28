@@ -5,6 +5,7 @@ import { FormNavigation } from '@/components/form/form-navigation';
 import { FormFinalLoading } from '@/components/form/form-final-loading';
 import { FormFinalMessage } from '@/components/form/form-final-message';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
+import { useProductAccessStore } from '@/stores/product-access-store';
 import { useAutoSave } from '@/hooks/use-auto-save';
 import { useGetSession, useSubmitSession } from '@/hooks/use-session-queries';
 import { treatmentFormConfig } from '@/config/treatment-form.config';
@@ -19,6 +20,7 @@ export default function TreatmentApproachPage() {
   const router = useRouter();
   const { currentStepIndex, answers, nextStep, previousStep, sessionId } =
     useTreatmentFormStore();
+  const { authorizeProduct } = useProductAccessStore();
 
   // Carregar sessão do backend
   const { isLoading: isLoadingSession, isError: isErrorSession } =
@@ -84,30 +86,14 @@ export default function TreatmentApproachPage() {
 
             // Processar resposta baseada no status
             if (data.status === 'APPROVED' && data.productUrl) {
-              // Concatenar UTM's na productUrl se existirem
-              let finalUrl = data.productUrl;
+              // O productUrl agora é o ID do produto (ex: pv4, pv5, etc.)
+              const productId = data.productUrl;
 
-              if (data.latestUtm) {
-                const url = new URL(data.productUrl);
-                const utms = data.latestUtm;
+              // Autorizar acesso ao produto na memória
+              authorizeProduct(productId, sessionId || '');
 
-                if (utms.utm_source)
-                  url.searchParams.set('utm_source', utms.utm_source);
-                if (utms.utm_medium)
-                  url.searchParams.set('utm_medium', utms.utm_medium);
-                if (utms.utm_campaign)
-                  url.searchParams.set('utm_campaign', utms.utm_campaign);
-                if (utms.utm_content)
-                  url.searchParams.set('utm_content', utms.utm_content);
-                if (utms.utm_term)
-                  url.searchParams.set('utm_term', utms.utm_term);
-
-                finalUrl = url.toString();
-                console.log("✅ URL com UTM's:", finalUrl);
-              }
-
-              // Redirecionar para URL do produto (mesma aba)
-              window.location.href = finalUrl;
+              // Redirecionar para página do produto (mantém estado em memória)
+              router.push(`/product/${productId}`);
             } else if (data.status === 'REJECTED') {
               // Mostrar mensagem de rejeição
               setShowFinalLoading(false);
