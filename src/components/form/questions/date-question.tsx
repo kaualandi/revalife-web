@@ -50,7 +50,7 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
-        const maxDate = question.validation?.maxDate || new Date();
+        const maxDate = new Date(question.validation?.maxDate || '');
         const currentYear = maxDate.getFullYear();
         const minYear = currentYear - 120;
         const years = Array.from(

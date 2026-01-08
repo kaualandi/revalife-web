@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react-hooks/incompatible-library */
 
 import type { FormStep } from '@/types/form.types';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
@@ -54,7 +55,7 @@ export function FormStepComponent({
       }
     });
     return () => subscription.unsubscribe();
-  }, [form.watch, setAnswer]);
+  }, [form, setAnswer]);
 
   // Reseta form quando muda de step (usando step.id para evitar flicker)
   useEffect(() => {
@@ -66,7 +67,7 @@ export function FormStepComponent({
       {} as Record<string, string | string[]>
     );
     form.reset(newDefaults);
-  }, [step.id]); // Usa step.id ao invés de currentStepIndex
+  }, [step.id, answers, form, visibleQuestions]); // Usa step.id ao invés de currentStepIndex
 
   // Verifica se todas as perguntas visíveis estão respondidas
   const handleRadioSelect = () => {

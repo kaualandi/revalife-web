@@ -1,69 +1,13 @@
 'use client';
 
-import { useStartSession } from '@/hooks/use-session-queries';
-import { useTreatmentFormStore } from '@/stores/treatment-form-store';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 export default function Home() {
-  const router = useRouter();
-  const startSession = useStartSession();
-  const { sessionId, hasHydrated } = useTreatmentFormStore();
-  const hasAttemptedStart = useRef(false);
-
-  // Criar sessão automaticamente ao montar o componente
-  useEffect(() => {
-    // Aguardar hidratação do Zustand
-    if (!hasHydrated) return;
-
-    // Preservar query params (UTM's) no redirecionamento
-    const queryString =
-      typeof window !== 'undefined' ? window.location.search : '';
-    const targetUrl = `/treatment-approach${queryString}`;
-
-    // Se já tem sessão, redirecionar direto
-    if (sessionId) {
-      router.push(targetUrl);
-      return;
-    }
-
-    // Criar nova sessão apenas uma vez
-    if (!hasAttemptedStart.current && !startSession.isPending) {
-      hasAttemptedStart.current = true;
-      startSession.mutate(undefined, {
-        onSuccess: () => {
-          router.push(targetUrl);
-        },
-      });
-    }
-  }, [sessionId, hasHydrated, startSession, router]);
-
-  // Mostrar loading ou erro
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        {startSession.isError ? (
-          <>
-            <p className="text-destructive mb-2 text-lg font-medium">
-              Erro ao iniciar formulário
-            </p>
-            <p className="text-muted-foreground mb-4 text-sm">
-              Não foi possível conectar ao servidor. Tente novamente.
-            </p>
-            <button
-              onClick={() => startSession.reset()}
-              className="text-primary hover:underline"
-            >
-              Tentar novamente
-            </button>
-          </>
-        ) : (
-          <p className="text-muted-foreground text-lg">
-            Iniciando formulário...
-          </p>
-        )}
-      </div>
-    </div>
+    <ErrorMessage
+      title="Formulário não encontrado"
+      message="Para acessar o formulário, você precisa usar um link específico. Por favor, verifique o link que você recebeu ou entre em contato com o suporte."
+    />
   );
 }
 
