@@ -197,13 +197,15 @@ export default function TreatmentFormPage() {
             <ChevronLeft className="h-5 w-5" />
           </Button>
         )}
-        <Image
-          src="/images/logo.svg"
-          alt="Revolife Plus"
-          className="w-24"
-          width={150}
-          height={15}
-        />
+        {formConfig?.logoUrl && (
+          <Image
+            src={formConfig.logoUrl}
+            alt={formConfig.name || 'Logo'}
+            className="w-24"
+            width={150}
+            height={15}
+          />
+        )}
       </header>
 
       <main className="mb-8 flex-1">

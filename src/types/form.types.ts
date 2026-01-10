@@ -102,6 +102,7 @@ export interface ApiFormConfig {
   name?: string;
   description?: string;
   isActive?: boolean;
+  logoUrl?: string | null;
   steps: FormStep[];
 }
 
