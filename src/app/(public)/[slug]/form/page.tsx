@@ -23,6 +23,7 @@ export default function TreatmentFormPage() {
   const {
     sessionId,
     formConfig,
+    logoUrl,
     formSlug: currentFormSlug,
     currentStepIndex,
     answers,
@@ -183,29 +184,33 @@ export default function TreatmentFormPage() {
     return <FormFinalMessage />;
   }
 
+  console.log({ logoUrl });
+
   return (
     <div className="flex min-h-screen flex-col px-3 pt-3 pb-3">
-      <header className="relative mb-14 flex items-center justify-center gap-4">
-        {!isFirstStep && (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handlePreviousStep}
-            size="icon"
-            className="absolute left-0 shrink-0"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-        )}
-        {formConfig?.logoUrl && (
+      <header className="relative mb-14 flex min-h-9 items-center justify-between gap-4">
+        <div className="flex-1">
+          {!isFirstStep && (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handlePreviousStep}
+              size="icon"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
+        {logoUrl && (
           <Image
-            src={formConfig.logoUrl}
+            src={logoUrl}
             alt={formConfig.name || 'Logo'}
-            className="w-24"
+            className="w-24 flex-1"
             width={150}
             height={15}
           />
         )}
+        <div className="flex-1" />
       </header>
 
       <main className="mb-8 flex-1">

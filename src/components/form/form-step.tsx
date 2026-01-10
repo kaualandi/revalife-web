@@ -67,7 +67,8 @@ export function FormStepComponent({
       {} as Record<string, string | string[]>
     );
     form.reset(newDefaults);
-  }, [step.id, answers, form, visibleQuestions]); // Usa step.id ao invés de currentStepIndex
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step.id]); // Apenas step.id - quando muda de step
 
   // Verifica se todas as perguntas visíveis estão respondidas
   const handleRadioSelect = () => {

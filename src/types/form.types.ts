@@ -11,7 +11,8 @@ export type QuestionType =
   | 'tel'
   | 'number'
   | 'integer'
-  | 'textarea';
+  | 'textarea'
+  | 'breather';
 
 // Condição para exibir uma pergunta baseada em respostas anteriores
 export interface QuestionCondition {
@@ -65,6 +66,7 @@ export interface Question {
   placeholder?: string;
   required?: boolean;
   observation?: string; // Texto de observação adicional
+  image?: string; // URL da imagem (para breather)
   options?: QuestionOption[]; // Para radio, select, checkbox
   validation?: QuestionValidation;
   showWhen?: QuestionCondition | QuestionConditionGroup; // Condições para exibir a pergunta
@@ -102,7 +104,6 @@ export interface ApiFormConfig {
   name?: string;
   description?: string;
   isActive?: boolean;
-  logoUrl?: string | null;
   steps: FormStep[];
 }
 

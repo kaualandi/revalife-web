@@ -12,6 +12,7 @@ interface TreatmentFormState {
   // Estado
   sessionId: number | null;
   formSlug: string | null;
+  logoUrl: string | null;
   formConfig: ApiFormConfig | null;
   currentStepIndex: number;
   answers: FormAnswers;
@@ -22,12 +23,15 @@ interface TreatmentFormState {
   // Ações
   setSessionId: (sessionId: number | null) => void;
   setFormSlug: (formSlug: string | null) => void;
+
   setFormConfig: (formConfig: ApiFormConfig | null) => void;
+  setLogoUrl: (logoUrl: string | null) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
   setAnswer: (questionId: string, value: string | string[]) => void;
   loadFormData: (data: {
     currentStepIndex: number;
     answers: FormAnswers;
+    logoUrl: string | null;
     formConfig: ApiFormConfig;
     formSlug: string;
   }) => void;
@@ -99,6 +103,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         // Estado inicial
         sessionId: null,
         formSlug: null,
+        logoUrl: null,
         formConfig: null,
         currentStepIndex: 0,
         answers: {},
@@ -115,6 +120,9 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         // Definir form config
         setFormConfig: formConfig => set({ formConfig }),
 
+        // Definir logo URL
+        setLogoUrl: logoUrl => set({ logoUrl }),
+
         setHasHydrated: hasHydrated => set({ hasHydrated }),
 
         // Carregar dados do formulário do backend
@@ -124,6 +132,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             currentStepIndex: data.currentStepIndex,
             answers: data.answers,
             formConfig: data.formConfig,
+            logoUrl: data.logoUrl,
             formSlug: data.formSlug,
           });
         },
