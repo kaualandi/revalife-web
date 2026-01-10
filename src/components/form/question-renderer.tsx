@@ -13,6 +13,7 @@ import { TelQuestion } from './questions/tel-question';
 import { NumberQuestion } from './questions/number-question';
 import { IntegerQuestion } from './questions/integer-question';
 import { ConsentQuestion } from './questions/consent-question';
+import { BreatherQuestion } from './questions/breather-question';
 
 interface QuestionRendererProps {
   question: Question;
@@ -76,6 +77,9 @@ export function QuestionRenderer({
 
     case 'textarea':
       return <TextareaQuestion question={question} form={form} />;
+
+    case 'breather':
+      return <BreatherQuestion question={question} form={form} />;
 
     default:
       return null;

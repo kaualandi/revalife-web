@@ -13,7 +13,9 @@ import { toast } from 'sonner';
 // Query Keys para gerenciamento de cache
 export const sessionKeys = {
   all: ['sessions'] as const,
-  detail: (id: string) => [...sessionKeys.all, id] as const,
+  detail: (id: number | null) => [...sessionKeys.all, id] as const,
+  forms: ['forms'] as const,
+  formBySlug: (slug: string) => [...sessionKeys.forms, slug] as const,
 };
 
 /**
@@ -21,13 +23,20 @@ export const sessionKeys = {
  * Cria uma nova sessão no backend e armazena o sessionId no Zustand
  */
 export function useStartSession() {
-  const { setSessionId } = useTreatmentFormStore();
+  const { setSessionId, setFormSlug, setFormConfig, setLogoUrl } =
+    useTreatmentFormStore();
 
   return useMutation({
-    mutationFn: sessionApi.startSession,
-    onSuccess: data => {
+    mutationFn: (formSlug: string) => sessionApi.startSession(formSlug),
+    onSuccess: (data, formSlug) => {
+      console.log('📦 Dados recebidos do backend:', data);
+
       setSessionId(data.sessionId);
-      console.log('✅ Sessão iniciada:', data.sessionId);
+      setFormSlug(formSlug);
+      setFormConfig(data.formConfig);
+      setLogoUrl(data.logoUrl);
+
+      console.log('✅ Sessão iniciada:', data.sessionId, 'Form:', formSlug);
     },
     onError: (error: ApiError) => {
       const message = Array.isArray(error.message)
@@ -46,12 +55,12 @@ export function useStartSession() {
  * Hook para buscar sessão existente
  * Carrega dados do backend e sincroniza com o Zustand store APENAS na primeira vez
  */
-export function useGetSession(sessionId: string | null) {
-  const { loadFormData } = useTreatmentFormStore();
+export function useGetSession(sessionId: number | null) {
+  const { loadFormData, formSlug: currentFormSlug } = useTreatmentFormStore();
 
   const query = useQuery({
-    queryKey: sessionKeys.detail(sessionId || ''),
-    queryFn: () => sessionApi.getSession(sessionId || ''),
+    queryKey: sessionKeys.detail(sessionId),
+    queryFn: () => sessionApi.getSession(sessionId as number),
     enabled: !!sessionId,
     staleTime: Infinity, // Nunca considerar stale - carregar apenas uma vez
     gcTime: Infinity, // Manter cache para sempre durante a sessão
@@ -77,11 +86,24 @@ export function useGetSession(sessionId: string | null) {
         return;
       }
 
+      // Usar formSlug do backend, ou manter o atual se não vier
+      const formSlug = query.data.formSlug || currentFormSlug || '';
+
       loadFormData({
         currentStepIndex: query.data.currentStep,
         answers: query.data.answers,
+        formConfig: query.data.formConfig,
+        formSlug,
+        logoUrl: query.data.logoUrl,
       });
-      console.log('✅ Sessão carregada:', sessionId);
+      console.log(
+        '✅ Sessão carregada:',
+        sessionId,
+        'FormSlug:',
+        formSlug,
+        'Step:',
+        query.data.currentStep
+      );
 
       // Extrair e enviar UTM's da URL
       const extractUtmsFromUrl = (): UtmParameters | null => {
@@ -159,11 +181,11 @@ export function useUpdateSession() {
 
   return useMutation({
     mutationFn: (data: UpdateSessionDto) =>
-      sessionApi.updateSession(sessionId || '', data),
+      sessionApi.updateSession(sessionId as number, data),
     onSuccess: (response, variables) => {
       // Atualizar cache local do React Query
       queryClient.setQueryData(
-        sessionKeys.detail(sessionId || ''),
+        sessionKeys.detail(sessionId),
         (
           old:
             | {
@@ -201,7 +223,7 @@ export function useSubmitSession() {
 
   return useMutation({
     mutationFn: (data: SubmitSessionDto) =>
-      sessionApi.submitSession(sessionId || '', data),
+      sessionApi.submitSession(sessionId as number, data),
     onSuccess: () => {
       // Invalidar cache da sessão
       queryClient.invalidateQueries({ queryKey: sessionKeys.all });

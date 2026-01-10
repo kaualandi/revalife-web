@@ -1,25 +1,57 @@
-import type { FormAnswers } from './form.types';
+import type { FormAnswers, ApiFormConfig } from './form.types';
 
 // Status da sessão
-export type SessionStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED' | 'ERROR';
+export type SessionStatus =
+  | 'IN_PROGRESS'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'COMPLETED'
+  | 'ABANDONED'
+  | 'ERROR';
 
-// Resposta ao iniciar sessão
+// DTO para iniciar sessão (agora com formSlug)
+export interface StartSessionDto {
+  formSlug: string;
+}
+
+// Resposta ao iniciar sessão (agora inclui formConfig e totalSteps)
 export interface StartSessionResponse {
-  sessionId: string;
-  createdAt: string;
+  sessionId: number;
+  formSlug?: string;
+  currentStep?: number;
+  totalSteps?: number;
+  answers?: FormAnswers;
   status: SessionStatus;
+  createdAt: string;
+  formConfig: ApiFormConfig;
+  logoUrl: string | null;
 }
 
-// Resposta ao buscar sessão
+// Resposta ao buscar sessão (agora inclui formConfig e totalSteps)
 export interface GetSessionResponse {
-  sessionId: string;
-  status: SessionStatus;
+  sessionId: number;
+  formSlug?: string;
   currentStep: number;
+  totalSteps?: number;
   answers: FormAnswers;
+  status: SessionStatus;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
   submittedAt?: string;
+  formConfig: ApiFormConfig;
+  logoUrl: string | null;
 }
+
+// Resposta ao listar formulários
+export interface GetFormsResponse {
+  slug: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+}
+
+// Resposta ao buscar formulário por slug
+export type GetFormBySlugResponse = ApiFormConfig;
 
 // DTO para atualizar sessão (auto-save)
 export interface UpdateSessionDto {
@@ -29,7 +61,7 @@ export interface UpdateSessionDto {
 
 // Resposta ao atualizar sessão
 export interface UpdateSessionResponse {
-  sessionId: string;
+  id: number;
   status: SessionStatus;
   currentStep: number;
   updatedAt: string;
@@ -54,13 +86,19 @@ export interface UtmParameters {
 
 // Resposta ao submeter formulário
 export interface SubmitSessionResponse {
-  sessionId: string;
+  id: number;
   status: ApprovalStatus;
   submittedAt: string;
   message: string;
   productUrl?: string; // URL do produto (apenas se APPROVED)
   leadId?: number;
   latestUtm?: UtmParameters; // UTM's mais recentes (apenas se APPROVED)
+}
+
+// Erro de validação
+export interface ValidationError {
+  questionId: string;
+  message: string;
 }
 
 // Erro da API
@@ -70,4 +108,5 @@ export interface ApiError {
   error: string;
   timestamp?: string;
   path?: string;
+  errors?: ValidationError[]; // Para erros de validação
 }

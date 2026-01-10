@@ -11,7 +11,8 @@ export type QuestionType =
   | 'tel'
   | 'number'
   | 'integer'
-  | 'textarea';
+  | 'textarea'
+  | 'breather';
 
 // Condição para exibir uma pergunta baseada em respostas anteriores
 export interface QuestionCondition {
@@ -34,6 +35,28 @@ export interface QuestionOption {
   description?: string; // Descrição adicional
 }
 
+// Validação estendida com campos do backend
+export interface QuestionValidation {
+  // Para text/textarea
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+
+  // Para number/integer
+  min?: number;
+  max?: number;
+
+  // Para date
+  minDate?: string; // ISO format
+  maxDate?: string; // ISO format
+
+  // Para checkbox
+  minSelected?: number;
+  maxSelected?: number;
+
+  message?: string;
+}
+
 // Configuração base de uma pergunta
 export interface Question {
   id: string;
@@ -43,17 +66,9 @@ export interface Question {
   placeholder?: string;
   required?: boolean;
   observation?: string; // Texto de observação adicional
+  image?: string; // URL da imagem (para breather)
   options?: QuestionOption[]; // Para radio, select, checkbox
-  validation?: {
-    min?: number;
-    max?: number;
-    minLength?: number;
-    maxLength?: number;
-    minDate?: Date;
-    maxDate?: Date;
-    pattern?: string;
-    message?: string;
-  };
+  validation?: QuestionValidation;
   showWhen?: QuestionCondition | QuestionConditionGroup; // Condições para exibir a pergunta
   grid?: {
     cols?: number; // Para layout de opções em grid
@@ -72,6 +87,23 @@ export interface FormStep {
 
 // Configuração completa do formulário
 export interface FormConfig {
+  steps: FormStep[];
+}
+
+// Metadata de um formulário
+export interface FormMetadata {
+  slug: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+}
+
+// Configuração completa do formulário da API
+export interface ApiFormConfig {
+  slug?: string;
+  name?: string;
+  description?: string;
+  isActive?: boolean;
   steps: FormStep[];
 }
 
