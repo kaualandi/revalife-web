@@ -1,5 +1,4 @@
 'use client';
-/* eslint-disable react-hooks/incompatible-library */
 
 import type { FormStep } from '@/types/form.types';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
@@ -19,9 +18,7 @@ export function FormStepComponent({
   step,
   onAutoAdvance,
 }: FormStepComponentProps) {
-  const { answers, setAnswer, currentStepIndex } = useTreatmentFormStore();
-  console.log(currentStepIndex);
-
+  const { answers, setAnswer } = useTreatmentFormStore();
   // Filtra perguntas visíveis baseado nas condições
   const visibleQuestions = step.questions.filter(q => {
     if (!q.showWhen) return true;

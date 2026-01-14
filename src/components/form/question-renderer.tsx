@@ -14,6 +14,7 @@ import { NumberQuestion } from './questions/number-question';
 import { IntegerQuestion } from './questions/integer-question';
 import { ConsentQuestion } from './questions/consent-question';
 import { BreatherQuestion } from './questions/breather-question';
+import { CpfQuestion } from './questions/cpf-question';
 
 interface QuestionRendererProps {
   question: Question;
@@ -68,6 +69,9 @@ export function QuestionRenderer({
 
     case 'tel':
       return <TelQuestion question={question} form={form} />;
+
+    case 'cpf':
+      return <CpfQuestion question={question} form={form} />;
 
     case 'number':
       return <NumberQuestion question={question} form={form} />;

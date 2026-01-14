@@ -150,6 +150,12 @@ export const generateQuestionSchema = (question: Question) => {
         );
       break;
 
+    case 'cpf':
+      schema = z
+        .string()
+        .regex(/^(?:\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$/, 'CPF inválido');
+      break;
+
     case 'number':
     case 'integer':
       schema = z.string().refine(

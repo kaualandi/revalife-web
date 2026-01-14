@@ -184,8 +184,6 @@ export default function TreatmentFormPage() {
     return <FormFinalMessage />;
   }
 
-  console.log({ logoUrl });
-
   return (
     <div className="flex min-h-screen flex-col px-3 pt-3 pb-3">
       <header className="relative mb-14 flex min-h-9 items-center justify-between gap-4">

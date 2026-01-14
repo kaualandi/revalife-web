@@ -9,6 +9,7 @@ export type QuestionType =
   | 'text'
   | 'email'
   | 'tel'
+  | 'cpf'
   | 'number'
   | 'integer'
   | 'textarea'
