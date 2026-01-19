@@ -25,6 +25,7 @@ export interface StartSessionResponse {
   createdAt: string;
   formConfig: ApiFormConfig;
   logoUrl: string | null;
+  gtmId: string | null;
 }
 
 // Resposta ao buscar sessão (agora inclui formConfig e totalSteps)
@@ -40,6 +41,7 @@ export interface GetSessionResponse {
   submittedAt?: string;
   formConfig: ApiFormConfig;
   logoUrl: string | null;
+  gtmId: string | null;
 }
 
 // Resposta ao listar formulários

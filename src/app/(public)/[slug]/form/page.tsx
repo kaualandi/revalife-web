@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
+import { GoogleTagManager } from '@next/third-parties/google';
 
 export default function TreatmentFormPage() {
   const router = useRouter();
@@ -245,6 +246,10 @@ export default function TreatmentFormPage() {
       <footer className="mt-auto">
         <FormNavigation onContinue={handleContinue} isSaving={isSaving} />
       </footer>
+
+      {sessionQuery.data?.gtmId && (
+        <GoogleTagManager gtmId={sessionQuery.data?.gtmId} />
+      )}
     </div>
   );
 }
