@@ -25,6 +25,7 @@ export interface StartSessionResponse {
   createdAt: string;
   formConfig: ApiFormConfig;
   logoUrl: string | null;
+  faviconUrl: string | null;
   gtmId: string | null;
 }
 
@@ -41,6 +42,7 @@ export interface GetSessionResponse {
   submittedAt?: string;
   formConfig: ApiFormConfig;
   logoUrl: string | null;
+  faviconUrl: string | null;
   gtmId: string | null;
 }
 
@@ -53,7 +55,15 @@ export interface GetFormsResponse {
 }
 
 // Resposta ao buscar formulário por slug
-export type GetFormBySlugResponse = ApiFormConfig;
+export interface GetFormBySlugResponse {
+  slug: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+  faviconUrl: string | null;
+  logoUrl: string | null;
+  formConfig?: ApiFormConfig;
+}
 
 // DTO para atualizar sessão (auto-save)
 export interface UpdateSessionDto {
@@ -98,6 +108,90 @@ export interface SubmitSessionResponse {
 }
 
 // Erro de validação
+
+// Product types based on Prisma schema
+export interface Product {
+  id: number;
+  slug: string;
+  formId: number;
+  isActive: boolean;
+
+  // Form relacionado
+  form: {
+    id: number;
+    slug: string;
+    name: string;
+    faviconUrl: string | null;
+    logoUrl: string | null;
+  };
+
+  // Informações básicas
+  title: string;
+  subtitle: string;
+
+  // Preços
+  originalPrice: number;
+  finalPrice: number;
+  discountPercent: number;
+  installments: number;
+  installmentValue: number;
+  periodLabel: string | null;
+
+  // Checkout
+  checkoutUrl: string;
+  checkoutCoupon: string | null;
+  checkoutParams: Record<string, string | number | boolean> | null;
+
+  // Imagens
+  heroImage1Url: string;
+  heroImage2Url: string;
+  includedImageUrl: string;
+
+  // Médico
+  doctorName: string | null;
+  doctorCrm: string | null;
+  doctorVideoUrl: string | null;
+
+  // Cores/Estilo
+  highlightColor: string;
+  highlightTextColor: string;
+  priceColor: string;
+  buttonColor: string;
+
+  // Conteúdo
+  whatIsIncluded: string[];
+  whatYouWillReceive: string[];
+  disclaimers: {
+    consultation: string;
+    prescription: string;
+    medication: string;
+    medicationNote: string;
+  };
+  planInfo: {
+    title: string;
+    description: string;
+    continuity: string;
+  };
+  nextSteps: Array<{
+    number: number;
+    title: string;
+    description: string;
+  }>;
+  footerDisclaimers: string[];
+
+  // Badges/Tags
+  showSuggestedBadge: boolean;
+
+  // SEO/Meta
+  metaTitle: string | null;
+  metaDescription: string | null;
+
+  // Order
+  displayOrder: number;
+
+  createdAt: string;
+  updatedAt: string;
+}
 export interface ValidationError {
   questionId: string;
   message: string;

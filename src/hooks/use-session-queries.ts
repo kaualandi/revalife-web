@@ -23,8 +23,13 @@ export const sessionKeys = {
  * Cria uma nova sessão no backend e armazena o sessionId no Zustand
  */
 export function useStartSession() {
-  const { setSessionId, setFormSlug, setFormConfig, setLogoUrl } =
-    useTreatmentFormStore();
+  const {
+    setSessionId,
+    setFormSlug,
+    setFormConfig,
+    setLogoUrl,
+    setFaviconUrl,
+  } = useTreatmentFormStore();
 
   return useMutation({
     mutationFn: (formSlug: string) => sessionApi.startSession(formSlug),
@@ -35,6 +40,7 @@ export function useStartSession() {
       setFormSlug(formSlug);
       setFormConfig(data.formConfig);
       setLogoUrl(data.logoUrl);
+      setFaviconUrl(data.faviconUrl);
 
       console.log('✅ Sessão iniciada:', data.sessionId, 'Form:', formSlug);
     },
@@ -95,6 +101,7 @@ export function useGetSession(sessionId: number | null) {
         formConfig: query.data.formConfig,
         formSlug,
         logoUrl: query.data.logoUrl,
+        faviconUrl: query.data.faviconUrl,
       });
       console.log(
         '✅ Sessão carregada:',
