@@ -241,10 +241,14 @@ function ProductPageContent({ product }: { product: Product }) {
           >
             R${product.finalPrice.toFixed(2).replace('.', ',')}
           </p>
-          <p className="text-gray-600">
-            ou {product.installments}x de R$
-            {product.installmentValue.toFixed(2).replace('.', ',')}
-          </p>
+          {product.installmentValue > 0 ? (
+            <p className="text-gray-600">
+              ou {product.installments}x de R$
+              {product.installmentValue.toFixed(2).replace('.', ',')}
+            </p>
+          ) : (
+            <p className="text-gray-600">Em até {product.installments}x</p>
+          )}
           {product.periodLabel && (
             <p className="text-sm font-medium text-gray-700">
               {product.periodLabel}
