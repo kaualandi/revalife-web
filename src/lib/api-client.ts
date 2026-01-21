@@ -1,3 +1,5 @@
+import type { Product } from '@/types/api.types';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 const API_TIMEOUT = parseInt(
   process.env.NEXT_PUBLIC_API_TIMEOUT || '10000',
@@ -83,4 +85,11 @@ export async function fetchApi<T>(
 
     throw error;
   }
+}
+
+/**
+ * Buscar produto por slug
+ */
+export async function getProductBySlug(slug: string) {
+  return fetchApi<Product>(`/products/slug/${slug}`);
 }

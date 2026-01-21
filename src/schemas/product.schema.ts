@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 export const productPricingSchema = z.object({
   originalPrice: z.number(),
   finalPrice: z.number(),
@@ -11,7 +10,8 @@ export const productPricingSchema = z.object({
 });
 
 export const productSchema = z.object({
-  id: z.string(),
+  id: z.number(),
+  slug: z.string(),
   title: z.string(),
   subtitle: z.string(),
   pricing: productPricingSchema,
