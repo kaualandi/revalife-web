@@ -13,6 +13,7 @@ interface TreatmentFormState {
   sessionId: number | null;
   formSlug: string | null;
   logoUrl: string | null;
+  faviconUrl: string | null;
   formConfig: ApiFormConfig | null;
   currentStepIndex: number;
   answers: FormAnswers;
@@ -26,12 +27,14 @@ interface TreatmentFormState {
 
   setFormConfig: (formConfig: ApiFormConfig | null) => void;
   setLogoUrl: (logoUrl: string | null) => void;
+  setFaviconUrl: (faviconUrl: string | null) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
   setAnswer: (questionId: string, value: string | string[]) => void;
   loadFormData: (data: {
     currentStepIndex: number;
     answers: FormAnswers;
     logoUrl: string | null;
+    faviconUrl: string | null;
     formConfig: ApiFormConfig;
     formSlug: string;
   }) => void;
@@ -104,6 +107,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         sessionId: null,
         formSlug: null,
         logoUrl: null,
+        faviconUrl: null,
         formConfig: null,
         currentStepIndex: 0,
         answers: {},
@@ -123,6 +127,9 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         // Definir logo URL
         setLogoUrl: logoUrl => set({ logoUrl }),
 
+        // Definir favicon URL
+        setFaviconUrl: faviconUrl => set({ faviconUrl }),
+
         setHasHydrated: hasHydrated => set({ hasHydrated }),
 
         // Carregar dados do formulário do backend
@@ -133,6 +140,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             answers: data.answers,
             formConfig: data.formConfig,
             logoUrl: data.logoUrl,
+            faviconUrl: data.faviconUrl,
             formSlug: data.formSlug,
           });
         },

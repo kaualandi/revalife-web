@@ -25,6 +25,7 @@ export interface StartSessionResponse {
   createdAt: string;
   formConfig: ApiFormConfig;
   logoUrl: string | null;
+  faviconUrl: string | null;
   gtmId: string | null;
 }
 
@@ -41,6 +42,7 @@ export interface GetSessionResponse {
   submittedAt?: string;
   formConfig: ApiFormConfig;
   logoUrl: string | null;
+  faviconUrl: string | null;
   gtmId: string | null;
 }
 
@@ -53,7 +55,15 @@ export interface GetFormsResponse {
 }
 
 // Resposta ao buscar formulário por slug
-export type GetFormBySlugResponse = ApiFormConfig;
+export interface GetFormBySlugResponse {
+  slug: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+  faviconUrl: string | null;
+  logoUrl: string | null;
+  formConfig?: ApiFormConfig;
+}
 
 // DTO para atualizar sessão (auto-save)
 export interface UpdateSessionDto {
