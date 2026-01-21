@@ -3,14 +3,17 @@ import type {
   Question,
   QuestionCondition,
   QuestionConditionGroup,
+  ApiFormConfig,
 } from '@/types/form.types';
-import { treatmentFormConfig } from '@/config/treatment-form.config';
 import { devtools, persist } from 'zustand/middleware';
 import { create } from 'zustand';
 
 interface TreatmentFormState {
   // Estado
-  sessionId: string | null;
+  sessionId: number | null;
+  formSlug: string | null;
+  logoUrl: string | null;
+  formConfig: ApiFormConfig | null;
   currentStepIndex: number;
   answers: FormAnswers;
   isSubmitting: boolean;
@@ -18,12 +21,19 @@ interface TreatmentFormState {
   hasHydrated: boolean;
 
   // Ações
-  setSessionId: (sessionId: string | null) => void;
+  setSessionId: (sessionId: number | null) => void;
+  setFormSlug: (formSlug: string | null) => void;
+
+  setFormConfig: (formConfig: ApiFormConfig | null) => void;
+  setLogoUrl: (logoUrl: string | null) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
   setAnswer: (questionId: string, value: string | string[]) => void;
   loadFormData: (data: {
     currentStepIndex: number;
     answers: FormAnswers;
+    logoUrl: string | null;
+    formConfig: ApiFormConfig;
+    formSlug: string;
   }) => void;
   nextStep: () => void;
   previousStep: () => void;
@@ -38,6 +48,7 @@ interface TreatmentFormState {
   isStepVisible: (stepIndex: number) => boolean;
   canProceedToNextStep: () => boolean;
   getCurrentProgress: () => number;
+  getTotalSteps: () => number;
 }
 
 // Verifica se uma condição é atendida
@@ -91,6 +102,9 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
       (set, get) => ({
         // Estado inicial
         sessionId: null,
+        formSlug: null,
+        logoUrl: null,
+        formConfig: null,
         currentStepIndex: 0,
         answers: {},
         isSubmitting: false,
@@ -99,6 +113,16 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
 
         // Definir session ID
         setSessionId: sessionId => set({ sessionId }),
+
+        // Definir form slug
+        setFormSlug: formSlug => set({ formSlug }),
+
+        // Definir form config
+        setFormConfig: formConfig => set({ formConfig }),
+
+        // Definir logo URL
+        setLogoUrl: logoUrl => set({ logoUrl }),
+
         setHasHydrated: hasHydrated => set({ hasHydrated }),
 
         // Carregar dados do formulário do backend
@@ -107,6 +131,9 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
           set({
             currentStepIndex: data.currentStepIndex,
             answers: data.answers,
+            formConfig: data.formConfig,
+            logoUrl: data.logoUrl,
+            formSlug: data.formSlug,
           });
         },
 
@@ -122,12 +149,15 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         // Avançar para próximo step (pula steps invisíveis)
         nextStep: () =>
           set(state => {
-            const maxStep = treatmentFormConfig.steps.length - 1;
+            const { formConfig } = get();
+            if (!formConfig) return state;
+
+            const maxStep = formConfig.steps.length - 1;
             let nextIndex = state.currentStepIndex + 1;
 
             // Pula steps invisíveis
             while (nextIndex <= maxStep) {
-              const step = treatmentFormConfig.steps[nextIndex];
+              const step = formConfig.steps[nextIndex];
               if (!step.showWhen) break; // Sem condição = sempre visível
 
               const { answers } = get();
@@ -157,11 +187,14 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         // Voltar para step anterior (pula steps invisíveis)
         previousStep: () =>
           set(state => {
+            const { formConfig } = get();
+            if (!formConfig) return state;
+
             let prevIndex = state.currentStepIndex - 1;
 
             // Pula steps invisíveis
             while (prevIndex >= 0) {
-              const step = treatmentFormConfig.steps[prevIndex];
+              const step = formConfig.steps[prevIndex];
               if (!step.showWhen) break; // Sem condição = sempre visível
 
               const { answers } = get();
@@ -179,18 +212,23 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             }
 
             return {
-              currentStepIndex: Math.max(prevIndex, 0),
+              currentStepIndex: Math.max(0, prevIndex),
             };
           }),
 
-        // Ir para step específico
+        // Ir para um step específico
         goToStep: stepIndex =>
-          set(() => ({
-            currentStepIndex: Math.max(
-              0,
-              Math.min(stepIndex, treatmentFormConfig.steps.length - 1)
-            ),
-          })),
+          set(() => {
+            const { formConfig } = get();
+            if (!formConfig) return {};
+
+            return {
+              currentStepIndex: Math.max(
+                0,
+                Math.min(stepIndex, formConfig.steps.length - 1)
+              ),
+            };
+          }),
 
         // Resetar formulário
         resetForm: () =>
@@ -198,6 +236,8 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             currentStepIndex: 0,
             answers: {},
             isSubmitting: false,
+            formConfig: null,
+            formSlug: null,
           })),
 
         // Definir estado de submissão
@@ -231,7 +271,10 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
 
         // Verifica se um step deve ser exibido
         isStepVisible: stepIndex => {
-          const step = treatmentFormConfig.steps[stepIndex];
+          const { formConfig } = get();
+          if (!formConfig) return false;
+
+          const step = formConfig.steps[stepIndex];
           if (!step || !step.showWhen) {
             return true; // Sem condições = sempre visível
           }
@@ -252,7 +295,10 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
 
         // Retorna perguntas visíveis de um step
         getVisibleQuestions: stepIndex => {
-          const step = treatmentFormConfig.steps[stepIndex];
+          const { formConfig } = get();
+          if (!formConfig) return [];
+
+          const step = formConfig.steps[stepIndex];
           if (!step) return [];
 
           const { isQuestionVisible } = get();
@@ -266,7 +312,9 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
 
           // Verifica se todas as perguntas obrigatórias foram respondidas
           return visibleQuestions.every(question => {
-            if (!question.required) return true;
+            if (!question.required) {
+              return true; // Pergunta não obrigatória
+            }
 
             const answer = answers[question.id];
 
@@ -280,16 +328,25 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
 
         // Retorna progresso atual (0-100)
         getCurrentProgress: () => {
-          const { currentStepIndex } = get();
-          const totalSteps = treatmentFormConfig.steps.length;
+          const { formConfig, currentStepIndex } = get();
+          if (!formConfig) return 0;
+
+          const totalSteps = formConfig.steps.length;
           return ((currentStepIndex + 1) / totalSteps) * 100;
+        },
+
+        // Retorna total de steps
+        getTotalSteps: () => {
+          const { formConfig } = get();
+          return formConfig?.steps.length ?? 0;
         },
       }),
       {
         name: 'treatment-form-storage',
-        // Persiste apenas sessionId
+        // Persiste apenas sessionId e formSlug
         partialize: state => ({
           sessionId: state.sessionId,
+          formSlug: state.formSlug,
         }),
         onRehydrateStorage: () => state => {
           state?.setHasHydrated(true);

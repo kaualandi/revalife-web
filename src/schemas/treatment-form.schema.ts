@@ -1,3 +1,4 @@
+import { parseISO, isValid, isBefore, isAfter, isEqual } from 'date-fns';
 import type { Question } from '@/types/form.types';
 import { z } from 'zod';
 
@@ -7,8 +8,12 @@ const dateSchema = z
   .min(1, 'Data é obrigatória')
   .refine(
     value => {
-      const date = new Date(value);
-      return !isNaN(date.getTime());
+      try {
+        const date = parseISO(value);
+        return isValid(date);
+      } catch {
+        return false;
+      }
     },
     { message: 'Data inválida' }
   );
@@ -23,14 +28,38 @@ export const generateQuestionSchema = (question: Question) => {
   switch (question.type) {
     case 'date':
       schema = dateSchema;
-      if (question.validation?.maxDate) {
-        const maxDate = question.validation.maxDate;
+      // Validação de data mínima
+      if (question.validation?.minDate) {
+        const minDateStr = question.validation.minDate;
         schema = schema.refine(
           value => {
-            const date = new Date(value as string);
-            return date <= maxDate;
+            const date = parseISO(value as string);
+            const minDateParsed = parseISO(minDateStr);
+            return isAfter(date, minDateParsed) || isEqual(date, minDateParsed);
           },
-          { message: question.validation.message || 'Data inválida' }
+          {
+            message:
+              question.validation.message ||
+              `Data deve ser posterior a ${minDateStr}`,
+          }
+        );
+      }
+      // Validação de data máxima
+      if (question.validation?.maxDate) {
+        const maxDateStr = question.validation.maxDate;
+        schema = schema.refine(
+          value => {
+            const date = parseISO(value as string);
+            const maxDateParsed = parseISO(maxDateStr);
+            return (
+              isBefore(date, maxDateParsed) || isEqual(date, maxDateParsed)
+            );
+          },
+          {
+            message:
+              question.validation.message ||
+              `Data deve ser anterior a ${maxDateStr}`,
+          }
         );
       }
       break;
@@ -41,7 +70,25 @@ export const generateQuestionSchema = (question: Question) => {
       break;
 
     case 'checkbox':
-      schema = z.array(z.string()).min(1, 'Selecione ao menos uma opção');
+      schema = z.array(z.string());
+
+      // Validação de mínimo de itens selecionados
+      const minSelected = question.validation?.minSelected || 1;
+      schema = (schema as z.ZodArray<z.ZodString>).min(
+        minSelected,
+        question.validation?.message ||
+          `Selecione ao menos ${minSelected} opção(ões)`
+      );
+
+      // Validação de máximo de itens selecionados
+      if (question.validation?.maxSelected) {
+        const maxSelected = question.validation.maxSelected;
+        schema = (schema as z.ZodArray<z.ZodString>).max(
+          maxSelected,
+          question.validation.message ||
+            `Selecione no máximo ${maxSelected} opção(ões)`
+        );
+      }
       break;
 
     case 'text':
@@ -88,6 +135,65 @@ export const generateQuestionSchema = (question: Question) => {
           question.validation.message || `Máximo de ${maxValue} caracteres`
         );
       }
+      break;
+
+    case 'email':
+      schema = z.string().email('E-mail inválido');
+      break;
+
+    case 'tel':
+      schema = z
+        .string()
+        .regex(
+          /^\(?([0-9]{2})\)?[-.\s]?([0-9]{4,5})[-.\s]?([0-9]{4})$/,
+          'Telefone inválido'
+        );
+      break;
+
+    case 'cpf':
+      schema = z
+        .string()
+        .regex(/^(?:\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$/, 'CPF inválido');
+      break;
+
+    case 'number':
+    case 'integer':
+      schema = z.string().refine(
+        value => {
+          const num = Number(value);
+          return !isNaN(num);
+        },
+        { message: 'Número inválido' }
+      );
+
+      // Validação de valor mínimo
+      if (question.validation?.min !== undefined) {
+        const minValue = question.validation.min;
+        schema = schema.refine(value => Number(value) >= minValue, {
+          message: question.validation?.message || `Valor mínimo: ${minValue}`,
+        });
+      }
+
+      // Validação de valor máximo
+      if (question.validation?.max !== undefined) {
+        const maxValue = question.validation.max;
+        schema = schema.refine(value => Number(value) <= maxValue, {
+          message: question.validation?.message || `Valor máximo: ${maxValue}`,
+        });
+      }
+
+      // Validação específica para integer (sem decimais)
+      if (question.type === 'integer') {
+        schema = schema.refine(value => Number.isInteger(Number(value)), {
+          message: 'Deve ser um número inteiro',
+        });
+      }
+      break;
+
+    case 'consent':
+      schema = z.literal('true', {
+        message: 'Você deve aceitar os termos',
+      });
       break;
 
     default:

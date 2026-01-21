@@ -18,9 +18,7 @@ export function FormStepComponent({
   step,
   onAutoAdvance,
 }: FormStepComponentProps) {
-  const { answers, setAnswer, currentStepIndex } = useTreatmentFormStore();
-  console.log(currentStepIndex);
-
+  const { answers, setAnswer } = useTreatmentFormStore();
   // Filtra perguntas visíveis baseado nas condições
   const visibleQuestions = step.questions.filter(q => {
     if (!q.showWhen) return true;
@@ -54,7 +52,7 @@ export function FormStepComponent({
       }
     });
     return () => subscription.unsubscribe();
-  }, [form.watch, setAnswer]);
+  }, [form, setAnswer]);
 
   // Reseta form quando muda de step (usando step.id para evitar flicker)
   useEffect(() => {
@@ -66,7 +64,8 @@ export function FormStepComponent({
       {} as Record<string, string | string[]>
     );
     form.reset(newDefaults);
-  }, [step.id]); // Usa step.id ao invés de currentStepIndex
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step.id]); // Apenas step.id - quando muda de step
 
   // Verifica se todas as perguntas visíveis estão respondidas
   const handleRadioSelect = () => {

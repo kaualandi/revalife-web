@@ -263,7 +263,7 @@ export const treatmentFormConfig: FormConfig = {
           placeholder: 'DD/MM/AAAA',
           required: true,
           validation: {
-            maxDate: new Date(),
+            maxDate: new Date().toISOString().split('T')[0],
             message: 'Data inválida',
           },
         },
