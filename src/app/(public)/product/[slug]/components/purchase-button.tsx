@@ -15,7 +15,7 @@ export function PurchaseButton({ product }: PurchaseButtonProps) {
 
     // Adicionar coupon se existir
     if (product.checkoutCoupon) {
-      checkoutUrl.searchParams.set('coupon', product.checkoutCoupon);
+      checkoutUrl.searchParams.set('promocode', product.checkoutCoupon);
     }
 
     // Adicionar checkoutParams se existirem
