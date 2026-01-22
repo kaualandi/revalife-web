@@ -43,7 +43,10 @@ export function PurchaseButton({ product }: PurchaseButtonProps) {
       size="lg"
       onClick={handlePurchase}
       className="w-full text-xl"
-      style={{ backgroundColor: product.buttonColor }}
+      style={{
+        backgroundColor: product.buttonColor,
+        color: product.highlightTextColor,
+      }}
     >
       Comprar Agora
     </Button>

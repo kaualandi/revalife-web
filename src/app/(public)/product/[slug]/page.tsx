@@ -226,35 +226,37 @@ function ProductPageContent({ product }: { product: Product }) {
           <p className="text-sm text-gray-600">{product.planInfo.continuity}</p>
         )}
 
-        <div className="my-6">
-          {product.originalPrice > 0 && (
-            <p className="text-sm text-gray-500">
-              de{' '}
-              <span className="line-through">
-                R${product.originalPrice.toFixed(2)}
-              </span>
+        {product.finalPrice > 0 && (
+          <div className="my-6">
+            {product.originalPrice > 0 && (
+              <p className="text-sm text-gray-500">
+                de{' '}
+                <span className="line-through">
+                  R${product.originalPrice.toFixed(2)}
+                </span>
+              </p>
+            )}
+            <p
+              className="text-5xl font-bold"
+              style={{ color: product.priceColor }}
+            >
+              R${product.finalPrice.toFixed(2).replace('.', ',')}
             </p>
-          )}
-          <p
-            className="text-5xl font-bold"
-            style={{ color: product.priceColor }}
-          >
-            R${product.finalPrice.toFixed(2).replace('.', ',')}
-          </p>
-          {product.installmentValue > 0 ? (
-            <p className="text-gray-600">
-              ou {product.installments}x de R$
-              {product.installmentValue.toFixed(2).replace('.', ',')}
-            </p>
-          ) : (
-            <p className="text-gray-600">Em até {product.installments}x</p>
-          )}
-          {product.periodLabel && (
-            <p className="text-sm font-medium text-gray-700">
-              {product.periodLabel}
-            </p>
-          )}
-        </div>
+            {product.installmentValue > 0 ? (
+              <p className="text-gray-600">
+                ou {product.installments}x de R$
+                {product.installmentValue.toFixed(2).replace('.', ',')}
+              </p>
+            ) : (
+              <p className="text-gray-600">Em até {product.installments}x</p>
+            )}
+            {product.periodLabel && (
+              <p className="text-sm font-medium text-gray-700">
+                {product.periodLabel}
+              </p>
+            )}
+          </div>
+        )}
 
         <PurchaseButton product={product} />
       </section>
