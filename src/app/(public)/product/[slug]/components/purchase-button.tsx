@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import type { Product } from '@/types/api.types';
 
 interface PurchaseButtonProps {
@@ -42,7 +43,7 @@ export function PurchaseButton({ product }: PurchaseButtonProps) {
       variant="green"
       size="lg"
       onClick={handlePurchase}
-      className="w-full text-xl"
+      className={cn('w-full text-xl', product.finalPrice === 0 && 'mt-6')}
       style={{
         backgroundColor: product.buttonColor,
         color: product.highlightTextColor,
