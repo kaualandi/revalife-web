@@ -6,16 +6,13 @@ import type {
   ApiFormConfig,
 } from '@/types/form.types';
 import { devtools, persist } from 'zustand/middleware';
+import type { FormMetadata } from '@/types/api.types';
 import { create } from 'zustand';
 
 interface TreatmentFormState {
   // Estado
   sessionId: number | null;
-  formSlug: string | null;
-  logoUrl: string | null;
-  faviconUrl: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
+  formMetadata: FormMetadata | null;
   formConfig: ApiFormConfig | null;
   currentStepIndex: number;
   answers: FormAnswers;
@@ -25,24 +22,15 @@ interface TreatmentFormState {
 
   // Ações
   setSessionId: (sessionId: number | null) => void;
-  setFormSlug: (formSlug: string | null) => void;
-
+  setFormMetadata: (formMetadata: FormMetadata | null) => void;
   setFormConfig: (formConfig: ApiFormConfig | null) => void;
-  setLogoUrl: (logoUrl: string | null) => void;
-  setFaviconUrl: (faviconUrl: string | null) => void;
-  setPrimaryColor: (primaryColor: string | null) => void;
-  setSecondaryColor: (secondaryColor: string | null) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
   setAnswer: (questionId: string, value: string | string[]) => void;
   loadFormData: (data: {
     currentStepIndex: number;
     answers: FormAnswers;
-    logoUrl: string | null;
-    faviconUrl: string | null;
-    primaryColor: string | null;
-    secondaryColor: string | null;
+    formMetadata: FormMetadata;
     formConfig: ApiFormConfig;
-    formSlug: string;
   }) => void;
   nextStep: () => void;
   previousStep: () => void;
@@ -111,11 +99,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
       (set, get) => ({
         // Estado inicial
         sessionId: null,
-        formSlug: null,
-        logoUrl: null,
-        faviconUrl: null,
-        primaryColor: null,
-        secondaryColor: null,
+        formMetadata: null,
         formConfig: null,
         currentStepIndex: 0,
         answers: {},
@@ -126,23 +110,11 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         // Definir session ID
         setSessionId: sessionId => set({ sessionId }),
 
-        // Definir form slug
-        setFormSlug: formSlug => set({ formSlug }),
+        // Definir form metadata
+        setFormMetadata: formMetadata => set({ formMetadata }),
 
         // Definir form config
         setFormConfig: formConfig => set({ formConfig }),
-
-        // Definir logo URL
-        setLogoUrl: logoUrl => set({ logoUrl }),
-
-        // Definir favicon URL
-        setFaviconUrl: faviconUrl => set({ faviconUrl }),
-
-        // Definir primary color
-        setPrimaryColor: primaryColor => set({ primaryColor }),
-
-        // Definir secondary color
-        setSecondaryColor: secondaryColor => set({ secondaryColor }),
 
         setHasHydrated: hasHydrated => set({ hasHydrated }),
 
@@ -153,11 +125,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             currentStepIndex: data.currentStepIndex,
             answers: data.answers,
             formConfig: data.formConfig,
-            logoUrl: data.logoUrl,
-            faviconUrl: data.faviconUrl,
-            primaryColor: data.primaryColor,
-            secondaryColor: data.secondaryColor,
-            formSlug: data.formSlug,
+            formMetadata: data.formMetadata,
           });
         },
 
@@ -261,7 +229,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             answers: {},
             isSubmitting: false,
             formConfig: null,
-            formSlug: null,
+            formMetadata: null,
           })),
 
         // Definir estado de submissão
@@ -367,10 +335,12 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
       }),
       {
         name: 'treatment-form-storage',
-        // Persiste apenas sessionId e formSlug
+        // Persiste apenas sessionId e formMetadata.slug
         partialize: state => ({
           sessionId: state.sessionId,
-          formSlug: state.formSlug,
+          formMetadata: state.formMetadata
+            ? { slug: state.formMetadata.slug }
+            : null,
         }),
         onRehydrateStorage: () => state => {
           state?.setHasHydrated(true);

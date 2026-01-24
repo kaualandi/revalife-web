@@ -14,7 +14,7 @@ export default function FormSlugPage() {
   const startSession = useStartSession();
   const store = useTreatmentFormStore();
   const sessionId = store.sessionId;
-  const currentFormSlug = store.formSlug || ''; // Garantir string vazia em vez de null
+  const formMetadata = store.formMetadata;
   const hasHydrated = store.hasHydrated;
   const resetForm = store.resetForm;
   const setSessionId = store.setSessionId;
@@ -26,26 +26,33 @@ export default function FormSlugPage() {
     if (!hasHydrated) return;
 
     // Se já tem sessão mas é de outro formulário, resetar
-    if (sessionId && currentFormSlug && currentFormSlug !== slug) {
+    if (sessionId && formMetadata?.slug && formMetadata.slug !== slug) {
       console.log(
-        `🔄 Mudança de formulário detectada: ${currentFormSlug} → ${slug}`
+        `🔄 Mudança de formulário detectada: ${formMetadata.slug} → ${slug}`
       );
       resetForm();
       setSessionId(null);
       hasAttemptedStart.current = false;
     }
-  }, [sessionId, currentFormSlug, slug, hasHydrated, resetForm, setSessionId]);
+  }, [
+    sessionId,
+    formMetadata?.slug,
+    slug,
+    hasHydrated,
+    resetForm,
+    setSessionId,
+  ]);
 
   // Criar sessão automaticamente ao montar o componente
   useEffect(() => {
     console.log('🔍 useEffect executado com:', {
       sessionId,
-      currentFormSlug,
+      formSlug: formMetadata?.slug,
       slug,
       hasHydrated,
       types: {
         sessionId: typeof sessionId,
-        currentFormSlug: typeof currentFormSlug,
+        formSlug: typeof formMetadata?.slug,
         slug: typeof slug,
         hasHydrated: typeof hasHydrated,
       },
@@ -60,7 +67,7 @@ export default function FormSlugPage() {
     const targetUrl = `/${slug}/form${queryString}`;
 
     // Se já tem sessão válida do mesmo formulário, redirecionar direto
-    if (sessionId && currentFormSlug === slug) {
+    if (sessionId && formMetadata?.slug === slug) {
       console.log('✅ Redirecionando para:', targetUrl);
       router.push(targetUrl);
       return;
@@ -77,7 +84,7 @@ export default function FormSlugPage() {
         },
       });
     }
-  }, [sessionId, currentFormSlug, slug, hasHydrated, startSession, router]);
+  }, [sessionId, formMetadata?.slug, slug, hasHydrated, startSession, router]);
 
   // Mostrar erro se formulário não existe (404)
   if (startSession.isError) {

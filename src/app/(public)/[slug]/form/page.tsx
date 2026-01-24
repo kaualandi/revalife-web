@@ -24,8 +24,7 @@ export default function TreatmentFormPage() {
   const {
     sessionId,
     formConfig,
-    logoUrl,
-    formSlug: currentFormSlug,
+    formMetadata,
     currentStepIndex,
     answers,
     nextStep,
@@ -45,10 +44,10 @@ export default function TreatmentFormPage() {
 
   // Verificar se sessão existe e é do formulário correto
   useEffect(() => {
-    if (!sessionId || currentFormSlug !== slug) {
+    if (!sessionId || formMetadata?.slug !== slug) {
       router.push(`/${slug}`);
     }
-  }, [sessionId, currentFormSlug, slug, router]);
+  }, [sessionId, formMetadata?.slug, slug, router]);
 
   // Se não tem formConfig ainda, aguardar
   if (!formConfig || sessionQuery.isLoading) {
@@ -204,9 +203,9 @@ export default function TreatmentFormPage() {
             </Button>
           )}
         </div>
-        {logoUrl && (
+        {formMetadata?.logoUrl && (
           <Image
-            src={logoUrl}
+            src={formMetadata.logoUrl}
             alt={formConfig.name || 'Logo'}
             className="w-24 flex-1"
             width={150}
@@ -251,8 +250,8 @@ export default function TreatmentFormPage() {
         <FormNavigation onContinue={handleContinue} isSaving={isSaving} />
       </footer>
 
-      {sessionQuery.data?.gtmId && (
-        <GoogleTagManager gtmId={sessionQuery.data?.gtmId} />
+      {sessionQuery.data?.form.gtmId && (
+        <GoogleTagManager gtmId={sessionQuery.data.form.gtmId} />
       )}
     </div>
   );

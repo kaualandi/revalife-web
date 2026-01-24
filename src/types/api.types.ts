@@ -9,6 +9,18 @@ export type SessionStatus =
   | 'ABANDONED'
   | 'ERROR';
 
+// Metadados do formulário
+export interface FormMetadata {
+  slug: string;
+  name: string;
+  description?: string;
+  logoUrl: string | null;
+  faviconUrl: string | null;
+  gtmId: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+}
+
 // DTO para iniciar sessão (agora com formSlug)
 export interface StartSessionDto {
   formSlug: string;
@@ -17,37 +29,23 @@ export interface StartSessionDto {
 // Resposta ao iniciar sessão (agora inclui formConfig e totalSteps)
 export interface StartSessionResponse {
   sessionId: number;
-  formSlug?: string;
-  currentStep?: number;
-  totalSteps?: number;
-  answers?: FormAnswers;
   status: SessionStatus;
   createdAt: string;
   formConfig: ApiFormConfig;
-  logoUrl: string | null;
-  faviconUrl: string | null;
-  gtmId: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
+  form: FormMetadata;
 }
 
 // Resposta ao buscar sessão (agora inclui formConfig e totalSteps)
 export interface GetSessionResponse {
   sessionId: number;
-  formSlug?: string;
-  currentStep: number;
-  totalSteps?: number;
-  answers: FormAnswers;
   status: SessionStatus;
+  currentStep: number;
+  answers: FormAnswers;
   createdAt: string;
   updatedAt?: string;
   submittedAt?: string;
   formConfig: ApiFormConfig;
-  logoUrl: string | null;
-  faviconUrl: string | null;
-  gtmId: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
+  form: FormMetadata;
 }
 
 // Resposta ao listar formulários

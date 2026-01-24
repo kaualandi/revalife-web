@@ -5,7 +5,10 @@ import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
 
 export function FormFinalMessage() {
-  const { primaryColor, secondaryColor } = useTreatmentFormStore();
+  const { formMetadata } = useTreatmentFormStore();
+
+  const primaryColor = formMetadata?.primaryColor || '#000000';
+  const secondaryColor = formMetadata?.secondaryColor || '#000000';
 
   return (
     <motion.div
@@ -22,7 +25,7 @@ export function FormFinalMessage() {
         >
           <CheckCircle2
             className="h-20 w-20"
-            style={{ color: secondaryColor || '#22c55e' }}
+            style={{ color: secondaryColor }}
           />
         </motion.div>
 
@@ -32,7 +35,7 @@ export function FormFinalMessage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
           className="text-4xl font-bold tracking-tight"
-          style={{ color: primaryColor || 'hsl(var(--accent))' }}
+          style={{ color: primaryColor }}
         >
           Agora é com a gente!
         </motion.h1>
@@ -49,20 +52,14 @@ export function FormFinalMessage() {
             cuidadosamente o seu perfil.
           </p>
 
-          <p
-            className="font-bold"
-            style={{ color: secondaryColor || '#22c55e' }}
-          >
+          <p className="font-bold" style={{ color: secondaryColor }}>
             Em breve, entraremos em contato para informar se o seu tratamento
             foi aprovado, precisa de ajustes ou não se enquadra nos critérios
-            clínicos da Revalife+.
+            clínicos da {formMetadata?.name || 'Revalife+'}.
           </p>
 
           <p className="text-muted-foreground text-base">
-            <span
-              className="font-bold"
-              style={{ color: primaryColor || 'hsl(var(--accent))' }}
-            >
+            <span className="font-bold" style={{ color: primaryColor }}>
               Agradecemos pela confiança em compartilhar suas informações
             </span>
             , cada detalhe é analisado com responsabilidade, seguindo protocolos

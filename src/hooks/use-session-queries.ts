@@ -23,15 +23,8 @@ export const sessionKeys = {
  * Cria uma nova sessão no backend e armazena o sessionId no Zustand
  */
 export function useStartSession() {
-  const {
-    setSessionId,
-    setFormSlug,
-    setFormConfig,
-    setLogoUrl,
-    setFaviconUrl,
-    setPrimaryColor,
-    setSecondaryColor,
-  } = useTreatmentFormStore();
+  const { setSessionId, setFormConfig, setFormMetadata } =
+    useTreatmentFormStore();
 
   return useMutation({
     mutationFn: (formSlug: string) => sessionApi.startSession(formSlug),
@@ -39,12 +32,8 @@ export function useStartSession() {
       console.log('📦 Dados recebidos do backend:', data);
 
       setSessionId(data.sessionId);
-      setFormSlug(formSlug);
       setFormConfig(data.formConfig);
-      setLogoUrl(data.logoUrl);
-      setFaviconUrl(data.faviconUrl);
-      setPrimaryColor(data.primaryColor);
-      setSecondaryColor(data.secondaryColor);
+      setFormMetadata(data.form);
 
       console.log('✅ Sessão iniciada:', data.sessionId, 'Form:', formSlug);
     },
@@ -66,7 +55,7 @@ export function useStartSession() {
  * Carrega dados do backend e sincroniza com o Zustand store APENAS na primeira vez
  */
 export function useGetSession(sessionId: number | null) {
-  const { loadFormData, formSlug: currentFormSlug } = useTreatmentFormStore();
+  const { loadFormData } = useTreatmentFormStore();
 
   const query = useQuery({
     queryKey: sessionKeys.detail(sessionId),
@@ -96,24 +85,17 @@ export function useGetSession(sessionId: number | null) {
         return;
       }
 
-      // Usar formSlug do backend, ou manter o atual se não vier
-      const formSlug = query.data.formSlug || currentFormSlug || '';
-
       loadFormData({
         currentStepIndex: query.data.currentStep,
         answers: query.data.answers,
         formConfig: query.data.formConfig,
-        formSlug,
-        logoUrl: query.data.logoUrl,
-        faviconUrl: query.data.faviconUrl,
-        primaryColor: query.data.primaryColor,
-        secondaryColor: query.data.secondaryColor,
+        formMetadata: query.data.form,
       });
       console.log(
         '✅ Sessão carregada:',
         sessionId,
         'FormSlug:',
-        formSlug,
+        query.data.form.slug,
         'Step:',
         query.data.currentStep
       );
