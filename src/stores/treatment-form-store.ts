@@ -14,6 +14,8 @@ interface TreatmentFormState {
   formSlug: string | null;
   logoUrl: string | null;
   faviconUrl: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
   formConfig: ApiFormConfig | null;
   currentStepIndex: number;
   answers: FormAnswers;
@@ -28,6 +30,8 @@ interface TreatmentFormState {
   setFormConfig: (formConfig: ApiFormConfig | null) => void;
   setLogoUrl: (logoUrl: string | null) => void;
   setFaviconUrl: (faviconUrl: string | null) => void;
+  setPrimaryColor: (primaryColor: string | null) => void;
+  setSecondaryColor: (secondaryColor: string | null) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
   setAnswer: (questionId: string, value: string | string[]) => void;
   loadFormData: (data: {
@@ -35,6 +39,8 @@ interface TreatmentFormState {
     answers: FormAnswers;
     logoUrl: string | null;
     faviconUrl: string | null;
+    primaryColor: string | null;
+    secondaryColor: string | null;
     formConfig: ApiFormConfig;
     formSlug: string;
   }) => void;
@@ -108,6 +114,8 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         formSlug: null,
         logoUrl: null,
         faviconUrl: null,
+        primaryColor: null,
+        secondaryColor: null,
         formConfig: null,
         currentStepIndex: 0,
         answers: {},
@@ -130,6 +138,12 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         // Definir favicon URL
         setFaviconUrl: faviconUrl => set({ faviconUrl }),
 
+        // Definir primary color
+        setPrimaryColor: primaryColor => set({ primaryColor }),
+
+        // Definir secondary color
+        setSecondaryColor: secondaryColor => set({ secondaryColor }),
+
         setHasHydrated: hasHydrated => set({ hasHydrated }),
 
         // Carregar dados do formulário do backend
@@ -141,6 +155,8 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             formConfig: data.formConfig,
             logoUrl: data.logoUrl,
             faviconUrl: data.faviconUrl,
+            primaryColor: data.primaryColor,
+            secondaryColor: data.secondaryColor,
             formSlug: data.formSlug,
           });
         },

@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { useTreatmentFormStore } from '@/stores/treatment-form-store';
 
 export function FormFinalMessage() {
+  const { primaryColor, secondaryColor } = useTreatmentFormStore();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -17,7 +20,10 @@ export function FormFinalMessage() {
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
         >
-          <CheckCircle2 className="h-20 w-20 text-green-500" />
+          <CheckCircle2
+            className="h-20 w-20"
+            style={{ color: secondaryColor || '#22c55e' }}
+          />
         </motion.div>
 
         {/* Título */}
@@ -25,7 +31,8 @@ export function FormFinalMessage() {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="text-accent text-4xl font-bold tracking-tight"
+          className="text-4xl font-bold tracking-tight"
+          style={{ color: primaryColor || 'hsl(var(--accent))' }}
         >
           Agora é com a gente!
         </motion.h1>
@@ -42,14 +49,20 @@ export function FormFinalMessage() {
             cuidadosamente o seu perfil.
           </p>
 
-          <p className="text-primary-green font-bold">
+          <p
+            className="font-bold"
+            style={{ color: secondaryColor || '#22c55e' }}
+          >
             Em breve, entraremos em contato para informar se o seu tratamento
             foi aprovado, precisa de ajustes ou não se enquadra nos critérios
             clínicos da Revalife+.
           </p>
 
           <p className="text-muted-foreground text-base">
-            <span className="text-accent font-bold">
+            <span
+              className="font-bold"
+              style={{ color: primaryColor || 'hsl(var(--accent))' }}
+            >
               Agradecemos pela confiança em compartilhar suas informações
             </span>
             , cada detalhe é analisado com responsabilidade, seguindo protocolos

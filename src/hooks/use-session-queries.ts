@@ -29,6 +29,8 @@ export function useStartSession() {
     setFormConfig,
     setLogoUrl,
     setFaviconUrl,
+    setPrimaryColor,
+    setSecondaryColor,
   } = useTreatmentFormStore();
 
   return useMutation({
@@ -41,6 +43,8 @@ export function useStartSession() {
       setFormConfig(data.formConfig);
       setLogoUrl(data.logoUrl);
       setFaviconUrl(data.faviconUrl);
+      setPrimaryColor(data.primaryColor);
+      setSecondaryColor(data.secondaryColor);
 
       console.log('✅ Sessão iniciada:', data.sessionId, 'Form:', formSlug);
     },
@@ -102,6 +106,8 @@ export function useGetSession(sessionId: number | null) {
         formSlug,
         logoUrl: query.data.logoUrl,
         faviconUrl: query.data.faviconUrl,
+        primaryColor: query.data.primaryColor,
+        secondaryColor: query.data.secondaryColor,
       });
       console.log(
         '✅ Sessão carregada:',

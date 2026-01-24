@@ -27,6 +27,8 @@ export interface StartSessionResponse {
   logoUrl: string | null;
   faviconUrl: string | null;
   gtmId: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
 }
 
 // Resposta ao buscar sessão (agora inclui formConfig e totalSteps)
@@ -44,6 +46,8 @@ export interface GetSessionResponse {
   logoUrl: string | null;
   faviconUrl: string | null;
   gtmId: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
 }
 
 // Resposta ao listar formulários
@@ -62,6 +66,8 @@ export interface GetFormBySlugResponse {
   isActive: boolean;
   faviconUrl: string | null;
   logoUrl: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
   formConfig?: ApiFormConfig;
 }
 
