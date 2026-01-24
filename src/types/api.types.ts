@@ -94,6 +94,8 @@ export interface UtmParameters {
   utm_campaign?: string;
   utm_content?: string;
   utm_term?: string;
+  tracking_id?: string;
+  ph_distinct_id?: string;
 }
 
 // Resposta ao submeter formulário

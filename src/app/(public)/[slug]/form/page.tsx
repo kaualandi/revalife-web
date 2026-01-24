@@ -122,6 +122,10 @@ export default function TreatmentFormPage() {
                   url.searchParams.set('utm_content', utms.utm_content);
                 if (utms.utm_term)
                   url.searchParams.set('utm_term', utms.utm_term);
+                if (utms.tracking_id)
+                  url.searchParams.set('tracking_id', utms.tracking_id);
+                if (utms.ph_distinct_id)
+                  url.searchParams.set('ph_distinct_id', utms.ph_distinct_id);
 
                 finalUrl = url.toString();
                 console.log("✅ URL com UTM's:", finalUrl);
