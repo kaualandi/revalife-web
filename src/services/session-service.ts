@@ -6,8 +6,6 @@ import type {
   SubmitSessionDto,
   SubmitSessionResponse,
   UtmParameters,
-  GetFormsResponse,
-  GetFormBySlugResponse,
 } from '@/types/api.types';
 import { fetchApi } from '@/lib/api-client';
 
@@ -15,20 +13,6 @@ import { fetchApi } from '@/lib/api-client';
  * Serviço para comunicação com a API de sessões e formulários
  */
 export const sessionApi = {
-  /**
-   * Lista todos os formulários disponíveis
-   * @returns Promise com lista de formulários
-   */
-  getForms: () => fetchApi<GetFormsResponse[]>('/forms'),
-
-  /**
-   * Busca configuração de um formulário específico
-   * @param formSlug - Slug do formulário (REVALIFE, TEST1, etc.)
-   * @returns Promise com configuração completa do formulário
-   */
-  getFormConfig: (formSlug: string) =>
-    fetchApi<GetFormBySlugResponse>(`/forms/${formSlug}`),
-
   /**
    * Inicia uma nova sessão do formulário
    * @param formSlug - Slug do formulário a ser iniciado
