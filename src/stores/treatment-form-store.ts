@@ -334,7 +334,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         },
       }),
       {
-        name: 'treatment-form-storage',
+        name: 'treatment-form',
         // Persiste apenas sessionId e formMetadata.slug
         partialize: state => ({
           sessionId: state.sessionId,
