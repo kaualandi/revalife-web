@@ -29,6 +29,8 @@ export default function TreatmentFormPage() {
     answers,
     nextStep,
     previousStep,
+    clearStepAnswers,
+    getVisibleQuestions,
   } = useTreatmentFormStore();
 
   const sessionQuery = useGetSession(sessionId);
@@ -174,6 +176,34 @@ export default function TreatmentFormPage() {
 
   // Função para voltar step
   const handlePreviousStep = () => {
+    // Tipos de perguntas que disparam auto-advance
+    const autoAdvanceTypes = ['radio', 'radio-image', 'consent'];
+
+    // Calcular qual será a etapa anterior (considerando etapas invisíveis)
+    const { isStepVisible } = useTreatmentFormStore.getState();
+    let prevIndex = currentStepIndex - 1;
+
+    // Encontra a próxima etapa visível para trás
+    while (prevIndex >= 0 && !isStepVisible(prevIndex)) {
+      prevIndex--;
+    }
+
+    // Se encontrou uma etapa anterior válida
+    if (prevIndex >= 0) {
+      // Obter perguntas visíveis da etapa ANTERIOR (para onde vai voltar)
+      const previousVisibleQuestions = getVisibleQuestions(prevIndex);
+
+      // Verifica se todas as perguntas são do tipo auto-advance
+      const allQuestionsAutoAdvance = previousVisibleQuestions.every(q =>
+        autoAdvanceTypes.includes(q.type)
+      );
+
+      // Se todas as perguntas são auto-advance, limpa as respostas dessa etapa
+      if (allQuestionsAutoAdvance && previousVisibleQuestions.length > 0) {
+        clearStepAnswers(prevIndex);
+      }
+    }
+
     setDirection('backward');
     previousStep();
   };

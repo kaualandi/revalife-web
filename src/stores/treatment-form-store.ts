@@ -26,6 +26,7 @@ interface TreatmentFormState {
   setFormConfig: (formConfig: ApiFormConfig | null) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
   setAnswer: (questionId: string, value: string | string[]) => void;
+  clearStepAnswers: (stepIndex: number) => void;
   loadFormData: (data: {
     currentStepIndex: number;
     answers: FormAnswers;
@@ -137,6 +138,22 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
               [questionId]: value,
             },
           })),
+
+        // Limpar respostas de uma etapa específica
+        clearStepAnswers: stepIndex => {
+          const { formConfig, answers } = get();
+          if (!formConfig) return;
+
+          const step = formConfig.steps[stepIndex];
+          if (!step) return;
+
+          const newAnswers = { ...answers };
+          step.questions.forEach(question => {
+            delete newAnswers[question.id];
+          });
+
+          set({ answers: newAnswers });
+        },
 
         // Avançar para próximo step (pula steps invisíveis)
         nextStep: () =>
