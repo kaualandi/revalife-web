@@ -3,13 +3,13 @@ import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
 
-
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-light transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive !cursor-pointer",
   {
     variants: {
       variant: {
-        default: 'bg-foreground text-primary-foreground hover:bg-foreground/90',
+        default:
+          'bg-foreground text-primary-foreground hover:bg-foreground/90 disabled:!bg-neutral-300 disabled:!opacity-100',
         green: 'rounded-full bg-product-green font-bold',
         destructive:
           'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',

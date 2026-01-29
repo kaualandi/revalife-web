@@ -276,7 +276,7 @@ export default function TreatmentFormPage() {
         </AnimatePresence>
       </main>
 
-      <footer className="mt-auto">
+      <footer className="sticky bottom-0 mt-auto">
         <FormNavigation onContinue={handleContinue} isSaving={isSaving} />
       </footer>
 

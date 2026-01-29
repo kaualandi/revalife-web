@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { useTreatmentFormStore } from '@/stores/treatment-form-store';
 import type {
   QuestionCondition,
@@ -106,7 +107,7 @@ export function FormNavigation({ onContinue, isSaving }: FormNavigationProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className={cn('space-y-4')}>
       {/* Botão Continuar */}
       <Button
         onClick={onContinue}
