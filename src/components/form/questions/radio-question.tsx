@@ -43,7 +43,7 @@ export function RadioQuestion({
                 <label
                   key={option.value}
                   className={cn(
-                    'border-input hover:border-primary relative flex min-h-16 cursor-pointer items-center gap-3 rounded-md border px-4 py-3 transition-colors',
+                    'border-input hover:border-primary relative flex min-h-12 cursor-pointer items-center gap-3 rounded-md border px-4 py-3 transition-colors',
                     field.value === option.value && 'border-primary bg-primary'
                   )}
                 >

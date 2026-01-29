@@ -9,9 +9,24 @@ interface FormNavigationProps {
 }
 
 export function FormNavigation({ onContinue, isSaving }: FormNavigationProps) {
-  const { canProceedToNextStep } = useTreatmentFormStore();
+  const { canProceedToNextStep, getVisibleQuestions, currentStepIndex } =
+    useTreatmentFormStore();
 
   const canProceed = canProceedToNextStep();
+  const visibleQuestions = getVisibleQuestions(currentStepIndex);
+
+  // Tipos de perguntas que disparam auto-advance
+  const autoAdvanceTypes = ['radio', 'radio-image', 'consent'];
+
+  // Verifica se todas as perguntas visíveis são do tipo auto-advance
+  const allQuestionsAutoAdvance = visibleQuestions.every(q =>
+    autoAdvanceTypes.includes(q.type)
+  );
+
+  // Se todas as perguntas são auto-advance, não mostra o botão
+  if (allQuestionsAutoAdvance && visibleQuestions.length > 0) {
+    return null;
+  }
 
   return (
     <div className="space-y-4">

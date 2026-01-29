@@ -47,7 +47,7 @@ export function CheckboxQuestion({ question, form }: CheckboxQuestionProps) {
                   <label
                     key={option.value}
                     className={cn(
-                      'border-input hover:border-primary relative flex min-h-16 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
+                      'border-input hover:border-primary relative flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
                       value.includes(option.value) &&
                         'border-primary bg-primary'
                     )}
