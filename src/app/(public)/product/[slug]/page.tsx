@@ -1,3 +1,4 @@
+import { GoogleTagManager } from '@next/third-parties/google';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { Separator } from '@/components/ui/separator';
 import { getProductBySlug } from '@/lib/api-client';
@@ -87,6 +88,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <div className="min-h-screen bg-white">
       <ProductPageContent product={product} />
+      {product.form.gtmId && <GoogleTagManager gtmId={product.form.gtmId} />}
     </div>
   );
 }

@@ -129,6 +129,7 @@ export interface Product {
     name: string;
     faviconUrl: string | null;
     logoUrl: string | null;
+    gtmId: string | null;
   };
 
   // Informações básicas
