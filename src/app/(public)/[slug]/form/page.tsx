@@ -127,6 +127,11 @@ export default function TreatmentFormPage() {
                   url.searchParams.set('tracking_id', utms.tracking_id);
                 if (utms.ph_distinct_id)
                   url.searchParams.set('ph_distinct_id', utms.ph_distinct_id);
+                if (utms.referring_afiliado_id)
+                  url.searchParams.set(
+                    'referring_afiliado_id',
+                    utms.referring_afiliado_id
+                  );
 
                 finalUrl = url.toString();
                 console.log("✅ URL com UTM's:", finalUrl);

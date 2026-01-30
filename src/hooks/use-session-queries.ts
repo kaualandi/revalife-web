@@ -114,6 +114,7 @@ export function useGetSession(sessionId: number | null) {
         const utmTerm = params.get('utm_term');
         const trackingId = params.get('tracking_id');
         const phDistinctId = params.get('ph_distinct_id');
+        const referringAfiliadoId = params.get('referring_afiliado_id');
 
         if (utmSource) utms.utm_source = utmSource;
         if (utmMedium) utms.utm_medium = utmMedium;
@@ -122,6 +123,8 @@ export function useGetSession(sessionId: number | null) {
         if (utmTerm) utms.utm_term = utmTerm;
         if (trackingId) utms.tracking_id = trackingId;
         if (phDistinctId) utms.ph_distinct_id = phDistinctId;
+        if (referringAfiliadoId)
+          utms.referring_afiliado_id = referringAfiliadoId;
 
         return Object.keys(utms).length > 0 ? utms : null;
       };
@@ -143,7 +146,7 @@ export function useGetSession(sessionId: number | null) {
               url.searchParams.delete('utm_term');
               url.searchParams.delete('tracking_id');
               url.searchParams.delete('ph_distinct_id');
-
+              url.searchParams.delete('referring_afiliado_id');
               // Atualizar URL sem reload
               window.history.replaceState({}, '', url.toString());
               console.log("✅ UTM's removidas da URL");

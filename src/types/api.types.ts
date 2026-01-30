@@ -100,6 +100,7 @@ export interface UtmParameters {
   utm_term?: string;
   tracking_id?: string;
   ph_distinct_id?: string;
+  referring_afiliado_id?: string;
 }
 
 // Resposta ao submeter formulário
