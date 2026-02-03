@@ -47,7 +47,8 @@ export default function TreatmentFormPage() {
   // Verificar se sessão existe e é do formulário correto
   useEffect(() => {
     if (!sessionId || formMetadata?.slug !== slug) {
-      router.push(`/${slug}`);
+      const searchParams = window.location.search;
+      router.push(`/${slug}${searchParams}`);
     }
   }, [sessionId, formMetadata?.slug, slug, router]);
 
@@ -66,7 +67,10 @@ export default function TreatmentFormPage() {
       <ErrorMessage
         title="Erro ao carregar sessão"
         message="Não foi possível carregar seus dados. Tente novamente."
-        onRetry={() => router.push(`/${slug}`)}
+        onRetry={() => {
+          const searchParams = window.location.search;
+          router.push(`/${slug}${searchParams}`);
+        }}
         retryLabel="Reiniciar"
       />
     );
