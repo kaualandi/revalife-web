@@ -14,7 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
-import { GoogleTagManager } from '@next/third-parties/google';
+import { GoogleTagManager, sendGTMEvent } from '@next/third-parties/google';
 
 export default function TreatmentFormPage() {
   const router = useRouter();
@@ -108,6 +108,18 @@ export default function TreatmentFormPage() {
         { answers },
         {
           onSuccess: data => {
+            // Disparar GTM com evento de submissão
+            if (sessionQuery.data?.form.gtmId) {
+              sendGTMEvent({
+                gtmId: sessionQuery.data.form.gtmId,
+                eventName: 'form_submission',
+                eventParams: {
+                  formSlug: sessionQuery.data.form.slug,
+                  sessionId,
+                },
+              });
+            }
+
             // Processar resposta baseada no status
             if (data.status === 'APPROVED' && data.productUrl) {
               // Redirecionar para URL do produto (mesma aba)
