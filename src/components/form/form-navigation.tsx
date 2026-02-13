@@ -20,6 +20,7 @@ export function FormNavigation({ onContinue, isSaving }: FormNavigationProps) {
     currentStepIndex,
     formConfig,
     isStepVisible,
+    isInErrorCorrectionMode,
   } = useTreatmentFormStore();
 
   const canProceed = canProceedToNextStep();
@@ -91,10 +92,12 @@ export function FormNavigation({ onContinue, isSaving }: FormNavigationProps) {
   );
 
   // Sempre mostra o botão se:
-  // 1. É o último passo OU
-  // 2. Há steps condicionais que dependem das respostas atuais OU
-  // 3. Nem todas as perguntas são auto-advance
+  // 1. Está em modo de correção de erros OU
+  // 2. É o último passo OU
+  // 3. Há steps condicionais que dependem das respostas atuais OU
+  // 4. Nem todas as perguntas são auto-advance
   if (
+    isInErrorCorrectionMode ||
     !allQuestionsAutoAdvance ||
     visibleQuestions.length === 0 ||
     isLastStep ||
@@ -102,7 +105,7 @@ export function FormNavigation({ onContinue, isSaving }: FormNavigationProps) {
   ) {
     // Mostra o botão
   } else {
-    // Esconde o botão (apenas se todas são auto-advance E não é o último E não há condicionais)
+    // Esconde o botão (apenas se todas são auto-advance E não é o último E não há condicionais E não está em modo de correção)
     return null;
   }
 

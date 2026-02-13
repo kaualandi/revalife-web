@@ -1,5 +1,6 @@
 import type { FormAnswers, ApiFormConfig } from './form.types';
 
+
 // Status da sessão
 export type SessionStatus =
   | 'IN_PROGRESS'
@@ -209,8 +210,7 @@ export interface ValidationError {
 export interface ApiError {
   statusCode: number;
   message: string | string[];
-  error: string;
+  error: ValidationError[] | string; // Array de erros de validação ou string de erro genérico
   timestamp?: string;
   path?: string;
-  errors?: ValidationError[]; // Para erros de validação
 }

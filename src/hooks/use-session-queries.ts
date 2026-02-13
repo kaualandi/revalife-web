@@ -235,14 +235,6 @@ export function useSubmitSession() {
       console.log('✅ Formulário submetido com sucesso');
     },
     onError: (error: ApiError) => {
-      const message = Array.isArray(error.message)
-        ? error.message.join(', ')
-        : error.message || 'Erro ao enviar formulário';
-
-      toast.error('Erro ao enviar', {
-        description: message,
-      });
-
       console.error('❌ Erro ao submeter formulário:', error);
     },
   });

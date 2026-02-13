@@ -1,13 +1,8 @@
-import type {
-  FormAnswers,
-  Question,
-  QuestionCondition,
-  QuestionConditionGroup,
-  ApiFormConfig,
-} from '@/types/form.types';
+import type { FormAnswers, Question, QuestionCondition, QuestionConditionGroup, ApiFormConfig, } from '@/types/form.types';
 import { devtools, persist } from 'zustand/middleware';
 import type { FormMetadata } from '@/types/api.types';
 import { create } from 'zustand';
+
 
 interface TreatmentFormState {
   // Estado
@@ -19,6 +14,11 @@ interface TreatmentFormState {
   isSubmitting: boolean;
   isLoading: boolean;
   hasHydrated: boolean;
+
+  // Validação de erros do backend
+  validationErrors: Record<string, string>;
+  stepsWithErrors: number[];
+  isInErrorCorrectionMode: boolean;
 
   // Ações
   setSessionId: (sessionId: number | null) => void;
@@ -39,6 +39,15 @@ interface TreatmentFormState {
   resetForm: () => void;
   setIsSubmitting: (isSubmitting: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
+
+  // Ações de validação
+  setValidationErrors: (
+    errors: Array<{ questionId: string; message: string }>
+  ) => void;
+  clearValidationErrors: () => void;
+  clearQuestionError: (questionId: string) => void;
+  removeStepFromErrorList: (stepIndex: number) => void;
+  getNextStepWithError: () => number | null;
 
   // Helpers
   getVisibleQuestions: (stepIndex: number) => Question[];
@@ -107,6 +116,11 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         isSubmitting: false,
         isLoading: false,
         hasHydrated: false,
+
+        // Estado de validação
+        validationErrors: {},
+        stepsWithErrors: [],
+        isInErrorCorrectionMode: false,
 
         // Definir session ID
         setSessionId: sessionId => set({ sessionId }),
@@ -254,6 +268,67 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
 
         // Definir estado de loading
         setIsLoading: isLoading => set({ isLoading }),
+
+        // Definir erros de validação do backend
+        setValidationErrors: errors => {
+          const { formConfig } = get();
+          if (!formConfig) return;
+
+          // Mapear erros para Record<questionId, message>
+          const validationErrors: Record<string, string> = {};
+          errors.forEach(err => {
+            validationErrors[err.questionId] = err.message;
+          });
+
+          // Identificar steps que contêm os questionIds com erro
+          const stepsWithErrors: number[] = [];
+          formConfig.steps.forEach((step, index) => {
+            const hasError = step.questions.some(
+              q => validationErrors[q.id] !== undefined
+            );
+            if (hasError) {
+              stepsWithErrors.push(index);
+            }
+          });
+
+          set({
+            validationErrors,
+            stepsWithErrors: stepsWithErrors.sort((a, b) => a - b),
+            isInErrorCorrectionMode: true,
+          });
+        },
+
+        // Limpar todos os erros de validação
+        clearValidationErrors: () =>
+          set({
+            validationErrors: {},
+            stepsWithErrors: [],
+            isInErrorCorrectionMode: false,
+          }),
+
+        // Limpar erro de uma pergunta específica
+        clearQuestionError: questionId => {
+          const { validationErrors } = get();
+          const newErrors = { ...validationErrors };
+          delete newErrors[questionId];
+          set({ validationErrors: newErrors });
+        },
+
+        // Remover step da lista de erros
+        removeStepFromErrorList: stepIndex => {
+          const { stepsWithErrors } = get();
+          const newStepsWithErrors = stepsWithErrors.filter(
+            idx => idx !== stepIndex
+          );
+          set({ stepsWithErrors: newStepsWithErrors });
+        },
+
+        // Obter próximo step com erro
+        getNextStepWithError: () => {
+          const { stepsWithErrors, currentStepIndex } = get();
+          const nextError = stepsWithErrors.find(idx => idx > currentStepIndex);
+          return nextError !== undefined ? nextError : null;
+        },
 
         // Verifica se uma pergunta deve ser exibida
         isQuestionVisible: question => {

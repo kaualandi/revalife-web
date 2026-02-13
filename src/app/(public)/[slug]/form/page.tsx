@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import { GoogleTagManager, sendGTMEvent } from '@next/third-parties/google';
+import { toast } from 'sonner';
+import type { ApiError, ValidationError } from '@/types/api.types';
 
 export default function TreatmentFormPage() {
   const router = useRouter();
@@ -31,6 +33,9 @@ export default function TreatmentFormPage() {
     previousStep,
     clearStepAnswers,
     getVisibleQuestions,
+    setValidationErrors,
+    clearValidationErrors,
+    goToStep,
   } = useTreatmentFormStore();
 
   const sessionQuery = useGetSession(sessionId);
@@ -97,6 +102,9 @@ export default function TreatmentFormPage() {
   // Função ao clicar em Continuar
   const handleContinue = () => {
     if (isLastStep) {
+      // Limpar erros de validação anteriores
+      clearValidationErrors();
+
       // Salvar antes de submeter
       saveNow();
 
@@ -130,9 +138,33 @@ export default function TreatmentFormPage() {
               setShowFinalMessage(true);
             }
           },
-          onError: () => {
+          onError: error => {
             // Em caso de erro, voltar para o formulário
             setShowFinalLoading(false);
+
+            // Verificar se é erro de validação (status 400 com array de erros)
+            const apiError = error as ApiError;
+            if (apiError.statusCode === 400 && Array.isArray(apiError.error)) {
+              const validationErrors = apiError.error as ValidationError[];
+
+              // Definir erros no store
+              setValidationErrors(validationErrors);
+
+              // Encontrar primeiro step com erro
+              const { stepsWithErrors } = useTreatmentFormStore.getState();
+              if (stepsWithErrors.length > 0) {
+                // Navegar para o primeiro step com erro
+                goToStep(stepsWithErrors[0]);
+
+                // Mostrar toast com mensagem geral
+                toast.error(
+                  Array.isArray(apiError.message)
+                    ? apiError.message[0]
+                    : apiError.message
+                );
+              }
+            }
+            // Erro genérico já é tratado pelo hook useSubmitSession
           },
         }
       );
@@ -141,6 +173,67 @@ export default function TreatmentFormPage() {
       setDirection('forward');
       nextStep();
     }
+  };
+
+  // Função para resubmeter após correção de erros
+  const handleResubmit = () => {
+    // Limpar erros
+    clearValidationErrors();
+
+    // Salvar antes de submeter
+    saveNow();
+
+    // Mostrar loading final
+    setShowFinalLoading(true);
+
+    // Submeter formulário
+    submitSession.mutate(
+      { answers },
+      {
+        onSuccess: data => {
+          // Disparar GTM com evento de submissão
+          if (sessionQuery.data?.form.gtmId) {
+            sendGTMEvent({
+              gtmId: sessionQuery.data.form.gtmId,
+              eventName: 'form_submission',
+              eventParams: {
+                formSlug: sessionQuery.data.form.slug,
+                sessionId,
+              },
+            });
+          }
+
+          // Processar resposta
+          if (data.status === 'APPROVED' && data.productUrl) {
+            window.location.href = data.productUrl;
+          } else {
+            setShowFinalLoading(false);
+            setShowFinalMessage(true);
+          }
+        },
+        onError: error => {
+          setShowFinalLoading(false);
+
+          // Verificar se é erro de validação novamente
+          const apiError = error as ApiError;
+          if (apiError.statusCode === 400 && Array.isArray(apiError.error)) {
+            const validationErrors = apiError.error as ValidationError[];
+            setValidationErrors(validationErrors);
+
+            const { stepsWithErrors } = useTreatmentFormStore.getState();
+            if (stepsWithErrors.length > 0) {
+              goToStep(stepsWithErrors[0]);
+              toast.error(
+                Array.isArray(apiError.message)
+                  ? apiError.message[0]
+                  : apiError.message
+              );
+            }
+          }
+          // Erro genérico já é tratado pelo hook useSubmitSession
+        },
+      }
+    );
   };
 
   // Função para auto-advance ao selecionar radio
@@ -260,6 +353,7 @@ export default function TreatmentFormPage() {
               <FormStepComponent
                 step={currentStep}
                 onAutoAdvance={handleAutoAdvance}
+                onResubmit={handleResubmit}
               />
             </motion.div>
           )}

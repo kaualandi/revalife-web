@@ -12,13 +12,26 @@ import { useEffect } from 'react';
 interface FormStepComponentProps {
   step: FormStep;
   onAutoAdvance?: () => void;
+  onResubmit?: () => void;
 }
 
 export function FormStepComponent({
   step,
   onAutoAdvance,
+  onResubmit,
 }: FormStepComponentProps) {
-  const { answers, setAnswer } = useTreatmentFormStore();
+  const {
+    answers,
+    setAnswer,
+    validationErrors,
+    clearQuestionError,
+    isInErrorCorrectionMode,
+    currentStepIndex,
+    removeStepFromErrorList,
+    getNextStepWithError,
+    goToStep,
+    stepsWithErrors,
+  } = useTreatmentFormStore();
   // Filtra perguntas visíveis baseado nas condições
   const visibleQuestions = step.questions.filter(q => {
     if (!q.showWhen) return true;
@@ -49,10 +62,102 @@ export function FormStepComponent({
     const subscription = form.watch((values, { name }) => {
       if (name && values[name] !== undefined) {
         setAnswer(name, values[name] as string | string[]);
+
+        // Limpar erro individual ao corrigir campo
+        if (validationErrors[name]) {
+          clearQuestionError(name);
+
+          // Limpar erro do react-hook-form também
+          form.clearErrors(name);
+        }
       }
     });
     return () => subscription.unsubscribe();
-  }, [form, setAnswer]);
+  }, [form, setAnswer, validationErrors, clearQuestionError]);
+
+  // Injetar erros de validação do backend no form
+  useEffect(() => {
+    visibleQuestions.forEach(question => {
+      const errorMessage = validationErrors[question.id];
+      if (errorMessage) {
+        form.setError(question.id, {
+          type: 'manual',
+          message: errorMessage,
+        });
+      }
+    });
+  }, [validationErrors, visibleQuestions, form]);
+
+  // Monitorar correção de todos os erros do step atual
+  useEffect(() => {
+    // Só executa se estiver em modo de correção e o step atual tem erros
+    if (
+      !isInErrorCorrectionMode ||
+      !stepsWithErrors.includes(currentStepIndex)
+    ) {
+      return;
+    }
+
+    // Obter IDs de todas as perguntas do step atual
+    const currentStepQuestionIds = visibleQuestions.map(q => q.id);
+
+    // Verificar se há ALGUM erro de validação do backend para perguntas deste step
+    const stepValidationErrors = Object.keys(validationErrors).filter(
+      questionId => currentStepQuestionIds.includes(questionId)
+    );
+
+    // Se ainda há erros de validação do backend neste step, não avançar
+    if (stepValidationErrors.length > 0) {
+      return;
+    }
+
+    // Verificar se todos os campos obrigatórios estão preenchidos
+    const allRequiredFieldsFilled = visibleQuestions.every(question => {
+      if (!question.required) return true;
+
+      const answer = answers[question.id];
+
+      if (Array.isArray(answer)) {
+        return answer.length > 0;
+      }
+
+      return answer !== undefined && answer !== '';
+    });
+
+    // Só avança se não há mais erros de validação E todos os campos obrigatórios estão preenchidos
+    if (allRequiredFieldsFilled) {
+      // Todos os erros deste step foram corrigidos
+      removeStepFromErrorList(currentStepIndex);
+
+      // Verificar se há próximo step com erro
+      const nextStepWithError = getNextStepWithError();
+
+      if (nextStepWithError !== null) {
+        // Navegar para próximo step com erro
+        setTimeout(() => {
+          goToStep(nextStepWithError);
+        }, 300); // Delay para feedback visual
+      } else {
+        // Não há mais erros, resubmeter automaticamente
+        if (onResubmit) {
+          setTimeout(() => {
+            onResubmit();
+          }, 500); // Delay maior para mostrar que tudo foi corrigido
+        }
+      }
+    }
+  }, [
+    validationErrors,
+    visibleQuestions,
+    isInErrorCorrectionMode,
+    currentStepIndex,
+    stepsWithErrors,
+    removeStepFromErrorList,
+    getNextStepWithError,
+    goToStep,
+    onResubmit,
+    answers,
+  ]);
 
   // Reseta form quando muda de step (usando step.id para evitar flicker)
   useEffect(() => {
@@ -70,6 +175,9 @@ export function FormStepComponent({
   // Verifica se todas as perguntas visíveis estão respondidas
   const handleRadioSelect = () => {
     if (!onAutoAdvance) return;
+
+    // Desabilitar auto-advance se estiver em modo de correção de erros
+    if (isInErrorCorrectionMode) return;
 
     // Aguarda um delay para o estado ser atualizado e perguntas condicionais aparecerem
     setTimeout(() => {
