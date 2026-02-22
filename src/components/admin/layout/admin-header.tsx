@@ -73,7 +73,7 @@ export function AdminHeader() {
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <span className="hidden max-w-[140px] truncate text-sm font-medium md:block">
+            <span className="max-w-[140px] truncate text-sm font-medium">
               {user?.name ?? 'Admin'}
             </span>
             <ChevronDown className="text-muted-foreground h-3 w-3" />

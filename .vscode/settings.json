@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": true,
   "scm.compactFolders": false,
-  "explorer.compactFolders": false
+  "explorer.compactFolders": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
