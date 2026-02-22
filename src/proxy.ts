@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 
 const API_URL = process.env.API_URL || 'http://localhost:3000';
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Só atua em rotas /admin/*
