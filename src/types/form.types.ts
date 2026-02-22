@@ -110,3 +110,41 @@ export interface ApiFormConfig {
 
 // Tipo para as respostas do formulário
 export type FormAnswers = Record<string, string | string[]>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Form settings (anamnese + redirecionamentos)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface AnamnesisScoringCondition {
+  fieldName: string;
+  values: string[];
+  points: number;
+  reason?: string;
+}
+
+export interface AnamnesisRules {
+  threshold: number;
+  scoringConditions: AnamnesisScoringCondition[];
+}
+
+export interface RedirectCondition {
+  fieldName?: string;
+  operator?: 'equals' | 'notEquals' | 'contains' | 'notContains' | 'in';
+  value?: string | number | string[];
+  allConditions?: Array<{
+    fieldName: string;
+    operator: 'equals' | 'notEquals' | 'contains' | 'notContains' | 'in';
+    value: string | number | string[];
+  }>;
+  redirectUrl: string;
+}
+
+export interface RedirectOnSuccess {
+  conditions: RedirectCondition[];
+  defaultRedirect?: string;
+}
+
+export interface FormSettings {
+  anamnesisRules?: AnamnesisRules;
+  redirectOnSuccess?: RedirectOnSuccess | null;
+}

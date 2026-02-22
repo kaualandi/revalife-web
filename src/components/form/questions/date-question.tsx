@@ -258,7 +258,7 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
             {question.description && (
               <FormDescription>{question.description}</FormDescription>
             )}
-            <FormControl className="h-16">
+            <FormControl className="h-12">
               <InputGroup>
                 <IMaskInput
                   mask="00/00/0000"
@@ -283,7 +283,7 @@ export function DateQuestion({ question, form }: DateQuestionProps) {
                   }}
                   inputRef={field.ref}
                   placeholder="DD/MM/AAAA"
-                  className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-16 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-12 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                   style={{ borderRadius: '0.375rem 0 0 0.375rem' }}
                 />
                 <InputGroupAddon align="inline-end">

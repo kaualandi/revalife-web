@@ -346,7 +346,7 @@ function ProductPageContent({ product }: { product: Product }) {
               {product.nextSteps.map((step, index) => (
                 <div key={`step-${index}`} className="text-center">
                   <div
-                    className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full"
+                    className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full"
                     style={{ backgroundColor: product.highlightColor }}
                   >
                     <span

@@ -1,5 +1,5 @@
+import type { FormConfig, FormSettings } from './form.types';
 import type { SessionStatus } from './api.types';
-
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Auth
@@ -109,3 +109,51 @@ export interface RecentSession {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type SessionsOverTimePeriod = 7 | 30 | 90;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Forms
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface AdminFormListItem {
+  id: number;
+  slug: string;
+  name: string;
+  description: string | null;
+  logoUrl: string | null;
+  faviconUrl: string | null;
+  gtmId: string | null;
+  primaryColor: string;
+  secondaryColor: string;
+  isActive: boolean;
+  kommoIntegrationId: number | null;
+  sessionsCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminFormDetail extends AdminFormListItem {
+  fieldsSchema: FormConfig;
+  settings: FormSettings;
+}
+
+export interface CreateFormDto {
+  slug: string;
+  name: string;
+  description?: string;
+  primaryColor: string;
+  secondaryColor: string;
+  logoUrl?: string;
+  faviconUrl?: string;
+  gtmId?: string;
+  kommoIntegrationId?: number;
+  isActive?: boolean;
+  fieldsSchema?: FormConfig;
+  settings?: FormSettings;
+}
+
+export type UpdateFormDto = Partial<CreateFormDto>;
+
+export interface DuplicateFormDto {
+  newSlug: string;
+  newName?: string;
+}

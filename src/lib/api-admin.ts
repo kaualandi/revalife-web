@@ -1,8 +1,16 @@
-import type { AdminStatsResponse, SessionsOverTimeResponse, SessionsOverTimePeriod, } from '@/types/admin.types';
+import type {
+  AdminStatsResponse,
+  SessionsOverTimeResponse,
+  SessionsOverTimePeriod,
+  AdminFormListItem,
+  AdminFormDetail,
+  CreateFormDto,
+  UpdateFormDto,
+  DuplicateFormDto,
+} from '@/types/admin.types';
 import { twoFactorClient } from 'better-auth/client/plugins';
 import { magicLinkClient } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
-
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Better Auth Client
@@ -114,4 +122,49 @@ export function getSessionsOverTime(period: SessionsOverTimePeriod = 30) {
       params: { period },
     }
   );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Forms API
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Lista todos os formulários (ativos + inativos) com sessionsCount */
+export function getAdminForms() {
+  return fetchAdmin<AdminFormListItem[]>('/admin/forms');
+}
+
+/** Detalhes completos de um formulário incluindo fieldsSchema e settings */
+export function getAdminFormBySlug(slug: string) {
+  return fetchAdmin<AdminFormDetail>(`/admin/forms/${slug}`);
+}
+
+/** Criar novo formulário */
+export function createAdminForm(data: CreateFormDto) {
+  return fetchAdmin<AdminFormDetail>('/admin/forms', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/** Atualização parcial de um formulário */
+export function updateAdminForm(slug: string, data: UpdateFormDto) {
+  return fetchAdmin<AdminFormDetail>(`/admin/forms/${slug}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+/** Soft delete (isActive=false) */
+export function deleteAdminForm(slug: string) {
+  return fetchAdmin<void>(`/admin/forms/${slug}`, {
+    method: 'DELETE',
+  });
+}
+
+/** Duplicar formulário com Kommo + mapeamentos */
+export function duplicateAdminForm(slug: string, data: DuplicateFormDto) {
+  return fetchAdmin<AdminFormDetail>(`/admin/forms/${slug}/duplicate`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
 }
