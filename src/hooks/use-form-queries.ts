@@ -5,6 +5,7 @@ import {
   updateAdminForm,
   deleteAdminForm,
   duplicateAdminForm,
+  getKommoIntegrationsLookup,
 } from '@/lib/api-admin';
 import type {
   CreateFormDto,
@@ -23,6 +24,15 @@ export function useAdminForms() {
   return useQuery({
     queryKey: ['admin', 'forms'],
     queryFn: getAdminForms,
+    staleTime: STALE,
+    retry: 1,
+  });
+}
+
+export function useKommoIntegrationsLookup() {
+  return useQuery({
+    queryKey: ['admin', 'kommo-integrations', 'lookup'],
+    queryFn: getKommoIntegrationsLookup,
     staleTime: STALE,
     retry: 1,
   });

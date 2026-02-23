@@ -10,9 +10,18 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { useKommoIntegrationsLookup } from '@/hooks/use-form-queries';
 import type { CreateFormValues } from '@/schemas/admin-form.schema';
 import type { UseFormReturn } from 'react-hook-form';
 
@@ -21,6 +30,9 @@ interface FormGeneralTabProps {
 }
 
 export function FormGeneralTab({ form }: FormGeneralTabProps) {
+  const { data: kommoOptions, isLoading: kommoLoading } =
+    useKommoIntegrationsLookup();
+
   return (
     <div className="space-y-6">
       {/* Identidade */}
@@ -215,19 +227,32 @@ export function FormGeneralTab({ form }: FormGeneralTabProps) {
           name="kommoIntegrationId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>ID da Integração Kommo</FormLabel>
+              <FormLabel>Integração Kommo</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  placeholder="123"
-                  {...field}
-                  value={field.value ?? ''}
-                  onChange={e =>
-                    field.onChange(
-                      e.target.value === '' ? null : Number(e.target.value)
-                    )
-                  }
-                />
+                {kommoLoading ? (
+                  <Skeleton className="h-9 w-full" />
+                ) : (
+                  <Select
+                    value={
+                      field.value != null ? String(field.value) : '__none__'
+                    }
+                    onValueChange={v =>
+                      field.onChange(v === '__none__' ? null : Number(v))
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione uma integração" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Nenhuma</SelectItem>
+                      {(kommoOptions ?? []).map(opt => (
+                        <SelectItem key={opt.id} value={String(opt.id)}>
+                          {opt.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>

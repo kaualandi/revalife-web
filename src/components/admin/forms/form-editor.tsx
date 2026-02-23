@@ -77,7 +77,7 @@ export function FormEditor({ defaultValues }: FormEditorProps) {
       logoUrl: values.logoUrl || undefined,
       faviconUrl: values.faviconUrl || undefined,
       gtmId: values.gtmId || undefined,
-      kommoIntegrationId: values.kommoIntegrationId ?? undefined,
+      kommoIntegrationId: values.kommoIntegrationId ?? null,
       fieldsSchema,
       settings,
     };

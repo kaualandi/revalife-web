@@ -111,6 +111,15 @@ export interface RecentSession {
 export type SessionsOverTimePeriod = 7 | 30 | 90;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Kommo
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface KommoIntegrationLookup {
+  id: number;
+  name: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Admin Forms
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -145,7 +154,7 @@ export interface CreateFormDto {
   logoUrl?: string;
   faviconUrl?: string;
   gtmId?: string;
-  kommoIntegrationId?: number;
+  kommoIntegrationId?: number | null;
   isActive?: boolean;
   fieldsSchema?: FormConfig;
   settings?: FormSettings;

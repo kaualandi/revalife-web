@@ -63,6 +63,7 @@ export function AdminHeader() {
           <Button
             variant="ghost"
             className="my-2 flex h-10 items-center gap-2 px-2"
+            suppressHydrationWarning
           >
             <Avatar className="size-8">
               <AvatarImage

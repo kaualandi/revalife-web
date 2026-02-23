@@ -7,6 +7,7 @@ import type {
   CreateFormDto,
   UpdateFormDto,
   DuplicateFormDto,
+  KommoIntegrationLookup,
 } from '@/types/admin.types';
 import { twoFactorClient } from 'better-auth/client/plugins';
 import { magicLinkClient } from 'better-auth/client/plugins';
@@ -167,4 +168,15 @@ export function duplicateAdminForm(slug: string, data: DuplicateFormDto) {
     method: 'POST',
     body: JSON.stringify(data),
   });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Kommo Integrations API
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Lookup de integrações Kommo disponíveis */
+export function getKommoIntegrationsLookup() {
+  return fetchAdmin<KommoIntegrationLookup[]>(
+    '/admin/kommo-integrations/lookup'
+  );
 }
