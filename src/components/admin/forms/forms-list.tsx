@@ -184,7 +184,7 @@ function RowActions({ form }: { form: AdminFormListItem }) {
 
   return (
     <>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center justify-end gap-1">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
