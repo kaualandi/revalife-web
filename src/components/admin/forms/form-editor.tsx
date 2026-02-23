@@ -134,7 +134,7 @@ export function FormEditor({ defaultValues }: FormEditorProps) {
             </div>
           </div>
           <Button type="submit" disabled={isPending} className="shrink-0">
-            <SaveIcon className="mr-2 h-4 w-4" />
+            <SaveIcon className="size-4" />
             {isPending ? 'Salvando...' : 'Salvar'}
           </Button>
         </div>

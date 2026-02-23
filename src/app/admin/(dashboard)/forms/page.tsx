@@ -32,7 +32,7 @@ export default function AdminFormsPage() {
         </div>
         <Button asChild>
           <Link href="/admin/forms/new">
-            <PlusIcon className="mr-2 h-4 w-4" />
+            <PlusIcon className="size-4" />
             Novo Formulário
           </Link>
         </Button>
