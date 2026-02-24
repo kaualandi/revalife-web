@@ -60,7 +60,7 @@ export default function TreatmentFormPage() {
   // Se não tem formConfig ainda, aguardar
   if (!formConfig || sessionQuery.isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-dvh items-center justify-center">
         <p className="text-muted-foreground">Carregando formulário...</p>
       </div>
     );
@@ -302,7 +302,7 @@ export default function TreatmentFormPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col px-3 pt-3 pb-3">
+    <div className="flex min-h-dvh flex-col px-3 pt-3 pb-3">
       <header className="relative mb-8 flex min-h-9 items-center justify-between gap-4">
         <div className="flex-1">
           {!isFirstStep && (

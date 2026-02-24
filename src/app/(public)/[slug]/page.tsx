@@ -118,7 +118,7 @@ export default function FormSlugPage() {
 
   // Mostrar loading
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-dvh items-center justify-center">
       <div className="text-center">
         <p className="text-muted-foreground text-lg">
           Iniciando formulário {slug}...

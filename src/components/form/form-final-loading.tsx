@@ -30,7 +30,7 @@ export function FormFinalLoading() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex min-h-screen flex-col items-center justify-center px-4 py-12"
+      className="flex min-h-dvh flex-col items-center justify-center px-4 py-12"
     >
       <div className="w-full max-w-2xl space-y-8 text-center">
         {/* Título */}

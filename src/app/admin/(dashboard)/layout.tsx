@@ -18,7 +18,7 @@ export default function AdminDashboardLayout({
           <AdminSidebar />
         </div>
 
-        <SidebarInset className="flex min-h-screen flex-col">
+        <SidebarInset className="flex min-h-dvh flex-col">
           <AdminHeader />
 
           <main className="flex-1 overflow-auto p-4 pb-20 md:p-6 md:pb-6">

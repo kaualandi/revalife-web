@@ -50,7 +50,7 @@ function ResetPasswordContent() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-linear-to-br from-neutral-950 via-neutral-900 to-neutral-800 p-4">
+    <main className="flex min-h-dvh items-center justify-center bg-linear-to-br from-neutral-950 via-neutral-900 to-neutral-800 p-4">
       <div className="bg-card w-full max-w-sm rounded-2xl border border-neutral-800 p-8 shadow-2xl">
         {done ? (
           <div className="py-4 text-center">

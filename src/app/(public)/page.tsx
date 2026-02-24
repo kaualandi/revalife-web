@@ -42,7 +42,7 @@ export default function Home() {
   }, [sessionId, router]);
 
   return (
-    <div className="flex min-h-screen flex-col px-4 py-8">
+    <div className="flex min-h-dvh flex-col px-4 py-8">
       <header className="mb-20">
         <Image
           src="/images/logo.svg"

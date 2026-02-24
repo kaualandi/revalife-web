@@ -86,7 +86,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   console.log({ product });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-dvh bg-white">
       <ProductPageContent product={product} />
       {product.form.gtmId && <GoogleTagManager gtmId={product.form.gtmId} />}
     </div>
@@ -95,7 +95,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 function ProductPageContent({ product }: { product: Product }) {
   return (
-    <div className="min-h-screen space-y-6 px-3 pt-3 pb-3">
+    <div className="min-h-dvh space-y-6 px-3 pt-3 pb-3">
       {/* Header Images */}
       <section className="space-y-4">
         {product.showSuggestedBadge && (
