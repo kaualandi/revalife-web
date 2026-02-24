@@ -144,8 +144,8 @@ function LoadingSkeleton() {
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export function RecentSessionsTable() {
-  const { data, isLoading } = useRecentSessions();
+export function RecentSessionsTable({ formId }: { formId?: number }) {
+  const { data, isLoading } = useRecentSessions(formId);
 
   return (
     <Card>

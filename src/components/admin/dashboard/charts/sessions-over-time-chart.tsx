@@ -38,9 +38,9 @@ const PERIODS: { value: SessionsOverTimePeriod; label: string }[] = [
   { value: 90, label: '90 dias' },
 ];
 
-export function SessionsOverTimeChart() {
+export function SessionsOverTimeChart({ formId }: { formId?: number }) {
   const [period, setPeriod] = useState<SessionsOverTimePeriod>(30);
-  const { data, isLoading } = useSessionsOverTime(period);
+  const { data, isLoading } = useSessionsOverTime(period, formId);
 
   const formatted = data?.data?.map(d => ({
     ...d,

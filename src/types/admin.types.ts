@@ -35,6 +35,7 @@ export interface BetterAuthSessionResponse {
 export interface AdminOverview {
   totalForms: number;
   totalSessions: number;
+  completedSessions: number;
   completionRate: number; // percentage 0-100
   avgUtmsPerSession: number;
 }
@@ -165,4 +166,14 @@ export type UpdateFormDto = Partial<CreateFormDto>;
 export interface DuplicateFormDto {
   newSlug: string;
   newName?: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Form Lookup
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface FormLookupItem {
+  id: number;
+  slug: string;
+  name: string;
 }

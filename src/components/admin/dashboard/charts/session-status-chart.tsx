@@ -47,8 +47,8 @@ const chartConfig: ChartConfig = {
   ERROR: { label: STATUS_LABELS.ERROR, color: STATUS_COLORS.ERROR },
 };
 
-export function SessionStatusChart() {
-  const { data, isLoading } = useSessionStatus();
+export function SessionStatusChart({ formId }: { formId?: number }) {
+  const { data, isLoading } = useSessionStatus(formId);
 
   return (
     <Card className="flex flex-col">

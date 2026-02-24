@@ -28,8 +28,8 @@ const chartConfig: ChartConfig = {
   count: { label: 'Sessões', color: 'var(--chart-2)' },
 };
 
-export function SessionsPerFormChart() {
-  const { data, isLoading } = useSessionsPerForm();
+export function SessionsPerFormChart({ formId }: { formId?: number }) {
+  const { data, isLoading } = useSessionsPerForm(formId);
 
   const sorted = data ? [...data].sort((a, b) => b.count - a.count) : [];
 

@@ -32,8 +32,8 @@ const chartConfig: ChartConfig = {
   inProgress: { label: 'Em progresso', color: 'var(--chart-4)' },
 };
 
-export function AbandonmentChart() {
-  const { data, isLoading } = useAbandonmentPerForm();
+export function AbandonmentChart({ formId }: { formId?: number }) {
+  const { data, isLoading } = useAbandonmentPerForm(formId);
 
   return (
     <Card>

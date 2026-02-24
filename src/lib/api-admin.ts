@@ -8,6 +8,7 @@ import type {
   UpdateFormDto,
   DuplicateFormDto,
   KommoIntegrationLookup,
+  FormLookupItem,
 } from '@/types/admin.types';
 import { twoFactorClient } from 'better-auth/client/plugins';
 import { magicLinkClient } from 'better-auth/client/plugins';
@@ -111,16 +112,21 @@ export async function fetchAdmin<T>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Todas as métricas do dashboard em uma única requisição */
-export function getAdminStats() {
-  return fetchAdmin<AdminStatsResponse>('/admin/stats');
+export function getAdminStats(formId?: number) {
+  return fetchAdmin<AdminStatsResponse>('/admin/stats', {
+    params: { formId },
+  });
 }
 
 /** Sessões ao longo do tempo */
-export function getSessionsOverTime(period: SessionsOverTimePeriod = 30) {
+export function getSessionsOverTime(
+  period: SessionsOverTimePeriod = 30,
+  formId?: number
+) {
   return fetchAdmin<SessionsOverTimeResponse>(
     '/admin/stats/sessions-over-time',
     {
-      params: { period },
+      params: { period, formId },
     }
   );
 }
@@ -179,4 +185,9 @@ export function getKommoIntegrationsLookup() {
   return fetchAdmin<KommoIntegrationLookup[]>(
     '/admin/kommo-integrations/lookup'
   );
+}
+
+/** Lookup de formulários (id, slug, name) */
+export function getFormsLookup() {
+  return fetchAdmin<FormLookupItem[]>('/admin/forms/lookup');
 }

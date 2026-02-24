@@ -28,8 +28,8 @@ const chartConfig: ChartConfig = {
   count: { label: 'Sessões', color: 'var(--chart-3)' },
 };
 
-export function UtmSourcesChart() {
-  const { data, isLoading } = useUtmSources();
+export function UtmSourcesChart({ formId }: { formId?: number }) {
+  const { data, isLoading } = useUtmSources(formId);
 
   const top10 = data
     ? [...data].sort((a, b) => b.count - a.count).slice(0, 10)

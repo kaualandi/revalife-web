@@ -71,8 +71,8 @@ function StatCard({
   );
 }
 
-export function StatsCards() {
-  const { data, isLoading } = useAdminOverview();
+export function StatsCards({ formId }: { formId?: number }) {
+  const { data, isLoading } = useAdminOverview(formId);
 
   const completionRate = data?.completionRate ?? 0;
   const completionTrend = completionRate >= 50 ? 'up' : 'down';
@@ -102,7 +102,9 @@ export function StatsCards() {
         icon={<TrendingUp className="h-4 w-4" />}
         trend={data ? completionTrend : undefined}
         description={
-          data ? `${data.completionRate.toFixed(1)}% de conclusão` : undefined
+          data
+            ? `${data.completedSessions}/${data.totalSessions} sessões concluídas`
+            : undefined
         }
       />
       <StatCard

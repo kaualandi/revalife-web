@@ -37,8 +37,8 @@ const chartConfig: ChartConfig = {
   count: { label: 'Sessões', color: 'var(--chart-1)' },
 };
 
-export function FormFunnelChart() {
-  const { data, isLoading } = useFunnelData();
+export function FormFunnelChart({ formId }: { formId?: number }) {
+  const { data, isLoading } = useFunnelData(formId);
 
   return (
     <Card className="flex flex-col">
