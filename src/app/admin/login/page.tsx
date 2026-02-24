@@ -4,7 +4,6 @@ import Image from 'next/image';
 
 import { LoginForm } from './login-form';
 
-
 export const metadata: Metadata = {
   title: 'Login — Revalife Admin',
   description: 'Painel administrativo Revalife',
@@ -12,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function AdminLoginPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-linear-to-br from-neutral-950 via-neutral-900 to-neutral-800 p-4">
+    <main className="flex min-h-dvh items-center justify-center bg-linear-to-br from-neutral-950 via-neutral-900 to-neutral-800 p-4">
       {/* Glow decorativo */}
       <div
         aria-hidden
