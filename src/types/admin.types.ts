@@ -177,3 +177,128 @@ export interface FormLookupItem {
   slug: string;
   name: string;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Sessions — List
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface AdminSessionListQuery {
+  page?: number;
+  limit?: number;
+  status?: SessionStatus;
+  formSlug?: string;
+  search?: string;
+  startDate?: string;
+  endDate?: string;
+  hasKommoId?: boolean;
+}
+
+export interface AdminSessionListItem {
+  id: number;
+  fullName: string | null;
+  email: string | null;
+  formName: string | null;
+  formSlug: string | null;
+  currentStep: number;
+  kommoId: number | null;
+  productUrl: string | null;
+  hasUtm: boolean;
+  status: SessionStatus;
+  createdAt: string;
+  submittedAt: string | null;
+}
+
+export interface PaginatedSessions {
+  data: AdminSessionListItem[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Sessions — Stats
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface SessionStatusCount {
+  status: SessionStatus;
+  count: number;
+}
+
+export interface TopForm {
+  formId: number;
+  formName: string;
+  formSlug: string;
+  count: number;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Sessions — Detail
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface MappedAnswer {
+  questionId: string;
+  questionTitle: string;
+  questionType: string;
+  rawValue: unknown;
+  displayValue: string;
+}
+
+export interface AdminSessionDetail {
+  id: number;
+  fullName: string | null;
+  email: string | null;
+  phone: string | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  currentStep: number;
+  kommoId: number | null;
+  productUrl: string | null;
+  status: SessionStatus;
+  answers: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+  submittedAt: string | null;
+  form: {
+    id: number;
+    slug: string;
+    name: string;
+    isActive: boolean;
+    kommoIntegration: {
+      name: string;
+      apiUrl: string;
+      pipelineId: string;
+      isActive: boolean;
+    } | null;
+  } | null;
+  utms: {
+    id: number;
+    utm_source: string | null;
+    utm_medium: string | null;
+    utm_campaign: string | null;
+    utm_content: string | null;
+    utm_term: string | null;
+    tracking_id: string | null;
+    ph_distinct_id: string | null;
+    referring_afiliado_id: string | null;
+  }[];
+  webhookDeliveries: {
+    id: number;
+    event: string;
+    status: string;
+    attempts: number;
+    responseStatus: number | null;
+    errorMessage: string | null;
+    lastAttempt: string | null;
+    webhookConfig: { url: string };
+  }[];
+  mappedAnswers: MappedAnswer[];
+}
+
+export interface AdminSessionUpdate {
+  status?: SessionStatus;
+  productUrl?: string | null;
+  answers?: Record<string, unknown>;
+}

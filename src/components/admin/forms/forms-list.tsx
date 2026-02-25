@@ -36,7 +36,7 @@ import {
 import { useDeleteForm } from '@/hooks/use-form-queries';
 import { useAdminForms } from '@/hooks/use-form-queries';
 import type { AdminFormListItem } from '@/types/admin.types';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   CopyIcon,
@@ -313,17 +313,42 @@ function DesktopTable({ forms }: { forms: AdminFormListItem[] }) {
                   )}
                 </TableCell>
                 <TableCell>
-                  <span className="font-medium">
-                    {form.sessionsCount.toLocaleString('pt-BR')}
-                  </span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        asChild
+                      >
+                        <Link href={`/admin/sessions?formSlug=${form.slug}`}>
+                          <Users2Icon className="h-3.5 w-3.5" />
+                        </Link>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {form.sessionsCount.toLocaleString('pt-BR')} sessões
+                    </TooltipContent>
+                  </Tooltip>
                 </TableCell>
                 <TableCell>
-                  <span className="text-muted-foreground text-sm">
-                    {formatDistanceToNow(new Date(form.createdAt), {
-                      locale: ptBR,
-                      addSuffix: true,
-                    })}
-                  </span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="text-muted-foreground cursor-default text-sm">
+                        {formatDistanceToNow(new Date(form.createdAt), {
+                          locale: ptBR,
+                          addSuffix: true,
+                        })}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {format(
+                        new Date(form.createdAt),
+                        "d MMM yyyy 'às' HH:mm",
+                        { locale: ptBR }
+                      )}
+                    </TooltipContent>
+                  </Tooltip>
                 </TableCell>
                 <TableCell className="text-right">
                   <RowActions form={form} />
@@ -363,10 +388,13 @@ function MobileCards({ forms }: { forms: AdminFormListItem[] }) {
           <CardContent className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 text-sm">
-                <span className="text-muted-foreground flex items-center gap-1">
+                <Link
+                  href={`/admin/sessions?formSlug=${form.slug}`}
+                  className="text-muted-foreground flex items-center gap-1 hover:underline"
+                >
                   <Users2Icon className="h-3.5 w-3.5" />
                   {form.sessionsCount.toLocaleString('pt-BR')} sessões
-                </span>
+                </Link>
                 <ColorSwatches
                   primary={form.primaryColor}
                   secondary={form.secondaryColor}
