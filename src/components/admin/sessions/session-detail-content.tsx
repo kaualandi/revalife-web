@@ -504,7 +504,7 @@ function RawJsonTab({ session }: { session: AdminSessionDetail }) {
 function SummarySection({ session }: { session: AdminSessionDetail }) {
   const kommoUrl =
     session.kommoId && session.form?.kommoIntegration?.apiUrl
-      ? `https://${session.form.kommoIntegration.apiUrl}/leads/detail/${session.kommoId}`
+      ? `${session.form.kommoIntegration.apiUrl}/leads/detail/${session.kommoId}`
       : null;
 
   return (

@@ -317,18 +317,17 @@ function DesktopTable({ forms }: { forms: AdminFormListItem[] }) {
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
+                        size="sm"
+                        className="h-8 gap-1.5 px-2"
                         asChild
                       >
                         <Link href={`/admin/sessions?formSlug=${form.slug}`}>
                           <Users2Icon className="h-3.5 w-3.5" />
+                          {form.sessionsCount.toLocaleString('pt-BR')}
                         </Link>
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      {form.sessionsCount.toLocaleString('pt-BR')} sessões
-                    </TooltipContent>
+                    <TooltipContent>Ver sessões deste formulário</TooltipContent>
                   </Tooltip>
                 </TableCell>
                 <TableCell>
