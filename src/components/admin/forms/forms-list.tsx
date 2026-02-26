@@ -327,7 +327,9 @@ function DesktopTable({ forms }: { forms: AdminFormListItem[] }) {
                         </Link>
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Ver sessões deste formulário</TooltipContent>
+                    <TooltipContent>
+                      Ver sessões deste formulário
+                    </TooltipContent>
                   </Tooltip>
                 </TableCell>
                 <TableCell>
