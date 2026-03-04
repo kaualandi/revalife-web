@@ -1,8 +1,13 @@
-import type { FormAnswers, Question, QuestionCondition, QuestionConditionGroup, ApiFormConfig, } from '@/types/form.types';
+import type {
+  FormAnswers,
+  Question,
+  QuestionCondition,
+  QuestionConditionGroup,
+  ApiFormConfig,
+} from '@/types/form.types';
 import { devtools, persist } from 'zustand/middleware';
 import type { FormMetadata } from '@/types/api.types';
 import { create } from 'zustand';
-
 
 interface TreatmentFormState {
   // Estado
@@ -14,6 +19,12 @@ interface TreatmentFormState {
   isSubmitting: boolean;
   isLoading: boolean;
   hasHydrated: boolean;
+
+  // Resultado da submissão (persistido para retorno do usuário)
+  submissionResult: {
+    status: 'APPROVED' | 'REJECTED';
+    productUrl?: string;
+  } | null;
 
   // Validação de erros do backend
   validationErrors: Record<string, string>;
@@ -39,6 +50,10 @@ interface TreatmentFormState {
   resetForm: () => void;
   setIsSubmitting: (isSubmitting: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
+
+  setSubmissionResult: (
+    result: { status: 'APPROVED' | 'REJECTED'; productUrl?: string } | null
+  ) => void;
 
   // Ações de validação
   setValidationErrors: (
@@ -116,6 +131,9 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
         isSubmitting: false,
         isLoading: false,
         hasHydrated: false,
+
+        // Resultado da submissão
+        submissionResult: null,
 
         // Estado de validação
         validationErrors: {},
@@ -261,7 +279,11 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
             isSubmitting: false,
             formConfig: null,
             formMetadata: null,
+            submissionResult: null,
           })),
+
+        // Definir resultado da submissão
+        setSubmissionResult: result => set({ submissionResult: result }),
 
         // Definir estado de submissão
         setIsSubmitting: isSubmitting => set({ isSubmitting }),
@@ -433,6 +455,7 @@ export const useTreatmentFormStore = create<TreatmentFormState>()(
           formMetadata: state.formMetadata
             ? { slug: state.formMetadata.slug }
             : null,
+          submissionResult: state.submissionResult,
         }),
         onRehydrateStorage: () => state => {
           state?.setHasHydrated(true);

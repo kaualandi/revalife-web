@@ -9,6 +9,7 @@ import { Check } from 'lucide-react';
 import Image from 'next/image';
 
 import { PurchaseButton } from './components/purchase-button';
+import { CorrectDataButton } from './components/correct-data-button';
 
 interface ProductPageProps {
   params: Promise<{
@@ -96,6 +97,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 function ProductPageContent({ product }: { product: Product }) {
   return (
     <div className="min-h-dvh space-y-6 px-3 pt-3 pb-3">
+      {/* Botão Corrigir dados */}
+      <div>
+        <CorrectDataButton formSlug={product.form.slug} />
+      </div>
+
       {/* Header Images */}
       <section className="space-y-4">
         {product.showSuggestedBadge && (

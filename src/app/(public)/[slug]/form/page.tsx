@@ -36,9 +36,13 @@ export default function TreatmentFormPage() {
     setValidationErrors,
     clearValidationErrors,
     goToStep,
+    submissionResult,
+    setSubmissionResult,
+    resetForm,
+    setSessionId,
   } = useTreatmentFormStore();
 
-  const sessionQuery = useGetSession(sessionId);
+  const sessionQuery = useGetSession(submissionResult ? null : sessionId);
   const submitSession = useSubmitSession();
 
   // Auto-save com debounce de 2s
@@ -46,16 +50,52 @@ export default function TreatmentFormPage() {
 
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const [showFinalLoading, setShowFinalLoading] = useState(false);
-  const [showFinalMessage, setShowFinalMessage] = useState(false);
   const [isAdvancing, setIsAdvancing] = useState(false);
 
   // Verificar se sessão existe e é do formulário correto
   useEffect(() => {
+    // Não redirecionar se já tiver um resultado salvo
+    if (submissionResult) return;
+
     if (!sessionId || formMetadata?.slug !== slug) {
       const searchParams = window.location.search;
       router.push(`/${slug}${searchParams}`);
     }
-  }, [sessionId, formMetadata?.slug, slug, router]);
+  }, [sessionId, formMetadata?.slug, slug, router, submissionResult]);
+
+  // Redirecionar aprovados diretamente (inclui retorno do usuário)
+  useEffect(() => {
+    if (
+      submissionResult?.status === 'APPROVED' &&
+      submissionResult.productUrl
+    ) {
+      window.location.href = submissionResult.productUrl;
+    }
+  }, [submissionResult]);
+
+  // Função de reset: limpa sessão e redireciona para o início
+  const handleReset = () => {
+    setSubmissionResult(null);
+    resetForm();
+    setSessionId(null);
+    const searchParams = window.location.search;
+    router.push(`/${slug}${searchParams}`);
+  };
+
+  // Mostrar tela de loading final
+  if (showFinalLoading) {
+    return <FormFinalLoading />;
+  }
+
+  // Mostrar resultado persistido (inclui retorno do usuário)
+  if (submissionResult?.status === 'APPROVED') {
+    // Redirecionar via useEffect — mostrar loading enquanto navega
+    return <FormFinalLoading />;
+  }
+
+  if (submissionResult) {
+    return <FormFinalMessage onReset={handleReset} />;
+  }
 
   // Se não tem formConfig ainda, aguardar
   if (!formConfig || sessionQuery.isLoading) {
@@ -116,6 +156,12 @@ export default function TreatmentFormPage() {
         { answers },
         {
           onSuccess: data => {
+            // Salvar resultado no store (persiste para retorno do usuário)
+            setSubmissionResult({
+              status: data.status,
+              productUrl: data.productUrl,
+            });
+
             // Disparar GTM com evento de submissão
             if (sessionQuery.data?.form.gtmId) {
               sendGTMEvent({
@@ -128,14 +174,12 @@ export default function TreatmentFormPage() {
               });
             }
 
-            // Processar resposta baseada no status
             if (data.status === 'APPROVED' && data.productUrl) {
-              // Redirecionar para URL do produto (mesma aba)
+              // Redirecionar direto — loading permanece visível durante a navegação
               window.location.href = data.productUrl;
             } else {
               // Mostrar mensagem de rejeição
               setShowFinalLoading(false);
-              setShowFinalMessage(true);
             }
           },
           onError: error => {
@@ -191,6 +235,12 @@ export default function TreatmentFormPage() {
       { answers },
       {
         onSuccess: data => {
+          // Salvar resultado no store (persiste para retorno do usuário)
+          setSubmissionResult({
+            status: data.status,
+            productUrl: data.productUrl,
+          });
+
           // Disparar GTM com evento de submissão
           if (sessionQuery.data?.form.gtmId) {
             sendGTMEvent({
@@ -203,12 +253,12 @@ export default function TreatmentFormPage() {
             });
           }
 
-          // Processar resposta
           if (data.status === 'APPROVED' && data.productUrl) {
+            // Redirecionar direto — loading permanece visível durante a navegação
             window.location.href = data.productUrl;
           } else {
+            // Mostrar mensagem de rejeição
             setShowFinalLoading(false);
-            setShowFinalMessage(true);
           }
         },
         onError: error => {
@@ -290,16 +340,6 @@ export default function TreatmentFormPage() {
     setDirection('backward');
     previousStep();
   };
-
-  // Mostrar tela de loading final
-  if (showFinalLoading) {
-    return <FormFinalLoading />;
-  }
-
-  // Mostrar mensagem final
-  if (showFinalMessage) {
-    return <FormFinalMessage />;
-  }
 
   return (
     <div className="flex min-h-dvh flex-col px-3 pt-3 pb-3">
