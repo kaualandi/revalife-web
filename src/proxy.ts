@@ -3,7 +3,8 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 
-const API_URL = process.env.API_URL || 'http://localhost:3000';
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
