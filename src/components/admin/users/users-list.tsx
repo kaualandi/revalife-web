@@ -294,7 +294,7 @@ function MobileCards({ users }: { users: AdminUserListItem[] }) {
             </div>
             <div>
               <span className="text-foreground font-medium">Formulários:</span>{' '}
-              {u.formPermissionsCount === null ? '∞' : u.formPermissionsCount}
+              {u.role === 'ADMIN' ? '∞' : u.formPermissionsCount}
             </div>
           </div>
 
