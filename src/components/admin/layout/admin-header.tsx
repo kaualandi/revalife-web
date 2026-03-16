@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { Sun, Moon, Monitor, LogOut, User, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { authClient } from '@/lib/api-admin';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -26,6 +27,7 @@ import { Separator } from '@/components/ui/separator';
 export function AdminHeader() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const queryClient = useQueryClient();
   const { data: session } = authClient.useSession();
 
   const user = session?.user;
@@ -40,6 +42,7 @@ export function AdminHeader() {
 
   const handleSignOut = async () => {
     await authClient.signOut();
+    queryClient.clear();
     toast.success('Sessão encerrada');
     router.push('/admin/login');
     router.refresh();

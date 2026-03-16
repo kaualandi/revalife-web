@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Loader2, Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { GoogleIcon } from '@/components/ui/icons';
 
@@ -35,6 +36,7 @@ import { TwoFactorDialog } from './two-factor-dialog';
 export function LoginForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const callbackUrl = searchParams.get('callbackUrl') || '/admin';
 
   // ── OAuth error handling (search param) ────────────────────
@@ -87,6 +89,7 @@ export function LoginForm() {
     }
 
     toast.success('Bem-vindo!');
+    queryClient.clear();
     router.push(callbackUrl);
   };
 
