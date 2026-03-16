@@ -13,9 +13,17 @@ import type {
   PaginatedSessions,
   AdminSessionDetail,
   AdminSessionUpdate,
+  AdminUserListQuery,
+  PaginatedUsers,
+  AdminUserDetail,
+  AdminCreateUserDto,
+  AdminUpdateUserDto,
 } from '@/types/admin.types';
-import { twoFactorClient } from 'better-auth/client/plugins';
-import { magicLinkClient } from 'better-auth/client/plugins';
+import {
+  twoFactorClient,
+  magicLinkClient,
+  inferAdditionalFields,
+} from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -29,7 +37,17 @@ export const authClient = createAuthClient({
   fetchOptions: {
     credentials: 'include', // obrigatório para cookies cross-origin
   },
-  plugins: [magicLinkClient(), twoFactorClient()],
+  plugins: [
+    magicLinkClient(),
+    twoFactorClient(),
+    inferAdditionalFields({
+      user: {
+        role: {
+          type: 'string' as const,
+        },
+      },
+    }),
+  ],
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -251,4 +269,52 @@ export async function exportAdminSessions(
   a.download = `sessions-${Date.now()}.xlsx`;
   a.click();
   URL.revokeObjectURL(objectUrl);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Users API
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Listagem paginada de usuários com filtros */
+export function getAdminUsers(query: AdminUserListQuery = {}) {
+  return fetchAdmin<PaginatedUsers>('/admin/users', {
+    params: query as Record<
+      string,
+      string | number | boolean | undefined | null
+    >,
+  });
+}
+
+/** Detalhe completo de um usuário incluindo permissões de formulários */
+export function getAdminUserById(id: string) {
+  return fetchAdmin<AdminUserDetail>(`/admin/users/${id}`);
+}
+
+/** Criar usuário (admin cria para outros) */
+export function createAdminUser(data: AdminCreateUserDto) {
+  return fetchAdmin<AdminUserDetail>('/admin/users', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/** Atualização parcial de um usuário */
+export function updateAdminUser(id: string, data: AdminUpdateUserDto) {
+  return fetchAdmin<AdminUserDetail>(`/admin/users/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+/** Remover usuário */
+export function deleteAdminUser(id: string) {
+  return fetchAdmin<void>(`/admin/users/${id}`, { method: 'DELETE' });
+}
+
+/** Substituir todas as permissões de formulários de um usuário */
+export function setUserFormPermissions(id: string, formIds: number[]) {
+  return fetchAdmin<AdminUserDetail>(`/admin/users/${id}/form-permissions`, {
+    method: 'PUT',
+    body: JSON.stringify({ formIds }),
+  });
 }

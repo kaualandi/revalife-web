@@ -5,6 +5,8 @@ import type { SessionStatus } from './api.types';
 // Auth
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type UserRole = 'ADMIN' | 'CLIENT';
+
 export interface AdminUser {
   id: string;
   name: string;
@@ -12,6 +14,7 @@ export interface AdminUser {
   image?: string | null;
   emailVerified: boolean;
   twoFactorEnabled?: boolean;
+  role?: UserRole;
   createdAt: string;
   updatedAt: string;
 }
@@ -301,4 +304,69 @@ export interface AdminSessionUpdate {
   status?: SessionStatus;
   productUrl?: string | null;
   answers?: Record<string, unknown>;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin Users
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface AdminUserListQuery {
+  search?: string;
+  role?: UserRole;
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminUserListItem {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  emailVerified: boolean;
+  createdAt: string;
+  formPermissionsCount: number | null;
+}
+
+export interface PaginatedUsers {
+  data: AdminUserListItem[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export interface AdminUserFormPermission {
+  formId: number;
+  formName: string;
+  formSlug: string;
+}
+
+export interface AdminUserDetail {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  emailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  formPermissions: AdminUserFormPermission[];
+}
+
+export interface AdminCreateUserDto {
+  name: string;
+  email: string;
+  role: UserRole;
+  formIds?: number[];
+}
+
+export interface AdminUpdateUserDto {
+  name?: string;
+  email?: string;
+  role?: UserRole;
+}
+
+export interface AdminSetFormPermissionsDto {
+  formIds: number[];
 }

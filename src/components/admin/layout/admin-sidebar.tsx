@@ -2,7 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, Users, Settings } from 'lucide-react';
+import {
+  LayoutDashboard,
+  FileText,
+  Users,
+  Settings,
+  UserCog,
+} from 'lucide-react';
 
 import {
   Sidebar,
@@ -14,17 +20,44 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
+import { authClient } from '@/lib/api-admin';
 import Image from 'next/image';
 
-const navItems = [
-  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
-  { label: 'Formulários', href: '/admin/forms', icon: FileText, exact: false },
-  { label: 'Sessões', href: '/admin/sessions', icon: Users, exact: false },
+const baseNavItems = [
+  {
+    label: 'Dashboard',
+    href: '/admin',
+    icon: LayoutDashboard,
+    exact: true,
+    adminOnly: false,
+  },
+  {
+    label: 'Formulários',
+    href: '/admin/forms',
+    icon: FileText,
+    exact: false,
+    adminOnly: false,
+  },
+  {
+    label: 'Sessões',
+    href: '/admin/sessions',
+    icon: Users,
+    exact: false,
+    adminOnly: false,
+  },
+  {
+    label: 'Usuários',
+    href: '/admin/users',
+    icon: UserCog,
+    exact: false,
+    adminOnly: true,
+  },
   {
     label: 'Configurações',
     href: '/admin/settings',
     icon: Settings,
     exact: false,
+    adminOnly: false,
   },
 ];
 
@@ -32,6 +65,10 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
+  const { data: session, isPending } = authClient.useSession();
+  const isAdmin = session?.user?.role === 'ADMIN';
+
+  const navItems = baseNavItems.filter(item => !item.adminOnly || isAdmin || isPending);
 
   return (
     <Sidebar collapsible="icon">
