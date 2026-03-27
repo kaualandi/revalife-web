@@ -20,10 +20,13 @@ import {
 import { Separator } from '@/components/ui/separator';
 import type {
   AnamnesisScoringCondition,
+  FormConfig,
   FormSettings,
   RedirectCondition,
 } from '@/types/form.types';
+import { Checkbox as CheckboxPrimitive } from 'radix-ui';
 import { PlusIcon, TrashIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const REDIRECT_OPERATORS = [
   { value: 'equals', label: 'Igual a' },
@@ -36,6 +39,7 @@ const REDIRECT_OPERATORS = [
 interface FormSettingsPanelProps {
   value: FormSettings | undefined;
   onChange: (value: FormSettings) => void;
+  fieldsSchema?: FormConfig;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -328,16 +332,119 @@ function RedirectSection({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Kommo breakpoints section
+// ─────────────────────────────────────────────────────────────────────────────
+
+function KommoBreakpointsSection({
+  value,
+  onChange,
+  fieldsSchema,
+}: {
+  value: FormSettings;
+  onChange: (v: FormSettings) => void;
+  fieldsSchema?: FormConfig;
+}) {
+  const selected = value.kommoBreakpointSteps ?? [];
+  const formSteps = fieldsSchema?.steps ?? [];
+
+  function toggle(stepNum: number) {
+    const next = selected.includes(stepNum)
+      ? selected.filter(s => s !== stepNum)
+      : [...selected, stepNum].sort((a, b) => a - b);
+    onChange({ ...value, kommoBreakpointSteps: next });
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Breakpoints de Envio</CardTitle>
+        <CardDescription>
+          Selecione os steps em que o progresso é salvo automaticamente no Kommo
+          e faz disparos de webhooks. O número representa a posição do step
+          (começa em 1).
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-2">
+        {formSteps.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            Configure o schema do formulário primeiro para definir os
+            breakpoints.
+          </p>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {formSteps.map((step, i) => {
+                const stepNum = i + 1;
+                const isChecked = selected.includes(stepNum);
+                return (
+                  <label
+                    key={step.id}
+                    className="bg-muted/40 hover:bg-muted/70 flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3 transition-colors"
+                  >
+                    <CheckboxPrimitive.Root
+                      checked={isChecked}
+                      onCheckedChange={() => toggle(stepNum)}
+                      className={cn(
+                        'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors',
+                        isChecked
+                          ? 'bg-primary border-primary'
+                          : 'border-input bg-background'
+                      )}
+                    >
+                      <CheckboxPrimitive.Indicator>
+                        <svg
+                          viewBox="0 0 10 10"
+                          className="h-3 w-3 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                        >
+                          <polyline points="1.5,5 4,7.5 8.5,2.5" />
+                        </svg>
+                      </CheckboxPrimitive.Indicator>
+                    </CheckboxPrimitive.Root>
+                    <span className="text-sm leading-snug">
+                      <span className="text-muted-foreground font-medium">
+                        {stepNum}.{' '}
+                      </span>
+                      {step.title || `Step ${stepNum}`}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            {selected.length > 0 && (
+              <p className="text-muted-foreground mt-4 text-xs">
+                Selecionados: {selected.join(', ')}
+              </p>
+            )}
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Main export
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function FormSettingsPanel({ value, onChange }: FormSettingsPanelProps) {
+export function FormSettingsPanel({
+  value,
+  onChange,
+  fieldsSchema,
+}: FormSettingsPanelProps) {
   const current = value ?? {};
 
   return (
     <div className="space-y-6">
       <AnamnesisSection value={current} onChange={onChange} />
       <RedirectSection value={current} onChange={onChange} />
+      <KommoBreakpointsSection
+        value={current}
+        onChange={onChange}
+        fieldsSchema={fieldsSchema}
+      />
     </div>
   );
 }

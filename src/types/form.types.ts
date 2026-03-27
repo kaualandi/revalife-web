@@ -147,4 +147,5 @@ export interface RedirectOnSuccess {
 export interface FormSettings {
   anamnesisRules?: AnamnesisRules;
   redirectOnSuccess?: RedirectOnSuccess | null;
+  kommoBreakpointSteps?: number[];
 }

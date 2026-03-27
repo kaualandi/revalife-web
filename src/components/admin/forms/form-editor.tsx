@@ -159,7 +159,11 @@ export function FormEditor({ defaultValues }: FormEditorProps) {
           </TabsContent>
 
           <TabsContent value="settings" className="mt-6">
-            <FormSettingsPanel value={settings} onChange={setSettings} />
+            <FormSettingsPanel
+                value={settings}
+                onChange={setSettings}
+                fieldsSchema={fieldsSchema}
+              />
           </TabsContent>
         </Tabs>
       </form>
